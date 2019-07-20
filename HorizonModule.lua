@@ -1,18 +1,18 @@
-HorizonModule = function ()
-    local self = {}
+HorizonModule = function (name)
+    local this = {}
 
     local mt = {}
     mt._name = "HorizonModule"
-    setmetatable(self, mt)
+    setmetatable(this, mt)
 
-    self.Name = ""
-    self.Dependencies = {}
-    self.Enabled = false
+    this.Name = name or ""
+    this.Dependencies = {}
+    this.Enabled = false
 
-    function self.Register()
-    end
-    function self.Deregister()
-    end
+    function this.Update() end
 
-    return self
+    function this.Register() end
+    function this.Unregister() end
+
+    return this
 end
