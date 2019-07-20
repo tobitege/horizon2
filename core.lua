@@ -2,13 +2,11 @@ function Horizon(core)
     local this = {}
     this.core = core
     this.Modules = {}
-    this.Ship = {
+    this.Memory = {
         Current = {},
         Desired = {}
     }
-    local readonly_table = {__newindex = function(table, key, value) end}
-    setmetatable(this.Ship, readonly_table)
-    setmetatable(this.Ship.Current, readonly_table)
+    setmetatable(this.Memory.Current, {__index={}, __newindex=function (t,k,v) end})
 
     local mt = {
         __add = function (module)
