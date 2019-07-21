@@ -1,4 +1,4 @@
-package.path = package.path .. ";./lua/?.lua"
+package.path = package.path .. ";./lua/?.lua;./?.lua"
 types = require("pl/types")
 
 function HorizonDelegate(eventType)
@@ -48,7 +48,7 @@ function HorizonDelegate(eventType)
     return this
 end
 
-Horzon = (function (core)
+Horizon = (function (core)
     local this = {}
     this.Core = core
     this.Modules = {}
@@ -76,30 +76,42 @@ Horzon = (function (core)
 
     local mt = {
         __add = function (module)
-            if types.type(module) ~= "HorizonModule" then return end
-            table.insert(this.Modules, module)
-            module.Register()
+            this.RegisterModule(module)
         end,
 
         __sub = function (module)
-            if types.type(module) ~= "HorizonModule" then return end
-            for k,v in ipairs(this.Modules) do
-                if v.Name == module.Name then 
-                    table.remove(this.Modules, k)
-                    v.Deregister()
-                end
-            end
+            this.UnregisterModule(module)
         end,
 
         __newindex = function(table, key, value) end
     }
+
+    function this.RegisterModule(module)
+        if types.type(module) ~= "HorizonModule" then return end
+        table.insert(this.Modules, module)
+        module.Register()
+    end
+
+    function this.UnregisterModule(module)
+        if types.type(module) ~= "HorizonModule" then return end
+        for k,v in ipairs(this.Modules) do
+            if v.Name == module.Name then 
+                table.remove(this.Modules, k)
+                v.Unregister()
+            end
+        end
+    end
     
     function this.OnUpdate()
-
+        this.Event.PreUpdate.Call()
+        this.Event.Update.Call()
+        this.Event.PostUpdate.Call()
     end
 
     function this.OnFlush()
-
+        this.Event.PreFlush.Call()
+        this.Event.Flush.Call()
+        this.Event.PostFlush.Call()
     end
 
     function this.OnKeyDown(key)
@@ -143,3 +155,10 @@ Horzon = (function (core)
     setmetatable(this, mt)
     return this
 end)(core)
+
+require 'HorizonModule'
+require 'Modules/Readings'
+
+Horizon.RegisterModule(ReadingsModule)
+
+Horizon.OnFlush()
