@@ -82,19 +82,7 @@ Horizon = (function (core, controller)
         Error = HorizonDelegate("error")
     }
 
-    setmetatable(this.Memory.Static, {__index={}, __newindex=function (t,k,v) end})
-
-    local mt = {
-        __add = function (module)
-            this.RegisterModule(module)
-        end,
-
-        __sub = function (module)
-            this.UnregisterModule(module)
-        end,
-
-        __newindex = function(table, key, value) end
-    }
+    setmetatable(this.Memory.Static, {__index={}, __newindex=function() end})
 
     function this.RegisterModule(module)
         if types.type(module) ~= "HorizonModule" then return end
@@ -161,7 +149,10 @@ Horizon = (function (core, controller)
         return nil
     end
 
-    -- Lock table!
-    setmetatable(this, mt)
+    setmetatable(this, {
+        __add = function (module) this.RegisterModule(module) end,
+        __sub = function (module) this.UnregisterModule(module) end,
+        __newindex = function(table, key, value) end
+    })
     return this
 end)(core, unit)
