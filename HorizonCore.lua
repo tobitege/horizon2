@@ -45,7 +45,7 @@ function HorizonDelegate(eventType)
             if right == this then this.Remove(left) return this end
             return this
             end,
-        __tostring = function() return "EventDelegate(#".. #this.Delegates ..")" end
+        __tostring = function() return "EventDelegate(" .. eventType .. ", #".. #this.Delegates ..")" end
         })
 
     return this
@@ -98,46 +98,6 @@ Horizon = (function (core, controller)
                 v.Unregister()
             end
         end
-    end
-    
-    function this.OnUpdate()
-        this.Event.PreUpdate.Call()
-        this.Event.Update.Call()
-        this.Event.PostUpdate.Call()
-    end
-
-    function this.OnFlush()
-        this.Event.PreFlush.Call()
-        this.Event.Flush.Call()
-        this.Event.PostFlush.Call()
-    end
-
-    function this.OnKeyDown(key)
-
-    end
-
-    function this.OnKeyUp(key)
-
-    end
-
-    function this.OnKeyRepeat(key)
-
-    end
-
-    function this.OnScroll(amount)
-
-    end
-
-    function this.OnMouseMove(x, y)
-
-    end
-
-    function this.OnStart()
-
-    end
-
-    function this.OnStop()
-
     end
 
     function this.GetModule(name)
