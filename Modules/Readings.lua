@@ -1,5 +1,5 @@
 ReadingsModule = (function() 
-    local this = HorizonModule("Ship Readings")
+    local this = HorizonModule("Ship Readings", "PreFlush", true)
 
     function this.Update()
         local memory = getmetatable(Horizon.Memory.Static).__index
@@ -36,16 +36,6 @@ ReadingsModule = (function()
         rawset(memory, "World", World)
         rawset(memory, "Ship", Ship)
         rawset(memory, "Local", Local)
-    end
-
-    function this.Register()
-        this.Enabled = true
-        Horizon.Event.PreFlush.Add(this)
-    end
-
-    function this.Unregister()
-        this.Enabled = false
-        Horizon.Event.PreFlush.Remove(this)
     end
 
     return this

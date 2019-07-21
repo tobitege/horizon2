@@ -1,5 +1,5 @@
 GravityCounter = (function() 
-    local this = HorizonModule("Gravity Suppression")
+    local this = HorizonModule("Gravity Suppression", "Flush", true)
 
     function this.Update(eventType, deltaTime)
         local memory = Horizon.Memory.Static.World
@@ -7,17 +7,7 @@ GravityCounter = (function()
 
         write.Thrust = write.Thrust - memory.Gravity
     end
-
-    function this.Register()
-        this.Enabled = true
-        Horizon.Event.Flush.Add(this)
-    end
-
-    function this.Unregister()
-        this.Enabled = false
-        Horizon.Event.Flush.Remove(this)
-    end
-
+    
     return this
 end)()
 Horizon.RegisterModule(GravityCounter)

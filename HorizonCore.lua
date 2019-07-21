@@ -1,4 +1,3 @@
-package.path = package.path .. ";./lua/?.lua;./?.lua"
 types = require("pl/types")
 
 function HorizonDelegate(eventType)
@@ -166,10 +165,3 @@ Horizon = (function (core, controller)
     setmetatable(this, mt)
     return this
 end)(core, unit)
-
-require 'HorizonModule'
-require 'Modules/Readings'
-
-Horizon.RegisterModule(ReadingsModule)
-
-Horizon.OnFlush()
