@@ -9,8 +9,6 @@ HorizonModule = function (name)
     this.Dependencies = {}
     this.Enabled = false
 
-    function this.Update(deltaTime) end
-
     function this.Register() end
     function this.Unregister() end
 

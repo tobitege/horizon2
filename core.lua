@@ -1,6 +1,6 @@
 function Horizon(core)
     local this = {}
-    this.core = core
+    this.Core = core
     this.Modules = {}
     this.Memory = {
         Current = {},
@@ -38,7 +38,7 @@ function Horizon(core)
         return nil
     end
 
-    --Lock table!
+    -- Lock table!
     setmetatable(this, mt)
     return this
 end
