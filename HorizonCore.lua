@@ -1,4 +1,4 @@
-function Horizon(core)
+Horzon = (function (core)
     local this = {}
     this.Core = core
     this.Modules = {}
@@ -41,6 +41,4 @@ function Horizon(core)
     -- Lock table!
     setmetatable(this, mt)
     return this
-end
-
-Horzon = Horizon(core)
+end)(core)
