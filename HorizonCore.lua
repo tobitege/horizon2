@@ -26,7 +26,11 @@ function HorizonDelegate(eventType)
         return false
     end
 
-    function this.Call(...) for i=1,#this.Delegates do this.Delegates[i](eventType, ...) end end
+    function this.Call(...)
+        for i=1,#this.Delegates do
+            if this.Delegates[i].Enabled then this.Delegates[i](eventType, ...) end
+        end
+    end
 
     function this.Count() return #this.Delegates end
 
@@ -48,13 +52,20 @@ function HorizonDelegate(eventType)
     return this
 end
 
-Horizon = (function (core)
+Horizon = (function (core, controller)
     local this = {}
     this.Core = core
+    this.Controller = controller
     this.Modules = {}
     this.Memory = {
         Static = {},
-        Dynamic = {}
+        Dynamic = {
+            Ship = {
+                Thrust = vec3(0,0,0),
+                Rotarion = vec3(0,0,0),
+                Tags = "all,brake"
+            }
+        }
     }
     this.Event = {
         Start = HorizonDelegate("start"),
@@ -154,7 +165,7 @@ Horizon = (function (core)
     -- Lock table!
     setmetatable(this, mt)
     return this
-end)(core)
+end)(core, unit)
 
 require 'HorizonModule'
 require 'Modules/Readings'
