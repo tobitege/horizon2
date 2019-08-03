@@ -3,8 +3,10 @@ HorizonModule = function (name, defaultEventName, defaultEnable)
     setmetatable(this, { __call = function(ref, ...) ref.Update(...) end, _name = "HorizonModule" })
 
     this.Name = name or ""
+    this.Tags = ""
     this.Dependencies = {}
     this.Enabled = false
+    this.Config = {}
 
     function this.Update(eventType) end
 

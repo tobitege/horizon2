@@ -1,4 +1,10 @@
-types = require("pl/types")
+-- package.cpath = package.cpath .. ";C:\\Users\\Otixa\\Desktop\\DUDev\\Horizon2\\socket.dll"
+print(os.time())
+local socket = require("socket.core")
+print(require("socket.http").request{ url = "http://www.google.com" });
+print("kk")
+--types = require("pl/types")
+
 
 function HorizonDelegate(eventType)
     local typeof = types.type
@@ -61,9 +67,10 @@ Horizon = (function (core, controller)
         Dynamic = {
             Ship = {
                 Thrust = vec3(0,0,0),
-                Rotarion = vec3(0,0,0),
+                Rotation = vec3(0,0,0),
                 Tags = "all,brake"
-            }
+            },
+            Settings = {}
         }
     }
     this.Event = {

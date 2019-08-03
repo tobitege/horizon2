@@ -1,5 +1,6 @@
 ReadingsModule = (function() 
     local this = HorizonModule("Ship Readings", "PreFlush", true)
+    this.Tags = "system,readings"
     
     local memory = getmetatable(Horizon.Memory.Static).__index
     local core = Horizon.Core
