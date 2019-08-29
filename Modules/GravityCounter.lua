@@ -5,7 +5,8 @@ GravityCounter = (function()
     function this.Update(eventType, deltaTime)
         local world = Horizon.Memory.Static.World
         local ship = Horizon.Memory.Dynamic.Ship
-        local current = world.Velocity:dot(world.Gravity:normalize()) * world.Gravity:normalize()
+        local ugrav = world.Gravity:normalize()
+        local current = world.Velocity:dot(ugrav) * ugrav
 
         ship.Thrust = ship.Thrust - (world.Gravity + current)
     end

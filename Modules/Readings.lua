@@ -34,6 +34,7 @@ ReadingsModule = (function()
 
         -- Local
         Local.Velocity = vec3(core.getVelocity())
+        Local.Acceleration = vec3(core.getAcceleration())
 
         rawset(memory, "World", World)
         rawset(memory, "Ship", Ship)
