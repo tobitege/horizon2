@@ -34,14 +34,14 @@ ReadingsModule = (function()
         Ship.Mass = core.getConstructMass()
         Ship.CrossSection = core.getConstructCrossSection()
         Ship.MaxKinematics = {
-            Forward = core.getMaxKinematicsParametersAlongAxis("All", vec3(0,1,0)),
-            Up = core.getMaxKinematicsParametersAlongAxis(vec3(0,0,1)),
-            Right = core.getMaxKinematicsParametersAlongAxis(vec3(1,0,0))
+            Forward = core.getMaxKinematicsParametersAlongAxis("fueled", {vec3(0,1,0):unpack()}),
+            Up = core.getMaxKinematicsParametersAlongAxis("fueled", {vec3(0,0,1):unpack()}),
+            Right = core.getMaxKinematicsParametersAlongAxis("fueled", {vec3(1,0,0):unpack()})
         }
-        Ship.MaxKinematics = {
-            Forward = {10000,-10000,0,0},
-            Up = {20000,-10000,0,0},
-            Right = {10000,-10000,0,0}
+        Ship.MaxBreakingKinematics = {
+            Forward = core.getMaxKinematicsParametersAlongAxis("all", {vec3(0,1,0):unpack()}),
+            Up = core.getMaxKinematicsParametersAlongAxis("all", {vec3(0,0,1):unpack()}),
+            Right = core.getMaxKinematicsParametersAlongAxis("all", {vec3(1,0,0):unpack()})
         }
 
         -- Local

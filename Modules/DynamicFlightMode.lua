@@ -25,40 +25,45 @@ DynamicFlightMode = (function()
     function this.Update(eventType, key)
         local world = Horizon.Memory.Static.World
         local stats = Horizon.Memory.Static.Ship
-        
 
         if eventType == "flush" then
-            local inAtmosphere = world.AtmosphericDensity > 0.1
+            local kinematicsOffset = 0
+            if world.AtmosphericDensity < 0.1 then kinematicsOffset = 2 end
             local currentKinematics = {
-                Forward = stats.MaxKinematics.Forward[1+(inAtmosphere*2)],
-                Backward = stats.MaxKinematics.Forward[2+(inAtmosphere*2)],
-                Right = stats.MaxKinematics.Right[1+(inAtmosphere*2)],
-                Left = stats.MaxKinematics.Right[2+(inAtmosphere*2)],
-                Up = stats.MaxKinematics.Up[1+(inAtmosphere*2)],
-                Down = stats.MaxKinematics.Up[2+(inAtmosphere*2)]
+                Forward = math.abs(stats.MaxKinematics.Forward[1+kinematicsOffset]),
+                Backward = math.abs(stats.MaxKinematics.Forward[2+kinematicsOffset]),
+                Right = math.abs(stats.MaxKinematics.Right[1+kinematicsOffset]),
+                Left = math.abs(stats.MaxKinematics.Right[2+kinematicsOffset]),
+                Up = math.abs(stats.MaxKinematics.Up[1+kinematicsOffset]),
+                Down = math.abs(stats.MaxKinematics.Up[2+kinematicsOffset])
             }
 
-
-            local fMax = stats.MaxKinematics[1] / stats.Mass
-            local xform = (world.Up * this.Direction.z) + (world.Forward * this.Direction.y) + (world.Right * this.Direction.x)
-
-            --Apply the relevant kinematics
-            if this.Direction.z > 0 then
-                xform = xform + (world.Up*currentKinematics.Up)
-            else
-                xform = xform + (world.Up*currentKinematics.Down)
+            local xFormUp = world.Up
+            if (this.Direction.z > 0) then
+                xFormUp = xFormUp * currentKinematics.Up
+            elseif this.Direction.z < 0 then
+                xFormUp = xFormUp * currentKinematics.Down
             end
+            xFormUp = xFormUp*this.Direction.z
+
+            local xFormForward = world.Forward
             if this.Direction.y > 0 then
-                xform = xform + (world.Forward*currentKinematics.Forward)
-            else
-                xform = xform + (world.Forward*currentKinematics.Backward)
+                xFormForward = xFormForward * currentKinematics.Forward
+            elseif this.Direction.y < 0 then
+                xFormForward = xFormForward * currentKinematics.Backward
             end
-            if this.Direction.x > 0 then
-                xform = xform + (world.Right*currentKinematics.Right)
-            else
-                xform = xform + (world.Right*currentKinematics.Left)
-            end
+            xFormForward = xFormForward*this.Direction.y
 
+            local xFormRight = world.Right
+            if this.Direction.x > 0 then
+                xFormRight = xFormRight * currentKinematics.Right
+            elseif this.Direction.x < 0 then
+                xFormRight = xFormRight * currentKinematics.Left
+            end
+            xFormRight = xFormRight*this.Direction.x
+
+
+            local xform = xFormUp + xFormForward + xFormRight
 
             ship.Thrust = ship.Thrust + (xform * this.Throttle)
             ship.Rotation = ship.Rotation + ((world.Forward * this.Rotation.y) * this.TurnSpeed)
