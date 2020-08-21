@@ -1,11 +1,3 @@
--- package.cpath = package.cpath .. ";C:\\Users\\Otixa\\Desktop\\DUDev\\Horizon2\\socket.dll"
-print(os.time())
-local socket = require("socket.core")
-print(require("socket.http").request{ url = "http://www.google.com" });
-print("kk")
---types = require("pl/types")
-
-
 function HorizonDelegate(eventType)
     local typeof = types.type
     local this = {}
@@ -60,7 +52,7 @@ end
 Horizon = (function (core, controller)
     local this = {}
     this.Core = core
-    this.Controller = controller
+    this.Controller = controller.unit
     this.Modules = {}
     this.Memory = {
         Static = {},

@@ -28,9 +28,39 @@ DynamicFlightMode = (function()
         
 
         if eventType == "flush" then
+            local inAtmosphere = world.AtmosphericDensity > 0.1
+            local currentKinematics = {
+                Forward = stats.MaxKinematics.Forward[1+(inAtmosphere*2)],
+                Backward = stats.MaxKinematics.Forward[2+(inAtmosphere*2)],
+                Right = stats.MaxKinematics.Right[1+(inAtmosphere*2)],
+                Left = stats.MaxKinematics.Right[2+(inAtmosphere*2)],
+                Up = stats.MaxKinematics.Up[1+(inAtmosphere*2)],
+                Down = stats.MaxKinematics.Up[2+(inAtmosphere*2)]
+            }
+
+
             local fMax = stats.MaxKinematics[1] / stats.Mass
             local xform = (world.Up * this.Direction.z) + (world.Forward * this.Direction.y) + (world.Right * this.Direction.x)
-            ship.Thrust = ship.Thrust + (xform * this.Throttle * fMax)
+
+            --Apply the relevant kinematics
+            if this.Direction.z > 0 then
+                xform = xform + (world.Up*currentKinematics.Up)
+            else
+                xform = xform + (world.Up*currentKinematics.Down)
+            end
+            if this.Direction.y > 0 then
+                xform = xform + (world.Forward*currentKinematics.Forward)
+            else
+                xform = xform + (world.Forward*currentKinematics.Backward)
+            end
+            if this.Direction.x > 0 then
+                xform = xform + (world.Right*currentKinematics.Right)
+            else
+                xform = xform + (world.Right*currentKinematics.Left)
+            end
+
+
+            ship.Thrust = ship.Thrust + (xform * this.Throttle)
             ship.Rotation = ship.Rotation + ((world.Forward * this.Rotation.y) * this.TurnSpeed)
             return
         end
