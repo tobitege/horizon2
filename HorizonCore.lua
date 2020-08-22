@@ -24,9 +24,12 @@ function HorizonDelegate(eventType)
     end
 
     function this.Call(...)
-        for i=1,#this.Delegates do
-            if this.Delegates[i].Enabled then this.Delegates[i](eventType, ...) end
+        for currentPriority=0,5 do
+            for i=1,#this.Delegates do
+                if this.Delegates[i].Enabled and this.Delegates[i].Priority == currentPriority then this.Delegates[i](eventType, ...) end
+            end
         end
+            
     end
 
     function this.Count() return #this.Delegates end

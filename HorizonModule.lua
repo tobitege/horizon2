@@ -1,4 +1,4 @@
-HorizonModule = function (name, defaultEventName, defaultEnable)
+HorizonModule = function (name, defaultEventName, defaultEnable, priority)
     local this = {}
     setmetatable(this, { __call = function(ref, ...) ref.Update(...) end, _name = "HorizonModule" })
 
@@ -6,6 +6,13 @@ HorizonModule = function (name, defaultEventName, defaultEnable)
     this.Tags = ""
     this.Dependencies = {}
     this.Enabled = false
+    
+    if priority == nil then
+        this.Priority = 1
+    else
+        this.Priority = priority
+    end
+
     this.Config = {}
 
     function this.Update(eventType) end
