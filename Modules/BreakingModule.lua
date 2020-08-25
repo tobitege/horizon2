@@ -1,30 +1,17 @@
 BreakingModule = (function() 
-    local this = HorizonModule("Velocity Breaking Module", "PostFlush", true, 4)
-    this.Tags = "thrust,breaking"
+    local this = HorizonModule("Velocity Braking", "PreFlush", false, 4)
+    this.Tags = "thrust,braking"
 
-    Horizon.Event.KeyUp.Add(this)
-    Horizon.Event.KeyDown.Add(this)
-
-    local isBreaking = false
+    local time = system.getTime()
 
     function this.Update(eventType, key)
         local world = Horizon.Memory.Static.World
         local ship = Horizon.Memory.Static.Ship
         local dship = Horizon.Memory.Dynamic.Ship
+        local deltaTime = system.getTime() - time
         
-        if key == "brake" then
-            if eventType == "keyup" then
-                isBreaking = false
-            else
-                isBreaking = true
-            end
-            return
-        end
-
-        if isBreaking == true then 
-            dship.Thrust = (-world.Velocity) * ship.Mass 
-            system.print("BREAKING")
-        end
+        dship.Thrust = -world.Velocity * ship.Mass * deltaTime
+        time = system.getTime()
     end
 
     return this

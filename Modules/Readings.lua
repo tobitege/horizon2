@@ -33,6 +33,29 @@ ReadingsModule = (function()
         Ship.Id = core.getConstructId()
         Ship.Mass = core.getConstructMass()
         Ship.CrossSection = core.getConstructCrossSection()
+
+        local localGravityVector = vec3(library.systemResolution3(
+                {World.Right:unpack()},
+                {World.Forward:unpack()},
+                {World.Up:unpack()},
+                {World.Gravity:unpack()}
+            ))
+
+        local gravityForwardKinematics = {localGravityVector.y, -localGravityVector.y, localGravityVector.y, -localGravityVector.y}
+        local gravityUpKinematics = {localGravityVector.z, -localGravityVector.z, localGravityVector.z, -localGravityVector.z}
+        local gravityRightKinematics = {localGravityVector.x, -localGravityVector.x, localGravityVector.x, -localGravityVector.x}
+
+        local localAirFrictionVector = vec3(library.systemResolution3(
+                {World.Right:unpack()},
+                {World.Forward:unpack()},
+                {World.Up:unpack()},
+                {World.AirFriction:unpack()}
+            ))
+
+        local airFrictionForwardKinematics = {localAirFrictionVector.y, -localAirFrictionVector.y, localAirFrictionVector.y, -localAirFrictionVector.y}
+        local airFrictionUpKinematics = {localAirFrictionVector.z, -localAirFrictionVector.z, localAirFrictionVector.z, -localAirFrictionVector.z}
+        local airFrictionRightKinematics = {localAirFrictionVector.x, -localAirFrictionVector.x, localAirFrictionVector.x, -localAirFrictionVector.x}
+
         Ship.MaxKinematics = {
             Forward = core.getMaxKinematicsParametersAlongAxis("fueled", {vec3(0,1,0):unpack()}),
             Up = core.getMaxKinematicsParametersAlongAxis("fueled", {vec3(0,0,1):unpack()}),
@@ -43,6 +66,18 @@ ReadingsModule = (function()
             Up = core.getMaxKinematicsParametersAlongAxis("all", {vec3(0,0,1):unpack()}),
             Right = core.getMaxKinematicsParametersAlongAxis("all", {vec3(1,0,0):unpack()})
         }
+
+        for i=1,#Ship.MaxKinematics.Forward,1 do
+
+            Ship.MaxKinematics.Forward[i] = Ship.MaxKinematics.Forward[i]+gravityForwardKinematics[i]
+            Ship.MaxKinematics.Up[i] = Ship.MaxKinematics.Up[i]+gravityUpKinematics[i]
+            Ship.MaxKinematics.Right[i] = Ship.MaxKinematics.Right[i]+gravityRightKinematics[i]
+
+            Ship.MaxBreakingKinematics.Forward[i] = Ship.MaxBreakingKinematics.Forward[i]+gravityForwardKinematics[i]+airFrictionForwardKinematics[i]
+            Ship.MaxBreakingKinematics.Up[i] = Ship.MaxBreakingKinematics.Up[i]+gravityUpKinematics[i]+airFrictionUpKinematics[i]
+            Ship.MaxBreakingKinematics.Right[i] = Ship.MaxBreakingKinematics.Right[i]+gravityRightKinematics[i]+airFrictionRightKinematics[i]
+
+        end
 
         -- Local
         Local.Velocity = vec3(core.getVelocity())

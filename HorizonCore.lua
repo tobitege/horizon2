@@ -63,7 +63,8 @@ Horizon = (function (core, controller)
             Ship = {
                 Thrust = vec3(0,0,0),
                 Rotation = vec3(0,0,0),
-                Tags = "all,brake"
+                --All except rocket engines
+                Tags = "atmospheric_engine,space_engine,airfoil,brake,torque,vertical"
             },
             Settings = {}
         }
@@ -81,10 +82,15 @@ Horizon = (function (core, controller)
         KeyLoop = HorizonDelegate("keyloop"),
         MouseMove = HorizonDelegate("mousemove"),
         Stop = HorizonDelegate("stop"),
-        Error = HorizonDelegate("error")
+        Error = HorizonDelegate("error"),
+        MouseWheel = HorizonDelegate("mousewheel")
     }
 
     setmetatable(this.Memory.Static, {__index={}, __newindex=function() end})
+
+    function this.RegisterSharedDatabank(databank)
+        this.Memory.Shared = databank
+    end
 
     function this.RegisterModule(module)
         if types.type(module) ~= "HorizonModule" then return end
@@ -104,7 +110,7 @@ Horizon = (function (core, controller)
 
     function this.GetModule(name)
         for k,v in ipairs(this.Modules) do
-            if v.Name == module.Name then 
+            if v.Name == name then 
                 return v
             end
         end

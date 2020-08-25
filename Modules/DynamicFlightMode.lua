@@ -13,8 +13,8 @@ DynamicFlightMode = (function()
     local events = {
         forward = vec3(0,1,0),
         backward = vec3(0,-1,0),
-        left = vec3(-1,0,0),
-        right = vec3(1,0,0),
+        yawleft = vec3(-1,0,0),
+        yawright = vec3(1,0,0),
         up = vec3(0,0,1),
         down = vec3(0,0,-1)
     }
@@ -81,13 +81,13 @@ DynamicFlightMode = (function()
         end
 
         -- TODO: Unfuck
-        if key == "yawleft" then
+        if key == "left" then
             if eventType == "keyup" then
                 this.Rotation.y = 0
             else
                 this.Rotation.y = -1
             end
-        elseif key == "yawright" then
+        elseif key == "right" then
             if eventType == "keyup" then
                 this.Rotation.y = 0
             else

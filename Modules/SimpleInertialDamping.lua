@@ -15,6 +15,8 @@ SimpleInertialDampening = (function()
         if ship.MoveDirection.z == 0 then delta.z = norm.z * speed end
         delta = (world.Right * delta.x) + (world.Forward * delta.y) + (world.Up * delta.z)
         ship.Thrust = ship.Thrust - delta
+
+        ship.Rotation = ship.Rotation - ((world.AngularVelocity * 2) - (world.AngularAirFriction * 2))
     end
 
     return this

@@ -17,6 +17,10 @@ HorizonModule = function (name, defaultEventName, defaultEnable, priority)
 
     function this.Update(eventType) end
 
+    function this.Enable() this.Enabled = true end
+    function this.Disable() this.Enabled = false end
+    function this.ToggleEnabled() if this.Enabled then this.Disable() else this.Enable() end end
+
     function this.Register()
         if defaultEnable ~= nil then this.Enabled = defaultEnable end
         if defaultEventName then

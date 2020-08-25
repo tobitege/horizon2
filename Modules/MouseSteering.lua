@@ -37,6 +37,15 @@ MouseSteering = (function()
         ship.Rotation = ship.Rotation - x - z
     end
 
+    function this.Enable()
+        this.Enabled = true
+        system.lockView(1)
+    end
+    function this.Disable()
+        this.Enabled = false
+        system.lockView(0)
+    end
+
     system.lockView(1)
     return this
 end)()
