@@ -64,7 +64,10 @@ Horizon = (function (core, controller)
                 Thrust = vec3(0,0,0),
                 Rotation = vec3(0,0,0),
                 --All except rocket engines
-                Tags = "atmospheric_engine,space_engine,airfoil,brake,torque,vertical"
+                Tags = "atmospheric_engine,space_engine,airfoil,brake,torque,vertical",
+                Priority1Tags = "brake,airfoil,torque",
+                Priority2Tags = "atmospheric_engine,space_engine,vertical",
+                Priority3Tags = ""
             },
             Settings = {}
         }

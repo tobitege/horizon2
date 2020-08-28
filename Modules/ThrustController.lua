@@ -10,7 +10,7 @@ ThrustController = (function()
         local thrust = memory.Thrust
         local rotation = memory.Rotation
 
-        controller.setEngineCommand(memory.Tags, {thrust:unpack()}, {rotation:unpack()})
+        controller.setEngineCommand(memory.Tags, {thrust:unpack()}, {rotation:unpack()}, false, false, memory.Priority1Tags, memory.Priority2Tags, memory.Priority3Tags)
 
         -- Cleanup
         memory.Thrust = vec3(0,0,0)
