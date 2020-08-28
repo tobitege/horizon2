@@ -8,9 +8,10 @@ DynamicFlightMode = (function()
 
     local ship = Horizon.Memory.Dynamic.Ship
 
+    --This is used to inform other modules of the users current movement intent
     if not ship.MoveDirection then ship.MoveDirection = vec3(0,0,0) end
 
-    local events = {
+    local directionVectors = {
         forward = vec3(0,1,0),
         backward = vec3(0,-1,0),
         yawleft = vec3(-1,0,0),
@@ -19,8 +20,68 @@ DynamicFlightMode = (function()
         down = vec3(0,0,-1)
     }
 
-    Horizon.Event.KeyUp.Add(this)
-    Horizon.Event.KeyDown.Add(this)
+    function this.Forward(keyDown)
+        if keyDown then
+            this.Direction = this.Direction + directionVectors.forward
+        else
+            this.Direction = this.Direction - directionVectors.forward
+        end
+    end
+    function this.Backward(keyDown)
+        if keyDown then
+            this.Direction = this.Direction + directionVectors.backward
+        else
+            this.Direction = this.Direction - directionVectors.backward
+        end
+    end
+    function this.YawLeft(keyDown)
+        if keyDown then
+            this.Direction = this.Direction + directionVectors.yawleft
+        else
+            this.Direction = this.Direction - directionVectors.yawleft
+        end
+    end
+    function this.YawRight(keyDown)
+        if keyDown then
+            this.Direction = this.Direction + directionVectors.yawright
+        else
+            this.Direction = this.Direction - directionVectors.yawright
+        end
+    end
+    function this.Up(keyDown)
+        if keyDown then
+            this.Direction = this.Direction + directionVectors.up
+        else
+            this.Direction = this.Direction - directionVectors.up
+        end
+    end
+    function this.Down(keyDown)
+        if keyDown then
+            this.Direction = this.Direction + directionVectors.down
+        else
+            this.Direction = this.Direction - directionVectors.down
+        end
+    end
+    function this.Left(keyDown)
+        if keyDown then
+            this.Rotation.y = -1
+        else
+            this.Rotation.y = 0
+        end
+    end
+    function this.Right(keyDown)
+        if keyDown then
+            this.Rotation.y = 1
+        else
+            this.Rotation.y = 0
+        end
+    end
+    function this.SpeedUp(keyDown)
+
+    end
+    function this.SpeedDown(keyDown)
+
+    end
 
     function this.Update(eventType, key)
         local world = Horizon.Memory.Static.World
@@ -38,62 +99,33 @@ DynamicFlightMode = (function()
                 Down = math.abs(stats.MaxKinematics.Up[2+kinematicsOffset])
             }
 
-            local xFormUp = world.Up
+            local thrustToApply = vec3(0,0,0)
+
             if (this.Direction.z > 0) then
-                xFormUp = xFormUp * currentKinematics.Up
+                thrustToApply = thrustToApply + (world.Up * currentKinematics.Up)
             elseif this.Direction.z < 0 then
-                xFormUp = xFormUp * currentKinematics.Down
+                thrustToApply = thrustToApply + (-world.Up * currentKinematics.Down)
             end
-            xFormUp = xFormUp*this.Direction.z
 
-            local xFormForward = world.Forward
             if this.Direction.y > 0 then
-                xFormForward = xFormForward * currentKinematics.Forward
+                thrustToApply = thrustToApply + (world.Forward * currentKinematics.Forward)
             elseif this.Direction.y < 0 then
-                xFormForward = xFormForward * currentKinematics.Backward
+                thrustToApply = thrustToApply + (-world.Forward * currentKinematics.Backward)
             end
-            xFormForward = xFormForward*this.Direction.y
 
-            local xFormRight = world.Right
             if this.Direction.x > 0 then
-                xFormRight = xFormRight * currentKinematics.Right
+                thrustToApply = thrustToApply + (world.Right * currentKinematics.Right)
             elseif this.Direction.x < 0 then
-                xFormRight = xFormRight * currentKinematics.Left
+                thrustToApply = thrustToApply + -(world.Right * currentKinematics.Left)
             end
-            xFormRight = xFormRight*this.Direction.x
 
-
-            local xform = xFormUp + xFormForward + xFormRight
-
-            ship.Thrust = ship.Thrust + (xform * this.Throttle)
+            ship.Thrust = ship.Thrust + (thrustToApply * this.Throttle)
             ship.Rotation = ship.Rotation + ((world.Forward * this.Rotation.y) * this.TurnSpeed)
             return
         end
 
-        if events[key] then
-            if eventType == "keyup" then
-                this.Direction = this.Direction - events[key]
-            else
-                this.Direction = this.Direction + events[key]
-            end
-            ship.MoveDirection = this.Direction
-            return
-        end
+        ship.MoveDirection = this.Direction
 
-        -- TODO: Unfuck
-        if key == "left" then
-            if eventType == "keyup" then
-                this.Rotation.y = 0
-            else
-                this.Rotation.y = -1
-            end
-        elseif key == "right" then
-            if eventType == "keyup" then
-                this.Rotation.y = 0
-            else
-                this.Rotation.y = 1
-            end
-        end
     end
 
     return this
