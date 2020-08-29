@@ -1,5 +1,5 @@
 function HorizonDelegate(eventType)
-    local typeof = types.type
+    _G.typeof = types.type
     local this = {}
     this.Delegates = {}
     local lastTime = system.getTime()
