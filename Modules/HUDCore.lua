@@ -244,6 +244,9 @@ HUDObject = function (x, y, width, height, content)
     this.IsDirty = true
     this.IsHovered = false
     this.IsPressed = false
+    this.Anchoring = {
+        
+    }
 
     this.HUD = Horizon.GetModule("HUDCore")
     this.Horizon = Horizon
@@ -253,6 +256,7 @@ HUDObject = function (x, y, width, height, content)
 
     local wasHovered = false
     local wasClicked = false
+    local buffer = ""
 
     function this.Contains(pos)
         if  pos.X >= this.Position.X and pos.X <= this.Position.X + this.Width and 
@@ -326,7 +330,6 @@ HUDObject = function (x, y, width, height, content)
     function this.Render(scope)
         local anyDirty = scope.IsDirty
         for k,v in ipairs(scope.Children) do
-            system.print("Iterating " .. v.GUID)
             if v.IsDirty then
                 anyDirty = true
                 break
@@ -335,7 +338,6 @@ HUDObject = function (x, y, width, height, content)
         if anyDirty then
             buffer = template.substitute(scope._wrapStart..scope.Content, scope)
             for k,v in ipairs(scope.Children) do
-                system.print("Rendering " .. v.GUID)
                 buffer = buffer .. v.Render(v)
             end
             buffer = buffer .. scope._wrapEnd
@@ -477,6 +479,6 @@ local mainPanel = HUDPanel(86.4, 30, 10.6, 26)
 mainPanel.Class = "filled"
 HUDCore.AddWidget(mainPanel)
 
-local subpanel = HUDPanel(0.3, 0.3, 10, 25.7)
-subpanel.Content = [[yes hello]]
---mainPanel.AddChild(subpanel)
+local subpanel = HUDPanel(0.3, 0.6, 10, 25.7)
+subpanel.Content = [[<uiheading>Test Panel</uiheading>]]
+mainPanel.AddChild(subpanel)
