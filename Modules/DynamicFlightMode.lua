@@ -121,11 +121,9 @@ DynamicFlightMode = (function()
 
             ship.Thrust = ship.Thrust + (thrustToApply * this.Throttle)
             ship.Rotation = ship.Rotation + ((world.Forward * this.Rotation.y) * this.TurnSpeed)
-            return
         end
 
         ship.MoveDirection = this.Direction
-
     end
 
     return this

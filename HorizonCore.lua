@@ -70,7 +70,8 @@ Horizon = (function (core, controller)
                 Priority3Tags = ""
             },
             Settings = {}
-        }
+        },
+        Slots = SlotContainer()
     }
     this.Event = {
         Start = HorizonDelegate("start"),
@@ -93,6 +94,9 @@ Horizon = (function (core, controller)
 
     function this.RegisterSharedDatabank(databank)
         this.Memory.Shared = databank
+    end
+    function this.RegisterSlots(slotContainer)
+        this.Memory.Slots = slotContainer
     end
 
     function this.RegisterModule(module)

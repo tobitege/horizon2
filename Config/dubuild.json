@@ -1,0 +1,94 @@
+{
+    "Minify": false,
+    "Encrypt": false,
+    "Slots":[
+        {
+            "Files": ["HorizonModule.lua","HorizonCore.lua"],
+            "Slot": "-2",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["Modules/Readings.lua"],
+            "Slot": "-3",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["Modules/DynamicFlightMode.lua"],
+            "Slot": "-3",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["Modules/RotationDampening.lua"],
+            "Slot": "-3",
+            "Signature": "start()",
+            "Args": ""
+        },{
+            "Files": ["Modules/ThrustController.lua"],
+            "Slot": "-3",
+            "Signature": "start()",
+            "Args": ""
+        },{
+            "Files": ["Modules/SimpleInertialDamping.lua"],
+            "Slot": "-3",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["Modules/MouseSteering.lua"],
+            "Slot": "-3",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["Modules/KeybindsModule.lua"],
+            "Slot": "-3",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["Modules/GravityCounter.lua"],
+            "Slot": "-3",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["Modules/CruiseControlModule.lua"],
+            "Slot": "-3",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Code": "Horizon.Event.PreFlush() Horizon.Event.Flush() Horizon.Event.PostFlush()",
+            "Slot": "-2",
+            "Signature": "flush()",
+            "Args": ""
+        },
+        {
+            "Code": "Horizon.Event.PreUpdate() Horizon.Event.Update() Horizon.Event.PostUpdate()",
+            "Slot": "-2",
+            "Signature": "update()",
+            "Args": ""
+        },
+        {
+            "Code": "Horizon.Event.Stop()",
+            "Slot": "-2",
+            "Signature": "stop()",
+            "Args": ""
+        },
+        {
+            "Code": "Horizon.Event.KeyDown(action)",
+            "Slot": "-2",
+            "Signature": "actionStart(action)",
+            "Args": "*"
+        },
+        {
+            "Code": "Horizon.Event.KeyUp(action)",
+            "Slot": "-2",
+            "Signature": "actionStop(action)",
+            "Args": "*"
+        }
+    ]
+}

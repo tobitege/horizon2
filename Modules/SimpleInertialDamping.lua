@@ -1,6 +1,8 @@
 SimpleInertialDampening = (function() 
     local this = HorizonModule("Simple Inertial Dampening", "PostFlush", true)
     this.Tags = "stability,thrust"
+
+    this.origionalState = true
     
     function this.Update(eventType, deltaTime)
         local staticWorld = Horizon.Memory.Static.World
@@ -14,8 +16,17 @@ SimpleInertialDampening = (function()
         if dynamicShip.MoveDirection.y == 0 then delta.y = currentShipMomentum.y end
         if dynamicShip.MoveDirection.z == 0 then delta.z = currentShipMomentum.z end
         dynamicShip.Thrust = dynamicShip.Thrust - delta
+    end
 
-        dynamicShip.Rotation = dynamicShip.Rotation - ((staticWorld.AngularVelocity * 2) - (staticWorld.AngularAirFriction * 2))
+    function this.Enable() this.origionalState = true this.Enabled = true end
+    function this.Disable() this.origionalState = false this.Enabled = false end
+
+    function this.Brake(keyDown)
+        if (keyDown) then
+            this.Enabled = true
+        else
+            this.Enabled = this.origionalState
+        end
     end
 
     return this

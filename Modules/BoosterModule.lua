@@ -1,18 +1,21 @@
 BoosterModule = (function() 
-    local this = HorizonModule("Booster Module", "PostFlush", true)
+    local this = HorizonModule("Booster", "PostFlush", false)
     this.Tags = "system,thrust"
 
     local tags = Horizon.Memory.Dynamic.Ship.Tags
+    Navigation.setBoosterCommand('rocket_engine')
 
     function this.Update(eventType, deltaTime)
        
     end
 
     function this.Enable()
-        tags = tags .. ",rocket_engine"
+        Navigation.toggleBoosters()
+        this.Enabled = true
     end
     function this.Disable()
-        tags = tags:gsub(",rocket_engine", "")
+        Navigation.toggleBoosters()
+        this.Enabled = false
     end
 
     return this
