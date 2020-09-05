@@ -9,8 +9,9 @@ LandingModule = (function()
         local world = Horizon.Memory.Static.World
         
         if world.Velocity:len() < speedLimitInMs then
+
             for i,v in ipairs(slots.Telemeters) do
-                if v.getDistance() < distanceLimit and Horizon.Controller.isAnyLandingGearExtended() ==0 then
+                if v.getDistance() <= distanceLimit and Horizon.Controller.isAnyLandingGearExtended() ==0 then
                     Horizon.Controller.extendLandingGears()
                     return
                 end
@@ -19,6 +20,9 @@ LandingModule = (function()
                     return
                 end    
             end
+
+        else
+            if Horizon.Controller.isAnyLandingGearExtended() ==1 then Horizon.Controller.retractLandingGears() end
         end
     end
 

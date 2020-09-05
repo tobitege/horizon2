@@ -77,10 +77,10 @@ DynamicFlightMode = (function()
         end
     end
     function this.SpeedUp(keyDown)
-
+        this.Throttle = math.min(1,this.Throttle+0.1)
     end
     function this.SpeedDown(keyDown)
-
+        this.Throttle = math.max(0,this.Throttle-0.1)
     end
 
     function this.Update(eventType, key)
@@ -88,35 +88,25 @@ DynamicFlightMode = (function()
         local stats = Horizon.Memory.Static.Ship
 
         if eventType == "flush" then
-            local kinematicsOffset = 0
-            if world.AtmosphericDensity < 0.1 then kinematicsOffset = 2 end
-            local currentKinematics = {
-                Forward = math.abs(stats.MaxKinematics.Forward[1+kinematicsOffset]),
-                Backward = math.abs(stats.MaxKinematics.Forward[2+kinematicsOffset]),
-                Right = math.abs(stats.MaxKinematics.Right[1+kinematicsOffset]),
-                Left = math.abs(stats.MaxKinematics.Right[2+kinematicsOffset]),
-                Up = math.abs(stats.MaxKinematics.Up[1+kinematicsOffset]),
-                Down = math.abs(stats.MaxKinematics.Up[2+kinematicsOffset])
-            }
 
             local thrustToApply = vec3(0,0,0)
 
             if (this.Direction.z > 0) then
-                thrustToApply = thrustToApply + (world.Up * currentKinematics.Up)
+                thrustToApply = thrustToApply + (world.Up * stats.MaxKinematics.Up)
             elseif this.Direction.z < 0 then
-                thrustToApply = thrustToApply + (-world.Up * currentKinematics.Down)
+                thrustToApply = thrustToApply + (-world.Up * stats.MaxKinematics.Down)
             end
 
             if this.Direction.y > 0 then
-                thrustToApply = thrustToApply + (world.Forward * currentKinematics.Forward)
+                thrustToApply = thrustToApply + (world.Forward * stats.MaxKinematics.Forward)
             elseif this.Direction.y < 0 then
-                thrustToApply = thrustToApply + (-world.Forward * currentKinematics.Backward)
+                thrustToApply = thrustToApply + (-world.Forward * stats.MaxKinematics.Backward)
             end
 
             if this.Direction.x > 0 then
-                thrustToApply = thrustToApply + (world.Right * currentKinematics.Right)
+                thrustToApply = thrustToApply + (world.Right * stats.MaxKinematics.Right)
             elseif this.Direction.x < 0 then
-                thrustToApply = thrustToApply + -(world.Right * currentKinematics.Left)
+                thrustToApply = thrustToApply + (-world.Right * stats.MaxKinematics.Left)
             end
 
             ship.Thrust = ship.Thrust + (thrustToApply * this.Throttle)

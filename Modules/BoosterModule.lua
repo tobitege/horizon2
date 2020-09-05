@@ -2,19 +2,18 @@ BoosterModule = (function()
     local this = HorizonModule("Booster", "PostFlush", false)
     this.Tags = "system,thrust"
 
-    local tags = Horizon.Memory.Dynamic.Ship.Tags
-    Navigation.setBoosterCommand('rocket_engine')
+    local link = rocket
 
     function this.Update(eventType, deltaTime)
        
     end
 
     function this.Enable()
-        Navigation.toggleBoosters()
+        link.setThrust(1)
         this.Enabled = true
     end
     function this.Disable()
-        Navigation.toggleBoosters()
+        link.setThrust(0)
         this.Enabled = false
     end
 

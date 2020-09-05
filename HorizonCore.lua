@@ -52,10 +52,10 @@ function HorizonDelegate(eventType)
     return this
 end
 
-Horizon = (function (core, controller)
+Horizon = (function ()
     local this = {}
-    this.Core = core
-    this.Controller = controller.unit
+    this.Core = nil
+    this.Controller = Unit
     this.Modules = {}
     this.Memory = {
         Static = {},
@@ -97,6 +97,8 @@ Horizon = (function (core, controller)
     end
     function this.RegisterSlots(slotContainer)
         this.Memory.Slots = slotContainer
+        if not slotContainer.Core then error("Core has not been linked") end
+        this.Core = slotContainer.Core
     end
 
     function this.RegisterModule(module)
@@ -130,4 +132,4 @@ Horizon = (function (core, controller)
         __newindex = function(table, key, value) end
     })
     return this
-end)(core, unit)
+end)()
