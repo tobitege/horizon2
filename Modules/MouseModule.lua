@@ -4,8 +4,8 @@ MouseModule = (function()
 
     
     function this.Update(eventType, deltaTime)
-        local mouseWheel = getThrottleInputFromMouseWheel()
-
+        local mouseWheel = system.getMouseWheel()
+        
         if mouseWheel ~= 0 then
             Horizon.Event.MouseWheel(mouseWheel)
         end

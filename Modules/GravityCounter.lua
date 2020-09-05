@@ -6,8 +6,6 @@ GravityCounter = (function()
         local world = Horizon.Memory.Static.World
         local ship = Horizon.Memory.Dynamic.Ship
 
-        local grav = world.Gravity
-
         ship.Thrust = ship.Thrust - world.Gravity
     end
 

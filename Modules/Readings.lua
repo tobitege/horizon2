@@ -48,10 +48,6 @@ ReadingsModule = (function()
                 {World.AirFriction:unpack()}
             ))
 
-        --[[local airFrictionForwardKinematics = {localAirFrictionVector.y, -localAirFrictionVector.y, localAirFrictionVector.y, -localAirFrictionVector.y}
-        local airFrictionUpKinematics = {localAirFrictionVector.z, -localAirFrictionVector.z, localAirFrictionVector.z, -localAirFrictionVector.z}
-        local airFrictionRightKinematics = {localAirFrictionVector.x, -localAirFrictionVector.x, localAirFrictionVector.x, -localAirFrictionVector.x}]]
-
         local tkForward = core.getMaxKinematicsParametersAlongAxis("all", {vec3(0,1,0):unpack()})
         local tkUp = core.getMaxKinematicsParametersAlongAxis("all", {vec3(0,0,1):unpack()})
         local tkRight = core.getMaxKinematicsParametersAlongAxis("all", {vec3(1,0,0):unpack()})
