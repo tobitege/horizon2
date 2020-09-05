@@ -1,6 +1,5 @@
 {
     "Minify": false,
-    "Encrypt": false,
     "Slots":[
         {
             "Files": ["HorizonModule.lua","HorizonCore.lua"],
