@@ -93,7 +93,7 @@ Horizon = (function ()
         Error = HorizonDelegate("error"),
         MouseWheel = HorizonDelegate("mousewheel")
     }
-    this.Version = "2.0.1a RC1 COMMIT_HASH"
+    this.Version = "2.0.1a RC1 CI_COMMIT_BRANCH CI_COMMIT_SHORT_SHA"
 
     setmetatable(this.Memory.Static, {__index={}, __newindex=function() end})
 
