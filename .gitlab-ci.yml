@@ -1,14 +1,14 @@
 stages:
-    - build
+ - build
   
-  workflow:
-    rules:
-      - if: '$CI_COMMIT_BRANCH == "master"'
+workflow:
+ rules:
+  - if: '$CI_COMMIT_BRANCH == "master"'
   
-  build:
-    image: registry.internal.st/dual-universe/dubuild:latest
-    stage: build
-    variables:
-      GIT_SUBMODULE_STRATEGY: recursive
-    script:
-      - dotnet /app/publish/dubuild.dll build -s . -o /output -c ./Config/dubuild.json
+build:
+ image: registry.internal.st/dual-universe/dubuild:latest
+ stage: build
+ variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+ script:
+  - dotnet /app/publish/dubuild.dll build -s . -o /output -c ./Config/dubuild.json
