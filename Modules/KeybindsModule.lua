@@ -43,7 +43,7 @@
 
 KeybindsModule = (function() 
     local this = HorizonModule("Keybinds Module", "PreFlush", true, 1)
-    this.Tags = "system"
+    this.Tags = "system,control"
 
     Horizon.Event.KeyUp.Add(this)
     Horizon.Event.KeyDown.Add(this)

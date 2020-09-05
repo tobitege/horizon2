@@ -2,6 +2,7 @@ function HorizonDelegate(eventType)
     local typeof = types.type
     local this = {}
     this.Delegates = {}
+    local lastTime = system.getTime()
 
     function this.Add(f)
         if typeof(f) ~= "HorizonModule" then error("[HorizonDelegate] Unable to add callback - not a HorizonModule") return end
@@ -26,10 +27,12 @@ function HorizonDelegate(eventType)
     function this.Call(...)
         for currentPriority=0,5 do
             for i=1,#this.Delegates do
-                if this.Delegates[i].Enabled and this.Delegates[i].Priority == currentPriority then this.Delegates[i](eventType, ...) end
+                local deltaTime = system.getTime() - lastTime
+                if this.Delegates[i].Enabled and this.Delegates[i].Priority == currentPriority then this.Delegates[i](eventType, deltaTime, ...) end
             end
         end
-            
+
+        local lastTime = system.getTime()
     end
 
     function this.Count() return #this.Delegates end
@@ -57,6 +60,7 @@ Horizon = (function ()
     this.Core = nil
     this.Controller = Unit
     this.Modules = {}
+    this.HUD = nil
     this.Memory = {
         Static = {},
         Dynamic = {
@@ -89,6 +93,7 @@ Horizon = (function ()
         Error = HorizonDelegate("error"),
         MouseWheel = HorizonDelegate("mousewheel")
     }
+    this.Version = "2.0.1a RC1"
 
     setmetatable(this.Memory.Static, {__index={}, __newindex=function() end})
 
