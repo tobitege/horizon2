@@ -12,6 +12,7 @@ build:
   GIT_SUBMODULE_STRATEGY: recursive
  script:
   - dotnet /app/DUBuild.dll build -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/output -c $CI_PROJECT_DIR/Config/dubuild.json -f $CI_PROJECT_NAME.json
+  - dotnet /app/DUBuild.dll build -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/output -c $CI_PROJECT_DIR/Config/dubuild-minified.json -f $CI_PROJECT_NAME-minified.json
  artifacts:
     paths:
       - $CI_PROJECT_DIR/output/*.json

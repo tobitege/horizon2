@@ -1,0 +1,6 @@
+[submodule "slotdetector"]
+	path = slotdetector
+	url = https://gitlab+deploy-token-3:Ea-sMHUtxk89jn5DzrWx@git.internal.st/dual-universe/slotdetector.git
+[submodule "datalib"]
+	path = datalib
+	url = https://gitlab+deploy-token-4:hJUQXMsLYzAyAmmRfy_o@git.internal.st/dual-universe/datalib.git
