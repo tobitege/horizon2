@@ -11,7 +11,7 @@ build:
  variables:
   GIT_SUBMODULE_STRATEGY: recursive
  script:
-  - dotnet /app/DUBuild.dll build -s /builds/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME -o /output -c /builds/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/Config/dubuild.json -f $CI_PROJECT_NAME.json
+  - dotnet /app/DUBuild.dll build -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/output -c $CI_PROJECT_DIR/Config/dubuild.json -f $CI_PROJECT_NAME.json
  artifacts:
     paths:
-      - /output/*.json
+      - $CI_PROJECT_DIR/output/*.json
