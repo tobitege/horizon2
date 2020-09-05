@@ -1,5 +1,5 @@
 {
-    "Minify": false,
+    "Minify": true,
     "Slots":[
         {
             "Files": ["datalib/FuelTanks.lua", "datalib/Fuels.lua"],

@@ -138,3 +138,5 @@ Horizon = (function ()
     })
     return this
 end)()
+local slots = SlotDetector.DetectSlotsInNamespace(_G)
+Horizon.RegisterSlots(slots)
