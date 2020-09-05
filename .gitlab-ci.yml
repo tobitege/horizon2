@@ -11,4 +11,4 @@ build:
  variables:
   GIT_SUBMODULE_STRATEGY: recursive
  script:
-  - dotnet /app/publish/dubuild.dll build -s . -o /output -c ./Config/dubuild.json
+  - dotnet /app/dubuild.dll build -s . -o /output -c ./Config/dubuild.json
