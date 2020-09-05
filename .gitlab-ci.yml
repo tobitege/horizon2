@@ -12,3 +12,6 @@ build:
   GIT_SUBMODULE_STRATEGY: recursive
  script:
   - dotnet /app/DUBuild.dll build -s . -o /output -c ./Config/dubuild.json
+ artifacts:
+    paths:
+      - /output/
