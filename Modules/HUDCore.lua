@@ -37,6 +37,8 @@ CSS = [[
       font-size: 1.4vh;
       letter-spacing: 0.05vw;
       text-transform: uppercase;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     panel.row {
       flex-direction: row;
@@ -63,36 +65,6 @@ CSS = [[
     }
     .left {
       text-align: left;
-    }
-    .w5 {
-      width: 5vw;
-    }
-    .w10 {
-      width: 10vw;
-    }
-    .w15 {
-      width: 15vw;
-    }
-    .w20 {
-      width: 20vw;
-    }
-    .w25 {
-      width: 25vw;
-    }
-    .h5 {
-      height: 5vh;
-    }
-    .h10 {
-      height: 10vh;
-    }
-    .h15 {
-      height: 15vh;
-    }
-    .h20 {
-      height: 20vh;
-    }
-    .h25 {
-      height: 25vh;
     }
     .rel {
       position: relative;
@@ -179,6 +151,7 @@ CSS = [[
       background: var(--bg) var(--corner-bg);
       text-overflow: ellipsis;
       overflow: hidden;
+      height: 100%;
     }
     uiheading::before {
       content: "";
@@ -228,16 +201,21 @@ CSS = [[
 
 HUDObject = function (x, y, width, height, content)
     local this = {}
-    setmetatable(this, { _name = "HUDObject" })
-    this.GUID = system.getTime()
-    
+    local vec2 = require('cpml/vec2')
+    setmetatable(this, { _name = "HUDObject" })   
     this.Enabled = false
-    this.Position = {
-        X = x or 0,
-        Y = y or 0,
-    }
-    this.Width = width or 50
-    this.Height = height or 50
+    this.Name = nil
+
+    this.Position = vec2(x or 0, y or 0)
+    this.Offset = vec2(0, 0)
+
+    this.Width = width or 0
+    this.Height = height or 0
+    this.Zindex = 0
+    this.Padding = 0
+    this.Class = ""
+    this.Style = ""
+
     this.Parent = nil
     this.Children = {}
     this.Content = content or ""
@@ -245,11 +223,23 @@ HUDObject = function (x, y, width, height, content)
     this.IsHovered = false
     this.IsPressed = false
     this.Anchoring = {
-        
+        TopLeft = false,
+        TopRight = false,
+        BottomLeft = false,
+        BottomRight = false
     }
 
     this.HUD = Horizon.GetModule("HUDCore")
     this.Horizon = Horizon
+
+    this.GUID = (function ()
+        math.randomseed(system.getTime() * 1000000)
+        local template ='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+        return string.gsub(template, '[xy]', function (c)
+            local v = (c == 'x') and math.random(0, 0xf) or math.random(8, 0xb)
+            return string.format('%x', v)
+        end)
+    end)()
 
     this._wrapStart = ""
     this._wrapEnd = ""
@@ -259,14 +249,31 @@ HUDObject = function (x, y, width, height, content)
     local buffer = ""
 
     function this.Contains(pos)
-        if  pos.X >= this.Position.X and pos.X <= this.Position.X + this.Width and 
-            pos.Y >= this.Position.Y and pos.Y <= this.Position.Y + this.Height then
+        local selfPos = this.GetAbsolutePos()
+        selfPos.x = selfPos.x + this.Padding
+        selfPos.y = selfPos.y + this.Padding
+
+        if  pos.x >= selfPos.x and pos.x <= selfPos.x + this.Width and 
+            pos.y >= selfPos.y and pos.y <= selfPos.y + this.Height then
             return true
         end
         return false
     end
     
+    function this.GetAbsolutePos()
+        local pos = this.Position + this.Offset
+        if this.Parent then
+            pos = pos + this.Parent.GetAbsolutePos()
+            local pad = this.HUD.TransformSize(this.Parent.Padding)
+            pos = pos + pad
+        end
+        return pos
+    end
+
     function this._update()
+        if this.Parent ~= nil then
+            -- Recalc pos,size based on anchoring, set IsDirty if changed
+        end
         if this.Contains(this.HUD.MousePos) then
             this.IsHovered = true
         else
@@ -284,6 +291,10 @@ HUDObject = function (x, y, width, height, content)
             end
         end
         this.OnUpdate(this)
+
+        for k,v in ipairs(this.Children) do
+            v._update()
+        end
     end
 
     function this.AddChild(child)
@@ -298,7 +309,7 @@ HUDObject = function (x, y, width, height, content)
             end
         end
         child.Parent = this
-        table.insert(this.Children, child)
+        this.Children[#this.Children+1] = child
     end
 
     function this.RemoveChild(child)
@@ -310,13 +321,17 @@ HUDObject = function (x, y, width, height, content)
             if v.GUID == child.GUID then
                 v.Parent = nil
                 table.remove(this.Children, k)
+                v.Offset = {
+                    X = v.Offset.x,
+                    Y = v.Offset.y
+                }
                 return
             end
         end
         error(v.GUID.." is not a child of"..this.GUID)
     end
 
-    function this.SetParent()
+    function this.SetParent(parent)
         error("NotImplemented")
     end
 
@@ -336,11 +351,10 @@ HUDObject = function (x, y, width, height, content)
             end
         end
         if anyDirty then
-            buffer = template.substitute(scope._wrapStart..scope.Content, scope)
+            buffer = template.substitute(scope._wrapStart..scope.Content.. scope._wrapEnd, scope)
             for k,v in ipairs(scope.Children) do
                 buffer = buffer .. v.Render(v)
             end
-            buffer = buffer .. scope._wrapEnd
             scope.IsDirty = false
         end
         return buffer
@@ -349,35 +363,60 @@ HUDObject = function (x, y, width, height, content)
     return this
 end
 
-HUDButton = function (x, y, width, height, content)
+HUDPanel = function (x, y, width, height, content)
     local this = HUDObject(x, y, width, height, content)
-    this._wrapStart = [[<div style="position:absolute;left:$(Position.X)vw;top:$(Position.Y)vh;width:$(Width)vw;height:$(Height)vh;background-color: #ae0f12;">]]
-    this._wrapEnd = [[</div>]]
+    this._wrapStart = [[<panel style="position:absolute;left:$(GetAbsolutePos().x)vw;top:$(GetAbsolutePos().y)vh;width:$(Width)vw;height:$(Height)vh;z-index:$(Zindex);$(Style)" class="$(Class)">]]
+    this._wrapEnd = [[</panel>]]
+    return this
+end
+
+HUDExpandable = function (x, y, content)
+    local this = HUDPanel(x, y, width, height, content)
+    this.Width = 0
+    this.Height = 0
+    local maxHeight = 0
+    local maxWidth = 0
+
+    local baseUpdate = this._update
+    
+    function this._update()
+        for k,v in ipairs(this.Children) do
+            local w = v.Position.x + v.Width
+            local h = v.Position.y + v.Height
+            if w > maxWidth then 
+                maxWidth = w 
+                this.IsDirty = true
+            end
+            if h > maxHeight 
+            then 
+                maxHeight = h 
+                this.IsDirty = true
+            end
+        end
+        if this.IsDirty then
+            local pad = this.HUD.TransformSize(this.Padding) * 2
+            this.Width = maxWidth + pad.x
+            this.Height = maxHeight + pad.y
+        end
+        baseUpdate()
+    end
 
     return this
 end
 
-HUDPanel = function (x, y, width, height, content)
-    local this = HUDObject(x, y, width, height, content)
-    this._wrapStart = [[<panel style="position:absolute;left:$(Position.X)vw;top:$(Position.Y)vh;width:$(Width)vw;height:$(Height)vh;z-index:$(Zindex)" class="$(Class)">]]
-    this._wrapEnd = [[</panel>]]
-    this.Class = ""
-    this.Zindex = 0
-    this.Spacing = ((0.3 * this.HUD.Config.ScreenSize.Y) / this.HUD.Config.ScreenSize.Y) * 100
-    return this
+HUDFillHorizontal = function (x, y, content)
+    
 end
 
 HUDCore = (function(CSS) 
     local template = require('pl/template')
     local this = HorizonModule("HUDCore", "PostUpdate", true, 5)
+    local vec2 = require('cpml/vec2')
     this.Tags = "hud,core"
     this.Config = {
         EnableMouse = true,
         MouseSensitivity = 1.2,
-        ScreenSize = {
-            X = 2560,
-            Y = 1440
-        }
+        ScreenSize = vec2(2560, 1440)
     }
     this.Widgets = {}
     this.CSS = CSS
@@ -385,40 +424,37 @@ HUDCore = (function(CSS)
     local header = ""
     if this.CSS then header = "<style>"..this.CSS.."</style>" end
 
-    local MousePos = {
-        X = this.Config.ScreenSize.X * 0.5,
-        Y = this.Config.ScreenSize.Y * 0.5
-    }
-
-    this.MousePos = {
-        X = this.Config.ScreenSize.X * 0.5,
-        Y = this.Config.ScreenSize.Y * 0.5
-    }
+    local MousePos = vec2(this.Config.ScreenSize.x * 0.5, this.Config.ScreenSize.y * 0.5)
+    this.MousePos = vec2(this.Config.ScreenSize.x * 0.5, this.Config.ScreenSize.y * 0.5)
 
     system.showScreen(1)
     system.freeze(1)
     Horizon.Controller.hide()
 
     function contains(obj, pos)
-        if  pos.X > obj.X and pos.X < obj.X + obj.Width and
-            pos.Y > obj.Y and pos.Y < obj.Y + obj.Height then
+        if  pos.x > obj.x and pos.x < obj.x + obj.Width and
+            pos.y > obj.y and pos.y < obj.y + obj.Height then
             return true
         end
         return false
     end
 
-    function xform(pos)
-        return {X = (pos.X / this.Config.ScreenSize.X) * 100, Y = (pos.Y / this.Config.ScreenSize.Y) * 100}
+    local function xform(pos)
+        return vec2((pos.x / this.Config.ScreenSize.x) * 100, (pos.y / this.Config.ScreenSize.y) * 100)
     end
 
     function processMouse(x, y)
-        MousePos.X = MousePos.X + (x * this.Config.MouseSensitivity)
-        MousePos.Y = MousePos.Y + (y * this.Config.MouseSensitivity)
-        if MousePos.X < 0 then MousePos.X = 0 end
-        if MousePos.X > this.Config.ScreenSize.X then MousePos.X = this.Config.ScreenSize.X end
-        if MousePos.Y < 0 then MousePos.Y = 0 end
-        if MousePos.Y > this.Config.ScreenSize.Y then MousePos.Y = this.Config.ScreenSize.Y end
+        MousePos.x = MousePos.x + (x * this.Config.MouseSensitivity)
+        MousePos.y = MousePos.y + (y * this.Config.MouseSensitivity)
+        if MousePos.x < 0 then MousePos.x = 0 end
+        if MousePos.x > this.Config.ScreenSize.x then MousePos.x = this.Config.ScreenSize.x end
+        if MousePos.y < 0 then MousePos.y = 0 end
+        if MousePos.y > this.Config.ScreenSize.y then MousePos.y = this.Config.ScreenSize.y end
         this.MousePos = xform(MousePos)
+    end
+
+    function this.TransformSize(size)
+        return vec2(size, size + ((size / HUDCore.Config.ScreenSize.y) * 1000))
     end
     
     function this.Update(eventType, deltaTime)
@@ -464,21 +500,46 @@ Horizon.RegisterModule(HUDCore)
 
 local cursor = HUDObject(50,50)
 cursor.OnUpdate = function(this)
-    this.Position.X = HUDCore.MousePos.X
-    this.Position.Y = HUDCore.MousePos.Y
+    this.Position.x = HUDCore.MousePos.x
+    this.Position.y = HUDCore.MousePos.y
     this.IsDirty = true
 end
 cursor.Content = [[
-<uicursor style="left: $(Position.X)vw;top: $(Position.Y)vh">
+<uicursor style="left: $(Position.x)vw;top: $(Position.y)vh">
 	<svg xmlns="http://www.w3.org/2000/svg" stroke="black" stroke-width="1" preserveAspectRatio="xMidYMid" viewBox="0 0 100 100"><path fill="#ae0f12" fill-rule="evenodd" d="M30 73L0 100V0l100 100-70-27zM9 80l19-17 37 14L9 21v59z"/></svg>
 </uicursor>
 ]]
 HUDCore.AddWidget(cursor)
 
-local mainPanel = HUDPanel(86.4, 30, 10.6, 26)
+local mainPanel = HUDExpandable(86.4, 30)
 mainPanel.Class = "filled"
+mainPanel.Padding = 0.3
+mainPanel.Name = "Main"
 HUDCore.AddWidget(mainPanel)
 
-local subpanel = HUDPanel(0.3, 0.6, 10, 25.7)
-subpanel.Content = [[<uiheading>Test Panel</uiheading>]]
+local subpanel = HUDPanel(0, 0, 10, 3)
+subpanel.Content = [[<uiheading>Test Section</uiheading>]]
+subpanel.Name = "Head"
 mainPanel.AddChild(subpanel)
+
+local guids = HUDExpandable(0, 3.3)
+guids.Class = "filled"
+guids.Name = "GUIDS"
+guids.Padding = 0.3
+local dy = 0
+local function addPanels(list, offset)
+    for k,v in ipairs(list) do
+        local child = HUDPanel(0 + offset, dy, 10 - offset, 3.5)
+        child.Content = "$(Offset.x) $(Parent.Offset.x)"
+        child.Name = "GUID "..k.." - "..offset
+        child.Class = "filled"
+        child.Style = "font-size: 0.65vmax"
+        guids.AddChild(child)
+        dy = dy + 3.8
+        if #v.Children > 0 then
+            addPanels(v.Children, offset + 0.5)
+        end
+    end
+end
+addPanels(HUDCore.Widgets, 0)
+mainPanel.AddChild(guids)
