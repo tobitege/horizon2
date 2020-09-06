@@ -563,7 +563,7 @@ local function addPanels(list, offset)
         child.Content = "$(Offset.x) $(Parent.Offset.x) $(IsHovered)"
         child.Name = "GUID "..k.." - "..offset
         child.Class = "filled"
-        child.Style = "font-size: 0.65vmax"
+        child.Style = "font-size: 0.65vmax;color:#fff;"
         guids.AddChild(child)
         dy = dy + 3.8
         if #v.Children > 0 then
@@ -573,3 +573,5 @@ local function addPanels(list, offset)
 end
 addPanels(HUDCore.Widgets, 0)
 mainPanel.AddChild(guids)
+
+-- Actual HUD WIP
