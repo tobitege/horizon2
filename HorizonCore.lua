@@ -28,11 +28,15 @@ function HorizonDelegate(eventType)
         for currentPriority=0,5 do
             for i=1,#this.Delegates do
                 local deltaTime = system.getTime() - lastTime
-                if this.Delegates[i].Enabled and this.Delegates[i].Priority == currentPriority then this.Delegates[i](eventType, deltaTime, ...) end
+                if this.Delegates[i].Enabled and this.Delegates[i].Priority == currentPriority then 
+                    local _, err = pcall(this.Delegates[i], eventType, deltaTime, ...)
+                    if err then
+                        Horizon.Event.Error.Call(err)
+                    end
+                end
+                lastTime = system.getTime()
             end
         end
-
-        local lastTime = system.getTime()
     end
 
     function this.Count() return #this.Delegates end
