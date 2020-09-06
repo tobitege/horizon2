@@ -75,6 +75,8 @@ ReadingsModule = (function()
         rawset(memory, "Local", Local)
     end
 
+    this.Update()
+
     return this
 end)()
 Horizon.RegisterModule(ReadingsModule)
