@@ -2,7 +2,13 @@
     "Minify": false,
     "Slots":[
         {
-            "Files": ["datalib/FuelTanks.lua", "datalib/Fuels.lua"],
+            "Files": ["datalib/Fuels.lua", "datalib/FuelTanks.lua"],
+            "Slot": "-2",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["utility-library/Utils3d.lua"],
             "Slot": "-2",
             "Signature": "start()",
             "Args": ""
@@ -21,59 +27,59 @@
         },
         {
             "Files": ["HorizonCore.lua"],
-            "Slot": "-2",
+            "Slot": "-3",
             "Signature": "start()",
             "Args": ""
         },
         {
             "Files": ["Modules/Readings.lua"],
-            "Slot": "-3",
+            "Slot": "-1",
             "Signature": "start()",
             "Args": ""
         },
         {
             "Files": ["Modules/DynamicFlightMode.lua"],
-            "Slot": "-3",
+            "Slot": "-1",
             "Signature": "start()",
             "Args": ""
         },
         {
             "Files": ["Modules/RotationDampening.lua"],
-            "Slot": "-3",
+            "Slot": "-1",
             "Signature": "start()",
             "Args": ""
         },{
             "Files": ["Modules/ThrustController.lua"],
-            "Slot": "-3",
+            "Slot": "-1",
             "Signature": "start()",
             "Args": ""
         },{
             "Files": ["Modules/SimpleInertialDamping.lua"],
-            "Slot": "-3",
+            "Slot": "-1",
             "Signature": "start()",
             "Args": ""
         },
         {
             "Files": ["Modules/MouseSteering.lua"],
-            "Slot": "-3",
+            "Slot": "-1",
             "Signature": "start()",
             "Args": ""
         },
         {
             "Files": ["Modules/KeybindsModule.lua"],
-            "Slot": "-3",
+            "Slot": "-1",
             "Signature": "start()",
             "Args": ""
         },
         {
             "Files": ["Modules/GravityCounter.lua"],
-            "Slot": "-3",
+            "Slot": "-1",
             "Signature": "start()",
             "Args": ""
         },
         {
             "Files": ["Modules/CruiseControlModule.lua"],
-            "Slot": "-3",
+            "Slot": "-1",
             "Signature": "start()",
             "Args": ""
         },

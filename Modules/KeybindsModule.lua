@@ -1,6 +1,5 @@
 --[[ Example config :]]
 
-
     -- { {ModuleName, ModuleMethod, Keydown only?}}
     Config = {
         antigravity = nil, --Default bind Alt-G
@@ -54,7 +53,7 @@ KeybindsModule = (function()
         this.Config = config
     end
 
-    local function callBind(name, triggerOnKeyDownOnly)
+    local function callBind(name, isKeyDown)
         local event = this.Config[name]
 
         if event ~= nil then
@@ -64,19 +63,19 @@ KeybindsModule = (function()
                     local m = Horizon.GetModule(command[1])
                     local keyDownOnly = command[3]
                     
-                    if keyDownOnly == nil or triggerOnKeyDownOnly==keyDownOnly then
-                        if m ~= nil then m[command[2]](keyDown) end
+                    if (not keyDownOnly) or (isKeyDown and keyDownOnly) then
+                        if m ~= nil then m[command[2]](isKeyDown) end
                     end
                 end
 
             elseif type(event) == "function" then
-                event(keyDown)
+                event(isKeyDown)
             end
         end
 
     end
 
-    function this.Update(eventType, arg)
+    function this.Update(eventType, deltaTime, arg)
         
         if eventType == "keydown" or eventType == "keyup" then
             local isKeyDown = eventType == "keydown"
@@ -96,3 +95,4 @@ KeybindsModule = (function()
     return this
 end)()
 Horizon.RegisterModule(KeybindsModule)
+KeybindsModule.LoadConfig(Config)

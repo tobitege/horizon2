@@ -4,3 +4,6 @@
 [submodule "datalib"]
 	path = datalib
 	url = https://gitlab+deploy-token-4:hJUQXMsLYzAyAmmRfy_o@git.internal.st/dual-universe/datalib.git
+[submodule "utility-library"]
+	path = utility-library
+	url = https://gitlab+deploy-token-5:YiUnrbT628Q2rNNaJXWd@git.internal.st/dual-universe/utility-library.git
