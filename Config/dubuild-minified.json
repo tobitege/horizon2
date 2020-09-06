@@ -78,6 +78,12 @@
             "Args": ""
         },
         {
+            "Files": ["Modules/BrakingModule.lua"],
+            "Slot": "-1",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
             "Files": ["Modules/CruiseControlModule.lua"],
             "Slot": "-1",
             "Signature": "start()",
