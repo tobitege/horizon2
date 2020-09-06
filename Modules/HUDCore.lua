@@ -12,14 +12,19 @@ CSS = [[
       /* 0faea9 */
       --primary: #ae0f12;
       --secondary: #fff;
-      --bg: #ffffff22;
-      --bg2: #ffffff11;
+      --bg: #55555577;
+      --bg2: #44444444;
       --border: 0.05em solid var(--secondary);
       --border-primary: 0.05em solid var(--primary);
       --glow: 0 0 0.25vw 0.05vw var(--primary);
       --text-glow: 0 0 0.25vw var(--primary);
       --spacing: 0.25em;
       --warning: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-10 -10 120 120' preserveAspectRatio='xMidYMid meet'%3E%3Cpath d='M0 100 L50 0 L100 100 L0 100 L50 0' stroke='%23ae0f12' stroke-width='10' fill='none' /%3E%3Crect x='45' y='32' width='10' height='40' fill='%23ae0f12' /%3E%3Ccircle cx='50' cy='85' r='6' fill='%23ae0f12' /%3E%3C/svg%3E");
+    }
+    * {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     uicursor {
         display: block;
@@ -35,9 +40,6 @@ CSS = [[
       position: absolute;
       letter-spacing: 0.05vw;
       text-transform: uppercase;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
     panel.row {
       flex-direction: row;
@@ -62,8 +64,8 @@ CSS = [[
         content: "";
         width: 0.5vmax;
         height: 0.5vmax;
-        top: -1px;
-        left: -1px;
+        top: 0px;
+        left: 0px;
     }
     panel.filled::before{
         position: absolute; 
@@ -73,8 +75,8 @@ CSS = [[
         content: "";
         width: 0.5vmax;
         height: 0.5vmax;
-        bottom: -1px;
-        right: -1px;
+        bottom: 0px;
+        right: 0px;
     }
     .left {
       text-align: left;
@@ -163,9 +165,6 @@ CSS = [[
         font-size: 1.25em;
         padding: 0.2vmax;
         background: var(--bg);
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
     }
     uiheading::before {
         content: "";
@@ -216,6 +215,7 @@ CSS = [[
 HUDObject = function (x, y, width, height, content)
     local this = {}
     local vec2 = require('cpml/vec2')
+    local typeof = require('pl/types').type
     setmetatable(this, { _name = "HUDObject" })   
     this.Enabled = false
     this.Name = nil
@@ -242,8 +242,9 @@ HUDObject = function (x, y, width, height, content)
         BottomLeft = false,
         BottomRight = false
     }
+    this.IsClickable = true
 
-    this.HUD = Horizon.GetModule("HUDCore")
+    this.HUD = Horizon.GetModule("HUD Core")
     this.Horizon = Horizon
 
     this.GUID = (function ()
@@ -258,8 +259,6 @@ HUDObject = function (x, y, width, height, content)
     this._wrapStart = ""
     this._wrapEnd = ""
 
-    local wasHovered = false
-    local wasClicked = false
     local buffer = ""
 
     function this.Contains(pos)
@@ -289,24 +288,22 @@ HUDObject = function (x, y, width, height, content)
             -- Recalc pos,size based on anchoring, set IsDirty if changed
         end
         if this.Contains(this.HUD.MousePos) then
-            this.IsHovered = true
-        else
-            this.IsHovered = false
-        end
-        if this.IsHovered then 
-            this.IsDirty = true
-            this.OnEnter(this)
-            wasHovered = true
-        else
-            if wasHovered then
+            if not this.IsHovered then
+                this.IsHovered = true
                 this.IsDirty = true
-                wasHovered = false
+                this.OnEnter(this)
+            end
+            this.IsDirty = true
+        else
+            if this.IsHovered then
+                this.IsHovered = false
+                this.IsDirty = true
                 this.OnLeave(this)
             end
         end
         this.OnUpdate(this)
 
-        for k,v in ipairs(this.Children) do
+        for _,v in ipairs(this.Children) do
             v._update()
         end
     end
@@ -343,10 +340,6 @@ HUDObject = function (x, y, width, height, content)
             end
         end
         error(v.GUID.." is not a child of"..this.GUID)
-    end
-
-    function this.SetParent(parent)
-        error("NotImplemented")
     end
 
     function this.OnUpdate(scope) end
@@ -438,8 +431,9 @@ end
 
 HUDCore = (function(CSS) 
     local template = require('pl/template')
-    local this = HorizonModule("HUDCore", "PostUpdate", true, 5)
+    local this = HorizonModule("HUD Core", "PostUpdate", true, 5)
     local vec2 = require('cpml/vec2')
+    local typeof = require('pl/types').type
     this.Tags = "hud,core"
     this.Config = {
         EnableMouse = true,
@@ -495,6 +489,30 @@ HUDCore = (function(CSS)
         system.setScreen(buffer .. "</div>")
     end
 
+    local function getContained(objArray, targetArr)
+        if not targetArr then targetArr = {} end
+        for _,v in ipairs(objArray) do
+            if v.Contains(this.MousePos) and v.IsClickable then
+                table.insert(targetArr, v)
+            else
+                if #v.Children > 0 then getContained(v.Children, targetArr) end
+            end
+        end
+        return targetArr
+    end
+
+    function this.Click()
+        local contained = getContained(this.Widgets)
+        system.print(#contained)
+        local top = nil
+        for _,v in ipairs(contained) do
+            if not top or top.Zindex < v.Zindex then
+                top = v
+            end
+        end
+        if top then top.OnClick(top) end
+    end
+
     function this.AddWidget(widget)
         if typeof(widget) ~= "HUDObject" then return end
         for k,v in ipairs(this.Widgets) do
@@ -537,6 +555,7 @@ cursor.Content = [[
 	<svg xmlns="http://www.w3.org/2000/svg" stroke="black" stroke-width="1" preserveAspectRatio="xMidYMid" viewBox="0 0 100 100"><path fill="#ae0f12" fill-rule="evenodd" d="M30 73L0 100V0l100 100-70-27zM9 80l19-17 37 14L9 21v59z"/></svg>
 </uicursor>
 ]]
+cursor.IsClickable = false
 HUDCore.AddWidget(cursor)
 
 local mainPanel = HUDExpandable(86.4, 30)
@@ -575,3 +594,56 @@ addPanels(HUDCore.Widgets, 0)
 mainPanel.AddChild(guids)
 
 -- Actual HUD WIP
+local Version = HUDPanel(90, 90, 10, 2)
+Version.Content = "<uilabel>Horizon "..Horizon.Version.."</uilabel>"
+Version.Style = "font-size: 0.85vh"
+HUDCore.AddWidget(Version)
+
+HUDErrorLog = (function() 
+    local this = HorizonModule("HUD Error Log", "Error", true, 5)
+    local vec2 = require('cpml/vec2')
+    this.Tags = "system,hud,log"
+    this.Config = {
+        Position = vec2(50,2),
+        Width = 30
+    }
+
+    local Errors = {}
+
+    local hud = Horizon.GetModule("HUD Core")
+    local xformed = hud.TransformSize(1)
+
+    local base = HUDExpandable(this.Config.Position.x - (this.Config.Width*0.5), this.Config.Position.y)
+    base.OnEnter = function(scope) error("ok") end
+
+    hud.AddWidget(base)
+
+    local function createWidget(err)
+        local w = HUDPanel(0, #base.Children * xformed.y + (#base.Children - 1), this.Config.Width - xformed.x, xformed.y)
+        w.Content = "<uilabel style='height:100%'>" .. err .. "</uilabel>"
+        w.Style = "font-size: 0.85vh"
+        local closeBtn = HUDPanel(this.Config.Width - xformed.x, 0, xformed.x, xformed.y)
+        closeBtn.Style = "text-align: center;border: 1px solid var(--primary);background: var(--bg)"
+        closeBtn.Content = "&times;"
+        closeBtn.OnClick = function(ref)
+            w.RemoveChild(ref)
+            base.RemoveChild(w)
+            base.IsDirty = true
+        end
+        w.AddChild(closeBtn)
+
+        base.AddChild(w)
+    end
+
+    createWidget("Error test")
+
+    this.Update = function(event, dt, error)
+        system.print(error)
+        Errors[#Errors] = error
+        createWidget(error)
+        base.IsDirty = true
+    end
+
+    return this
+end)()
+Horizon.RegisterModule(HUDErrorLog)
