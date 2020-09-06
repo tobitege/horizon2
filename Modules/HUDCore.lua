@@ -6,6 +6,7 @@ CSS = [[
       right: 0;
       bottom: 0;
       font-family: 'Adam';
+      font-size: 1.3vh;
     }
     :root {
       /* 0faea9 */
@@ -18,8 +19,6 @@ CSS = [[
       --glow: 0 0 0.25vw 0.05vw var(--primary);
       --text-glow: 0 0 0.25vw var(--primary);
       --spacing: 0.25em;
-      --corner-bg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='10'%3E%3Csvg xmlns='http://www.w3.org/2000/svg' stroke-width='20' viewBox='0 0 100 100' preserveAspectRatio='xMinYMin meet'%3E%3Cpath d='M0 100 L0 0 100 0' fill='none' stroke='%23fff' /%3E%3C/svg%3E%3Csvg xmlns='http://www.w3.org/2000/svg' stroke-width='20' viewBox='0 0 100 100' preserveAspectRatio='xMaxYMin meet'%3E%3Cpath d='M0 0 L0 0 L100 0 L100 100' fill='none' stroke='%23fff' /%3E%3C/svg%3E%3C/svg%3E") no-repeat top center;
-      --corner-bg-bottom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='10'%3E%3Csvg stroke-width='20' viewBox='0 0 100 100' preserveAspectRatio='xMinYMax meet'%3E%3Cpath d='M0 0 L0 100 L100 100' fill='none' stroke='%23fff' /%3E%3C/svg%3E%3Csvg stroke-width='20' viewBox='0 0 100 100' preserveAspectRatio='xMaxYMax meet'%3E%3Cpath d='M100 0 L100 100 L0 100' fill='none' stroke='%23fff' /%3E%3C/svg%3E%3C/svg%3E") no-repeat bottom center;
       --warning: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-10 -10 120 120' preserveAspectRatio='xMidYMid meet'%3E%3Cpath d='M0 100 L50 0 L100 100 L0 100 L50 0' stroke='%23ae0f12' stroke-width='10' fill='none' /%3E%3Crect x='45' y='32' width='10' height='40' fill='%23ae0f12' /%3E%3Ccircle cx='50' cy='85' r='6' fill='%23ae0f12' /%3E%3C/svg%3E");
     }
     uicursor {
@@ -34,11 +33,11 @@ CSS = [[
       display: flex;
       flex-direction: column;
       position: absolute;
-      font-size: 1.4vh;
       letter-spacing: 0.05vw;
       text-transform: uppercase;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
     panel.row {
       flex-direction: row;
@@ -50,18 +49,32 @@ CSS = [[
       margin-right: var(--spacing);
     }
     panel.filled {
-      box-sizing: border-box;
-      padding: 1em;
-      background: var(--bg) var(--corner-bg);
+        box-sizing: border-box;
+        background: var(--bg);
+        border: 1px solid #ae0f1233;
+        box-sizing: border-box;
     }
     panel.filled::after {
-      position: absolute;
-      content: "";
-      background: var(--corner-bg-bottom);
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
+        position: absolute;
+        border: 1px solid #ffffff77;
+        border-width: 1px 0 0 1px;
+        border-radius: 0;
+        content: "";
+        width: 0.5vmax;
+        height: 0.5vmax;
+        top: -1px;
+        left: -1px;
+    }
+    panel.filled::before{
+        position: absolute; 
+        border: 1px solid #ffffff77;
+        border-width: 0 1px 1px 0;
+        border-radius: 0;
+        content: "";
+        width: 0.5vmax;
+        height: 0.5vmax;
+        bottom: -1px;
+        right: -1px;
     }
     .left {
       text-align: left;
@@ -70,132 +83,133 @@ CSS = [[
       position: relative;
     }
     uiprogress {
-      height: 0.5vw;
-      border-left: var(--border);
-      border-right: var(--border);
-      background-color: var(--bg);
+        height: 0.5vw;
+        border-left: var(--border);
+        border-right: var(--border);
+        background-color: var(--bg);
     }
     uivprogress {
-      position: relative;
-      border-top: var(--border);
-      border-bottom: var(--border);
-      background-color: var(--bg);
-      width: 0.75em;
-      z-index: 10;
+        position: relative;
+        border-top: var(--border);
+        border-bottom: var(--border);
+        background-color: var(--bg);
+        width: 0.75em;
+        z-index: 10;
     }
     uivprogress > inner {
-      position: absolute;
-      display: block;
-      background-color: var(--primary);
-      width: 33%;
-      left: 33%;
-      bottom: 0.05em;
-      box-shadow: var(--glow);
-      max-height: calc(100% - 0.05em);
+        position: absolute;
+        display: block;
+        background-color: var(--primary);
+        width: 33%;
+        left: 33%;
+        bottom: 0.05em;
+        box-shadow: var(--glow);
+        max-height: calc(100% - 0.05em);
     }
     uiprogress > inner {
-      position: relative;
-      display: block;
-      background-color: var(--primary);
-      height: 33%;
-      top: 50%;
-      left: 0.05em;
-      transform: translateY(-33%);
-      box-shadow: var(--glow);
-      max-width: calc(100% - 0.05em);
-      overflow: hidden;
+        position: relative;
+        display: block;
+        background-color: var(--primary);
+        height: 33%;
+        top: 50%;
+        left: 0.05em;
+        transform: translateY(-33%);
+        box-shadow: var(--glow);
+        max-width: calc(100% - 0.05em);
+        overflow: hidden;
     }
     uiprogress[data-label] {
-      margin-left: 1.8em;
+        margin-left: 1.8em;
     }
     panel.filled > uiprogress[data-label] {
-      margin-left: 2.3em;
+        margin-left: 2.3em;
     }
     panel.filled > uiprogress[data-label]::before {
-      left: 1.5em;
+        left: 1.5em;
     }
     uiprogress[data-label]::before {
-      display: block;
-      position: absolute;
-      left: 0;
-      content: attr(data-label);
-      color: var(--secondary);
-      font-size: 0.74em;
-      font-weight: 500;
-      padding-top: 0.05em;
-      text-shadow: var(--text-glow);
+        display: block;
+        position: absolute;
+        left: 0;
+        content: attr(data-label);
+        color: var(--secondary);
+        font-size: 0.74em;
+        font-weight: 500;
+        padding-top: 0.05em;
+        text-shadow: var(--text-glow);
     }
     uispacer {
-      display: block;
-      height: 1vh;
+        display: block;
+        height: 1vh;
     }
     uilabel {
-      color: var(--secondary);
-      font-size: 1.25em;
-      letter-spacing: 0;
-      border-left: var(--border-primary);
-      padding-left: 0.33vw;
-      text-transform: uppercase;
-      text-shadow: var(--text-glow);
-      background: var(--bg2);
-      padding-top: 0.25em;
-      padding-right: 0.15em;
+        color: var(--secondary);
+        font-size: 1.25em;
+        letter-spacing: 0;
+        border-left: var(--border-primary);
+        padding-left: 0.33vw;
+        text-transform: uppercase;
+        text-shadow: var(--text-glow);
+        background: var(--bg2);
+        padding-top: 0.25em;
+        padding-right: 0.15em;
     }
     uiheading {
-      color: var(--secondary);
-      position: relative;
-      text-transform: uppercase;
-      text-align: center;
-      font-size: 1.25em;
-      padding: 0.15em;
-      background: var(--bg) var(--corner-bg);
-      text-overflow: ellipsis;
-      overflow: hidden;
-      height: 100%;
+        color: var(--secondary);
+        position: absolute;
+        display: block;
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 1.25em;
+        padding: 0.2vmax;
+        background: var(--bg);
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
     }
     uiheading::before {
-      content: "";
-      left: 0;
-      bottom: 0;
-      display: block;
-      position: absolute;
-      background: var(--primary);
-      width: 15%;
-      height: 0.1em;
-      box-shadow: var(--glow);
+        content: "";
+        left: 0;
+        bottom: 0;
+        display: block;
+        position: absolute;
+        background: var(--primary);
+        width: 15%;
+        height: 0.1em;
+        box-shadow: var(--glow);
     }
     uiheading::after {
-      content: "";
-      right: 0;
-      bottom: 0;
-      display: block;
-      position: absolute;
-      background: var(--primary);
-      width: calc(85% - 0.2em);
-      height: 0.1em;
-      box-shadow: var(--glow);
+        content: "";
+        right: 0;
+        bottom: 0;
+        display: block;
+        position: absolute;
+        background: var(--primary);
+        width: calc(85% - 0.2em);
+        height: 0.1em;
+        box-shadow: var(--glow);
     }
     uiinstrument {
-      background: var(--bg);
-      border-left: var(--border);
-      border-right: var(--border);
+        background: var(--bg);
+        border-left: var(--border);
+        border-right: var(--border);
     }
     warning {
-      display: inline-block;
-      background: var(--warning) no-repeat center center;
-      margin-bottom: 0.1em;
-      height: 0.9em;
-      width: 1em;
-      vertical-align: bottom;
+        display: inline-block;
+        background: var(--warning) no-repeat center center;
+        margin-bottom: 0.1em;
+        height: 0.9em;
+        width: 1em;
+        vertical-align: bottom;
     }
     warning::after {
-      content: "";
-      display: inline-block;
-      position: absolute;
-      height: 0.9em;
-      width: 1em;
-      background: var(--warning) no-repeat center center;
-      filter: blur(0.1em);
+        content: "";
+        display: inline-block;
+        position: absolute;
+        height: 0.9em;
+        width: 1em;
+        background: var(--warning) no-repeat center center;
+        filter: blur(0.1em);
     }
 ]]
 
@@ -404,8 +418,22 @@ HUDExpandable = function (x, y, content)
     return this
 end
 
-HUDFillHorizontal = function (x, y, content)
-    
+HUDFillHorizontal = function (x, y, width, height, content)
+    local this = HUDPanel(x, y, width, height, content)
+
+    local baseUpdate = this._update
+    function this._update()
+        if this.Parent then
+            local desired = this.Parent.Width - (this.Parent.Padding * 2)
+            if this.Width ~= desired then
+                this.Width = this.Parent.Width - (this.Parent.Padding * 2)
+                this.IsDirty = true
+            end
+        end
+        baseUpdate()
+    end
+
+    return this
 end
 
 HUDCore = (function(CSS) 
@@ -517,20 +545,22 @@ mainPanel.Padding = 0.3
 mainPanel.Name = "Main"
 HUDCore.AddWidget(mainPanel)
 
-local subpanel = HUDPanel(0, 0, 10, 3)
-subpanel.Content = [[<uiheading>Test Section</uiheading>]]
+local subpanel = HUDFillHorizontal(0, 0, 0, 2.5)
+subpanel._wrapStart = [[<uiheading style="left:$(GetAbsolutePos().x)vw;top:$(GetAbsolutePos().y)vh;width:$(Width)vw;height:$(Height)vh;z-index:$(Zindex);$(Style)" class="$(Class)">]]
+subpanel._wrapEnd = [[</uiheading>]]
+subpanel.Content = [[Test Section $(IsHovered)]]
 subpanel.Name = "Head"
 mainPanel.AddChild(subpanel)
 
-local guids = HUDExpandable(0, 3.3)
+local guids = HUDExpandable(0, 3.5)
 guids.Class = "filled"
 guids.Name = "GUIDS"
 guids.Padding = 0.3
 local dy = 0
 local function addPanels(list, offset)
     for k,v in ipairs(list) do
-        local child = HUDPanel(0 + offset, dy, 10 - offset, 3.5)
-        child.Content = "$(Offset.x) $(Parent.Offset.x)"
+        local child = HUDPanel(0 + offset, dy, 8 - offset, 3.5)
+        child.Content = "$(Offset.x) $(Parent.Offset.x) $(IsHovered)"
         child.Name = "GUID "..k.." - "..offset
         child.Class = "filled"
         child.Style = "font-size: 0.65vmax"
