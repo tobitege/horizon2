@@ -55,10 +55,14 @@ function HorizonDelegate(eventType)
     return this
 end
 
-Horizon = (function ()
+local slots = SlotDetector.DetectSlotsInNamespace(_G)
+
+Horizon = (function (slotContainer)
     local this = {}
-    this.Core = nil
-    this.Controller = Unit
+
+    if not slotContainer.Core then error("The core has not been linked") end
+    this.Core = slotContainer.Core
+    this.Controller = unit
     this.Modules = {}
     this.HUD = nil
     this.Memory = {
@@ -75,7 +79,7 @@ Horizon = (function ()
             },
             Settings = {}
         },
-        Slots = SlotContainer()
+        Slots = slotContainer
     }
     this.Event = {
         Start = HorizonDelegate("start"),
@@ -99,11 +103,6 @@ Horizon = (function ()
 
     function this.RegisterSharedDatabank(databank)
         this.Memory.Shared = databank
-    end
-    function this.RegisterSlots(slotContainer)
-        this.Memory.Slots = slotContainer
-        if not slotContainer.Core then error("Core has not been linked") end
-        this.Core = slotContainer.Core
     end
 
     function this.RegisterModule(module)
@@ -137,6 +136,4 @@ Horizon = (function ()
         __newindex = function(table, key, value) end
     })
     return this
-end)()
-local slots = SlotDetector.DetectSlotsInNamespace(_G)
-Horizon.RegisterSlots(slots)
+end)(slots)

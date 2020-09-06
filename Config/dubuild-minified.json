@@ -3,13 +3,13 @@
     "Slots":[
         {
             "Files": ["datalib/FuelTanks.lua", "datalib/Fuels.lua"],
-            "Slot": "-1",
+            "Slot": "-2",
             "Signature": "start()",
             "Args": ""
         },
         {
             "Files": ["slotdetector/SlotDetector.lua"],
-            "Slot": "-1",
+            "Slot": "-2",
             "Signature": "start()",
             "Args": ""
         },
