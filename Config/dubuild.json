@@ -32,59 +32,7 @@
             "Args": ""
         },
         {
-            "Files": ["Modules/Readings.lua"],
-            "Slot": "-1",
-            "Signature": "start()",
-            "Args": ""
-        },
-        {
-            "Files": ["Modules/DynamicFlightMode.lua"],
-            "Slot": "-1",
-            "Signature": "start()",
-            "Args": ""
-        },
-        {
-            "Files": ["Modules/RotationDampening.lua"],
-            "Slot": "-1",
-            "Signature": "start()",
-            "Args": ""
-        },{
-            "Files": ["Modules/ThrustController.lua"],
-            "Slot": "-1",
-            "Signature": "start()",
-            "Args": ""
-        },{
-            "Files": ["Modules/SimpleInertialDamping.lua"],
-            "Slot": "-1",
-            "Signature": "start()",
-            "Args": ""
-        },
-        {
-            "Files": ["Modules/MouseSteering.lua"],
-            "Slot": "-1",
-            "Signature": "start()",
-            "Args": ""
-        },
-        {
-            "Files": ["Modules/KeybindsModule.lua"],
-            "Slot": "-1",
-            "Signature": "start()",
-            "Args": ""
-        },
-        {
-            "Files": ["Modules/GravityCounter.lua"],
-            "Slot": "-1",
-            "Signature": "start()",
-            "Args": ""
-        },
-        {
-            "Files": ["Modules/BrakingModule.lua"],
-            "Slot": "-1",
-            "Signature": "start()",
-            "Args": ""
-        },
-        {
-            "Files": ["Modules/CruiseControlModule.lua"],
+            "Directory": "Modules/CoreModules/*.lua",
             "Slot": "-1",
             "Signature": "start()",
             "Args": ""
