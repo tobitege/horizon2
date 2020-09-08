@@ -14,7 +14,6 @@ ReadingsModule = (function()
         -- World Linear
         World.Position = vec3(core.getConstructWorldPos())
         World.Velocity = vec3(core.getWorldVelocity())
-        World.VerticalVelocity = ship.world.velocity:dot(-ship.world.gravity:normalize())
         World.Acceleration = vec3(core.getWorldAcceleration())
         World.Up = vec3(core.getConstructWorldOrientationUp())
         World.Right = vec3(core.getConstructWorldOrientationRight())
@@ -23,6 +22,8 @@ ReadingsModule = (function()
         World.Gravity = vec3(core.getWorldGravity())
         World.AirFriction = vec3(core.getWorldAirFrictionAcceleration())
         World.AtmosphericDensity = controller.getAtmosphereDensity()
+
+        World.VerticalVelocity = World.Velocity:dot(-World.Gravity:normalize())
 
         -- World Angular
         World.AngularVelocity = vec3(core.getWorldAngularVelocity())
