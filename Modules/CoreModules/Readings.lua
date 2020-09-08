@@ -14,6 +14,7 @@ ReadingsModule = (function()
         -- World Linear
         World.Position = vec3(core.getConstructWorldPos())
         World.Velocity = vec3(core.getWorldVelocity())
+        World.VerticalVelocity = ship.world.velocity:dot(-ship.world.gravity:normalize())
         World.Acceleration = vec3(core.getWorldAcceleration())
         World.Up = vec3(core.getConstructWorldOrientationUp())
         World.Right = vec3(core.getConstructWorldOrientationRight())
