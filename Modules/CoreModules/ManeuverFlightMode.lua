@@ -1,5 +1,5 @@
-DynamicFlightMode = (function() 
-    local this = HorizonModule("Dynamic Flight Mode", "Flush", true)
+ManeuverFlightMode = (function() 
+    local this = HorizonModule("Maneuver Flight Mode", "Flush", true)
     this.Tags = "control,thrust,steering,input"
     this.Throttle = 0.2
     this.TurnSpeed = 2
@@ -124,4 +124,4 @@ DynamicFlightMode = (function()
 
     return this
 end)()
-Horizon.RegisterModule(DynamicFlightMode)
+Horizon.RegisterModule(ManeuverFlightMode)

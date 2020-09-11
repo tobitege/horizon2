@@ -9,9 +9,9 @@ CruiseControlModule = (function()
         
         dship.Thrust = dship.Thrust + world.Forward * ship.MaxKinematics.Forward
 
-        if dship.MoveDirection.x ~= 0 or dship.MoveDirection.y ~= 0 or dship.MoveDirection.z ~= 0 then
+        --[[if dship.MoveDirection.x ~= 0 or dship.MoveDirection.y ~= 0 or dship.MoveDirection.z ~= 0 then
             this.Disable()
-        end
+        end]]
 
     end
 

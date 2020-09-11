@@ -3,16 +3,16 @@
     -- { {ModuleName, ModuleMethod, Keydown only?}}
     Config = {
         antigravity = nil, --Default bind Alt-G
-        backward = { {"Dynamic Flight Mode", "Backward"} },
+        backward = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Backward"} },
         booster = { {"Booster Module", "ToggleEnabled"} }, --Default bind B
-        brake = { {"Velocity Braking", "ToggleEnabled"} },
-        down = { {"Dynamic Flight Mode", "Down"} },
-        forward = { {"Dynamic Flight Mode", "Forward"}  },
+        brake = { {"Cruise Control", "Disable"}, {"Velocity Braking", "ToggleEnabled"} },
+        down = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Down"} },
+        forward = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Forward"}  },
         Gear = { {"Landing", "ToggleGear"}  },
         groundaltitudeup = nil, -- Alt-Space
         groupaltitudedown = nil, -- Alt-C
         lalt = { {"Mouse Steering", "ToggleEnabled"} },
-        left = { {"Dynamic Flight Mode", "Left"}  },
+        left = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Left"}  },
         light = nil,
         lshift = nil,
         option1 = { {"Cruise Control", "ToggleEnabled", true} },
@@ -24,18 +24,18 @@
         option7 = nil,
         option8 = nil,
         option9 = nil,
-        right = { {"Dynamic Flight Mode", "Right"}  },
-        speeddown = { {"Dynamic Flight Mode", "SpeedDown", true}  },
-        speedup = { {"Dynamic Flight Mode", "SpeedUp", true}  },
+        right = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Right"}  },
+        speeddown = { {"Maneuver Flight Mode", "SpeedDown", true}  },
+        speedup = { {"Maneuver Flight Mode", "SpeedUp", true}  },
         stopengines = nil,
         strafeleft = nil,
         straferight = nil,
-        up = { {"Dynamic Flight Mode", "Up"}  },
+        up = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Up"}  },
         warp = nil,
-        yawleft = { {"Dynamic Flight Mode", "YawLeft"} },
-        yawright = { {"Dynamic Flight Mode", "YawRight"} },
-        mousewheelup = { {"Dynamic Flight Mode", "SpeedUp", true}  },
-        mousewheeldown = { {"Dynamic Flight Mode", "SpeedDown", true}  },
+        yawleft = { {"Maneuver Flight Mode", "YawLeft"} },
+        yawright = { {"Maneuver Flight Mode", "YawRight"} },
+        mousewheelup = { {"Maneuver Flight Mode", "SpeedUp", true}  },
+        mousewheeldown = { {"Maneuver Flight Mode", "SpeedDown", true}  },
         external1 = { {"Cruise Control", "Disable", true}, {"Velocity Braking", "Enable", true} },
     }
 
@@ -61,10 +61,12 @@ KeybindsModule = (function()
 
                 for i,command in ipairs(event) do
                     local m = Horizon.GetModule(command[1])
-                    local keyDownOnly = command[3]
+                    if m ~= nil then
+                        local keyDownOnly = command[3]
                     
-                    if (not keyDownOnly) or (isKeyDown and keyDownOnly) then
-                        if m ~= nil then m[command[2]](isKeyDown) end
+                        if (not keyDownOnly) or (isKeyDown and keyDownOnly) then
+                            if m ~= nil then m[command[2]](isKeyDown) end
+                        end
                     end
                 end
 

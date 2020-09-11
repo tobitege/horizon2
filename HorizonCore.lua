@@ -111,27 +111,20 @@ Horizon = (function (slotContainer)
 
     function this.RegisterModule(module)
         if types.type(module) ~= "HorizonModule" then return end
-        table.insert(this.Modules, module)
+        this.Modules[module.Name] = module
+        --table.insert(this.Modules, module)
         module.Register()
     end
 
     function this.UnregisterModule(module)
         if types.type(module) ~= "HorizonModule" then return end
-        for k,v in ipairs(this.Modules) do
-            if v.Name == module.Name then 
-                table.remove(this.Modules, k)
-                v.Unregister()
-            end
-        end
+        if this.Modules[module.Name] == nil then return end
+        this.Modules[module.Name] = nil
+        module.Unregister()
     end
 
     function this.GetModule(name)
-        for k,v in ipairs(this.Modules) do
-            if v.Name == name then 
-                return v
-            end
-        end
-        return nil
+        return this.Modules[name]
     end
 
     setmetatable(this, {
