@@ -8,7 +8,7 @@
         brake = { {"Cruise Control", "Disable"}, {"Velocity Braking", "ToggleEnabled"} },
         down = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Down"} },
         forward = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Forward"}  },
-        Gear = { {"Landing", "ToggleGear"}  },
+        Gear = { {"Landing Gear", "ToggleGear"}  },
         groundaltitudeup = nil, -- Alt-Space
         groupaltitudedown = nil, -- Alt-C
         lalt = { {"Mouse Steering", "ToggleEnabled"} },
@@ -18,7 +18,7 @@
         option1 = { {"Cruise Control", "ToggleEnabled", true} },
         option2 = { {"Simple Inertial Dampening", "ToggleEnabled", true} },
         option3 = { {"Gravity Suppression", "ToggleEnabled", true} },
-        option4 = nil,
+        option4 = { {"Landing Gear", "ToggleSoftland", true}  },
         option5 = nil,
         option6 = nil,
         option7 = nil,
