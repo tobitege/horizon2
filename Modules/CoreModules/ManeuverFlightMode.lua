@@ -1,8 +1,10 @@
 ManeuverFlightMode = (function() 
     local this = HorizonModule("Maneuver Flight Mode", "Flush", true)
     this.Tags = "control,thrust,steering,input"
-    this.Throttle = 0.2
-    this.TurnSpeed = 2
+
+    this.Config.Version = "CI_FILE_LAST_COMMIT"
+    this.Config.Throttle = 0.2
+    this.Config.TurnSpeed = 2
     this.Direction = vec3(0,0,0)
     this.Rotation = vec3(0,0,0)
 
@@ -14,8 +16,8 @@ ManeuverFlightMode = (function()
     local directionVectors = {
         forward = vec3(0,1,0),
         backward = vec3(0,-1,0),
-        yawleft = vec3(-1,0,0),
-        yawright = vec3(1,0,0),
+        left = vec3(-1,0,0),
+        right = vec3(1,0,0),
         up = vec3(0,0,1),
         down = vec3(0,0,-1)
     }
@@ -36,19 +38,51 @@ ManeuverFlightMode = (function()
         end
     end
 
+    function this.Left(keyDown)
+        if keyDown then
+            this.Direction = this.Direction + directionVectors.left
+        else
+            this.Direction = this.Direction - directionVectors.left
+        end
+    end
+
+    function this.Right(keyDown)
+        if keyDown then
+            this.Direction = this.Direction + directionVectors.right
+        else
+            this.Direction = this.Direction - directionVectors.right
+        end
+    end
+
+    function this.RollLeft(keyDown)
+        if keyDown then
+            this.Rotation.y = -1
+        else
+            this.Rotation.y = 0
+        end
+    end
+
+    function this.RollRight(keyDown)
+        if keyDown then
+            this.Rotation.y = 1
+        else
+            this.Rotation.y = 0
+        end
+    end
+
     function this.YawLeft(keyDown)
         if keyDown then
-            this.Direction = this.Direction + directionVectors.yawleft
+            this.Rotation.x = -1
         else
-            this.Direction = this.Direction - directionVectors.yawleft
+            this.Rotation.x = 0
         end
     end
 
     function this.YawRight(keyDown)
         if keyDown then
-            this.Direction = this.Direction + directionVectors.yawright
+            this.Rotation.x = 1
         else
-            this.Direction = this.Direction - directionVectors.yawright
+            this.Rotation.x = 0
         end
     end
 
@@ -68,28 +102,12 @@ ManeuverFlightMode = (function()
         end
     end
 
-    function this.Left(keyDown)
-        if keyDown then
-            this.Rotation.y = -1
-        else
-            this.Rotation.y = 0
-        end
-    end
-
-    function this.Right(keyDown)
-        if keyDown then
-            this.Rotation.y = 1
-        else
-            this.Rotation.y = 0
-        end
-    end
-
     function this.SpeedUp(keyDown)
-        this.Throttle = math.min(1,this.Throttle+0.1)
+        this.Config.Throttle = math.min(1,this.Config.Throttle+0.1)
     end
     
     function this.SpeedDown(keyDown)
-        this.Throttle = math.max(0,this.Throttle-0.1)
+        this.Config.Throttle = math.max(0,this.Config.Throttle-0.1)
     end
 
     function this.Update(eventType)
@@ -116,8 +134,8 @@ ManeuverFlightMode = (function()
             thrustToApply = thrustToApply + (-world.Right * stats.MaxKinematics.Left)
         end
 
-        ship.Thrust = ship.Thrust + (thrustToApply * this.Throttle)
-        ship.Rotation = ship.Rotation + ((world.Forward * this.Rotation.y) * this.TurnSpeed)
+        ship.Thrust = ship.Thrust + (thrustToApply * this.Config.Throttle)
+        ship.Rotation = ship.Rotation + ((world.Forward * this.Rotation.y) * this.Config.TurnSpeed)
 
         ship.MoveDirection = this.Direction
     end

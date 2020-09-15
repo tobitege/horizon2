@@ -8,11 +8,11 @@
         brake = { {"Cruise Control", "Disable"}, {"Velocity Braking", "ToggleEnabled"} },
         down = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Down"} },
         forward = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Forward"}  },
-        Gear = { {"Landing Gear", "ToggleGear"}  },
+        gear = { {"Landing Gear", "ToggleGear"}  },
         groundaltitudeup = nil, -- Alt-Space
         groupaltitudedown = nil, -- Alt-C
         lalt = { {"Mouse Steering", "ToggleEnabled"} },
-        left = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Left"}  },
+        left = { {"Maneuver Flight Mode", "RollLeft"}  },
         light = nil,
         lshift = nil,
         option1 = { {"Cruise Control", "ToggleEnabled", true} },
@@ -24,7 +24,7 @@
         option7 = nil,
         option8 = nil,
         option9 = nil,
-        right = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Right"}  },
+        right = { {"Maneuver Flight Mode", "RollRight"}  },
         speeddown = { {"Maneuver Flight Mode", "SpeedDown", true}  },
         speedup = { {"Maneuver Flight Mode", "SpeedUp", true}  },
         stopengines = nil,
@@ -32,8 +32,8 @@
         straferight = nil,
         up = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Up"}  },
         warp = nil,
-        yawleft = { {"Maneuver Flight Mode", "YawLeft"} },
-        yawright = { {"Maneuver Flight Mode", "YawRight"} },
+        yawleft = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Left"} },
+        yawright = { {"Cruise Control", "Disable"}, {"Maneuver Flight Mode", "Right"} },
         mousewheelup = { {"Maneuver Flight Mode", "SpeedUp", true}  },
         mousewheeldown = { {"Maneuver Flight Mode", "SpeedDown", true}  },
         external1 = { {"Cruise Control", "Disable", true}, {"Velocity Braking", "Enable", true} },
@@ -47,25 +47,32 @@ KeybindsModule = (function()
     Horizon.Event.KeyUp.Add(this)
     Horizon.Event.KeyDown.Add(this)
 
-    this.Config = {}
+    this.Config.Version = "CI_FILE_LAST_COMMIT"
+    this.Keybinds = {}
 
     function this.LoadConfig(config)
-        this.Config = config
+        this.Keybinds = config
     end
 
     local function callBind(name, isKeyDown)
-        local event = this.Config[name]
+        local event = this.Keybinds[name]
 
         if event ~= nil then
             if type(event) == "table" then
 
+                --For each keybind
                 for i,command in ipairs(event) do
+                    --Get the module
                     local m = Horizon.GetModule(command[1])
                     if m ~= nil then
-                        local keyDownOnly = command[3]
+                        --Only if the module is enabled
+                        if m.Enabled then
+                            local keyDownOnly = command[3]
                     
-                        if (not keyDownOnly) or (isKeyDown and keyDownOnly) then
-                            if m ~= nil then m[command[2]](isKeyDown) end
+                            if (not keyDownOnly) or (isKeyDown and keyDownOnly) then
+                                if m ~= nil then m[command[2]](isKeyDown) end
+                            end
+
                         end
                     end
                 end
