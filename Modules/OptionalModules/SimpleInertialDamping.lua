@@ -1,5 +1,5 @@
 SimpleInertialDampening = (function() 
-    local this = HorizonModule("Simple Inertial Dampening", "PostFlush", true)
+    local this = HorizonModule("Simple Inertial Dampening", "Slows velocity in any direction that the user is not applying thrust to 0, ie soft braking", "PostFlush", true)
     this.Tags = "stability,thrust"
 
     function this.Update(eventType, deltaTime)

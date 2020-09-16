@@ -1,5 +1,5 @@
 GravityCounter = (function() 
-    local this = HorizonModule("Gravity Suppression", "Flush", true)
+    local this = HorizonModule("Gravity Suppression", "Negates the effect of gravity, allowing hovering and linear velocity approaches to planets", "Flush", true)
     this.Tags = "thrust,stability"
 
     function this.Update(eventType, deltaTime)

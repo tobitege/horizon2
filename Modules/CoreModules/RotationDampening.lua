@@ -1,5 +1,5 @@
 RotationDampening = (function() 
-    local this = HorizonModule("Rotation Dampening", "PostFlush", true)
+    local this = HorizonModule("Rotation Dampening", "Slows rotation over time, preventing unintended spin", "PostFlush", true)
     this.Tags = "stability,rotation"
 
     function this.Update(eventType, deltaTime)

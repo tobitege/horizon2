@@ -1,5 +1,5 @@
 CruiseControlModule = (function() 
-    local this = HorizonModule("Cruise Control", "PostFlush", false)
+    local this = HorizonModule("Cruise Control", "When enabled forward thrust is constantly applied", "PostFlush", false)
     this.Tags = "thrust,breaking"
 
     function this.Update(eventType, deltaTime)

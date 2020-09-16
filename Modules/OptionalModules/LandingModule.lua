@@ -1,5 +1,5 @@
 LandingModule = (function() 
-    local this = HorizonModule("Landing Gear", "PostFlush", true)
+    local this = HorizonModule("Landing Gear", "Allows manual or automatic landing gear activation. Also includes a soft landing function", "PostFlush", true)
     this.Config = {
         SpeedLimit = 20, -- in m/s
         DistanceLimit = 10,

@@ -1,4 +1,4 @@
-HorizonModule = function (name, defaultEventName, defaultEnable, priority)
+HorizonModule = function (name, description, defaultEventName, defaultEnable, priority)
     local this = {}
     setmetatable(this, { __call = function(ref, ...) ref.Update(...) end, _name = "HorizonModule" })
 

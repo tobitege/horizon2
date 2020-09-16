@@ -1,5 +1,5 @@
 MouseSteering = (function() 
-    local this = HorizonModule("Mouse Steering", "Flush", true)
+    local this = HorizonModule("Mouse Steering", "Locks the mouse and redirects input to ship rotation", "Flush", true)
     this.Tags = "steering,control"
 
     -- Config

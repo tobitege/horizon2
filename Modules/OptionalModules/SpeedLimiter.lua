@@ -1,5 +1,5 @@
 SpeedLimiter = (function() 
-    local this = HorizonModule("Speed Limiter", "Flush", false)
+    local this = HorizonModule("Speed Limiter", "Prevents total velocity from exceeding the defined speed limit (UNTESTED)", "Flush", false)
 
     local speedLimitInMs = 277 --Limit us to 1000KM/h, a safe re-entry speed
 

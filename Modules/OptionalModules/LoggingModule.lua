@@ -1,5 +1,5 @@
 LoggingModule = (function() 
-    local this = HorizonModule("Logging Module", "Error", true, 5)
+    local this = HorizonModule("Logging Module", "Debug error handling", "Error", true, 5)
     this.Tags = "system,logging"
     local isBreaking = false
 

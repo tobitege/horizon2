@@ -1,5 +1,5 @@
 ReadingsModule = (function() 
-    local this = HorizonModule("Ship Readings", "PreFlush", true)
+    local this = HorizonModule("Ship Readings", "Gathers ship and environment data and makes it available to other modules", "PreFlush", true)
     this.Tags = "system,readings"
     this.Config.Version = "CI_FILE_LAST_COMMIT"
     

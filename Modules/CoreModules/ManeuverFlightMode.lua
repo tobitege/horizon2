@@ -1,5 +1,5 @@
 ManeuverFlightMode = (function() 
-    local this = HorizonModule("Maneuver Flight Mode", "Flush", true)
+    local this = HorizonModule("Maneuver Flight Mode", "Flight mode that allows 6DOF movement", "Flush", true)
     this.Tags = "control,thrust,steering,input"
 
     this.Config.Version = "CI_FILE_LAST_COMMIT"

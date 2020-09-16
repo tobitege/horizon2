@@ -1,5 +1,5 @@
 ThrustController = (function() 
-    local this = HorizonModule("Thrust Controller", "PostFlush", true, 5)
+    local this = HorizonModule("Thrust Controller", "Converts horizon thrust directives to actual thruster actions", "PostFlush", true, 5)
     this.Tags = "system,thrust"
 
     local core = Horizon.Core
