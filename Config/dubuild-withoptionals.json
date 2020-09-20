@@ -38,25 +38,25 @@
             "Args": ""
         },
         {
-            "Files": "Modules/OptionalModules/GravityCounter.lua",
+            "Files": ["Modules/OptionalModules/GravityCounter.lua"],
             "Slot": "-1",
             "Signature": "start()",
             "Args": ""
         },
         {
-            "Files": "Modules/OptionalModules/SimpleInertialDamping.lua",
+            "Files": ["Modules/OptionalModules/SimpleInertialDamping.lua"],
             "Slot": "-1",
             "Signature": "start()",
             "Args": ""
         },
         {
-            "Files": "Modules/OptionalModules/CruiseControlModule.lua",
+            "Files": ["Modules/OptionalModules/CruiseControlModule.lua"],
             "Slot": "-1",
             "Signature": "start()",
             "Args": ""
         },
         {
-            "Files": "Modules/OptionalModules/GravityFollow.lua",
+            "Files": ["Modules/OptionalModules/GravityFollow.lua"],
             "Slot": "-1",
             "Signature": "start()",
             "Args": ""
