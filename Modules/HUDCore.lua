@@ -6,8 +6,9 @@ CSS =
       left: 0;
       right: 0;
       bottom: 0;
-      font-family: 'Adam';
-      font-size: 1.3vh;
+      font-family: 'Play';
+      font-weight: 1;
+      font-size: 1vh;
     }
     :root {
       /* 0faea9 */
@@ -35,7 +36,6 @@ CSS =
         z-index: 999;
     }
     panel {
-      font-family: "adam";
       display: flex;
       flex-direction: column;
       position: absolute;
@@ -595,7 +595,7 @@ cursor.IsClickable = false
 HUDCore.AddWidget(cursor)
 
 -- Actual HUD WIP
-local Version = HUDPanel(90, 90, 10, 2)
+local Version = HUDPanel(90, 98, 10, 2)
 Version.Content = "<uilabel>Horizon " .. Horizon.Version .. "</uilabel>"
 Version.Style = "font-size: 0.85vh"
 HUDCore.AddWidget(Version)
@@ -606,11 +606,9 @@ HUDErrorLog =
     local vec2 = require("cpml/vec2")
     this.Tags = "system,hud,log"
     this.Config = {
-        Position = vec2(50, 2),
+        Position = vec2(50, 1.8),
         Width = 30
     }
-
-    local Errors = {}
 
     local hud = Horizon.GetModule("HUD Core")
     local xformed = hud.TransformSize(1)
@@ -619,10 +617,13 @@ HUDErrorLog =
     base.Class = "filled"
     base.Padding = 0.5
     base.Zindex = -1
-    base.OnEnter = function(scope)
-        error("ok")
+    base.OnUpdate = function(ref)
+        if #ref.Children > 0 then
+            ref.Class = "filled"
+        else
+            ref.Class = ""
+        end
     end
-
     hud.AddWidget(base)
 
     local function createWidget(err)
@@ -630,11 +631,19 @@ HUDErrorLog =
         w.Content = "<uilabel style='height:100%'>" .. err .. "</uilabel>"
         w.Style = "font-size: 0.85vh"
         local closeBtn = HUDPanel(this.Config.Width - xformed.x, 0, xformed.x, xformed.y)
-        closeBtn.Style = "text-align: center;border: 1px solid var(--primary);background: var(--bg)"
+        closeBtn.Style = "text-align: center;border: 1px solid var(--primary);background: var(--bg);font-size:1vh;"
         closeBtn.Content = "&times;"
         closeBtn.OnClick = function(ref)
             w.RemoveChild(ref)
             base.RemoveChild(w)
+            local i = 0
+            local count = #base.Children
+            for _, v in ipairs(base.Children) do
+                v.Position.y = i * xformed.y + i
+                v.IsDirty = true
+                v.Children[1].IsDirty = true
+                i = i + 1
+            end
             base.IsDirty = true
         end
         w.AddChild(closeBtn)
@@ -642,11 +651,8 @@ HUDErrorLog =
         base.AddChild(w)
     end
 
-    createWidget("Error test")
-
     this.Update = function(event, dt, error)
         system.print(error)
-        Errors[#Errors] = error
         createWidget(error)
         base.IsDirty = true
     end
@@ -654,3 +660,31 @@ HUDErrorLog =
     return this
 end)()
 Horizon.RegisterModule(HUDErrorLog)
+
+HUDSimpleStats = (function()
+    local this = HorizonModule("HUD Simple Stats", "PreUpdate", true, 0)
+    local vec2 = require("cpml/vec2")
+    this.Tags = "system,hud,data"
+    this.Config = {
+        Position = vec2(50, 94),
+    }
+    local hud = Horizon.GetModule("HUD Core")
+
+    local base = HUDObject(this.Config.Position.x, this.Config.Position.y)
+    base.Memory = Horizon.Memory
+    base.Round = function(num, numDecimalPlaces)
+        local mult = 10^(numDecimalPlaces or 0)
+        return math.floor(num * mult + 0.5) / mult
+    end
+    base._wrapStart = [[<panel class="filled row" style="padding:1em;position:absolute;left:$(GetAbsolutePos().x)vw;top:$(GetAbsolutePos().y)vh;transform:translateX(-50%)">]]
+    base._wrapEnd = [[</panel>]]
+    base.Content = [[
+        <uilabel>V $(Round(Memory.Static.World.Velocity:len()*3.6,2)) km/h</uilabel>
+        <uilabel>ΔV $(Round(Memory.Static.World.Acceleration:len()*3.6,2)) m/s</uilabel>
+        <uilabel>↕ $(Round(Memory.Static.World.Velocity:dot(-Memory.Static.World.Gravity:normalize()),2)) m/s</uilabel>]]
+    base.OnUpdate = function(ref) ref.IsDirty = true end
+    hud.AddWidget(base)
+
+    return this
+end)()
+Horizon.RegisterModule(HUDSimpleStats)
