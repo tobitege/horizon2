@@ -35,6 +35,16 @@ CSS =
         height: 2vh;
         z-index: 999;
     }
+    readout {
+        display: inline;
+        text-shadow: 0 0 0.5vh #000000ff;
+        text-align: center;
+        color:#fff;
+        letter-spacing:0.25px;
+        -webkit-text-stroke-width: 1px;
+        -webkit-text-stroke-color: #000000bb;
+        font-weight: 100;
+    }
     panel {
       display: flex;
       flex-direction: column;
@@ -220,6 +230,7 @@ HUDObject = function(x, y, width, height, content)
     setmetatable(this, {_name = "HUDObject"})
     this.Enabled = false
     this.Name = nil
+    this.AlwaysDirty = false
 
     this.Position = vec2(x or 0, y or 0)
     this.Offset = vec2(0, 0)
@@ -367,12 +378,12 @@ HUDObject = function(x, y, width, height, content)
     function this.Render(scope)
         local anyDirty = scope.IsDirty
         for k, v in ipairs(scope.Children) do
-            if v.IsDirty then
+            if v.AlwaysDirty or v.IsDirty then
                 anyDirty = true
                 break
             end
         end
-        if anyDirty then
+        if scope.AlwaysDirty or anyDirty then
             buffer = template.substitute(scope._wrapStart .. scope.Content .. scope._wrapEnd, scope)
             for k, v in ipairs(scope.Children) do
                 buffer = buffer .. v.Render(v)
@@ -447,7 +458,7 @@ end
 HUDCore =
     (function(CSS)
     local template = require("pl/template")
-    local this = HorizonModule("HUD Core", "PostUpdate", true, 5)
+    local this = HorizonModule("HUD Core", "Heads Up Display core driver","PostUpdate", true, 5)
     local vec2 = require("cpml/vec2")
     local typeof = require("pl/types").type
     this.Tags = "hud,core"
@@ -602,7 +613,7 @@ HUDCore.AddWidget(Version)
 
 HUDErrorLog =
     (function()
-    local this = HorizonModule("HUD Error Log", "Error", true, 5)
+    local this = HorizonModule("HUD Error Log", "Error logging for the HUD","Error", true, 5)
     local vec2 = require("cpml/vec2")
     this.Tags = "system,hud,log"
     this.Config = {
@@ -662,29 +673,206 @@ end)()
 Horizon.RegisterModule(HUDErrorLog)
 
 HUDSimpleStats = (function()
-    local this = HorizonModule("HUD Simple Stats", "PreUpdate", true, 0)
+    local this = HorizonModule("HUD Simple Stats", "Simple flight stats","PreUpdate", true, 0)
     local vec2 = require("cpml/vec2")
     this.Tags = "system,hud,data"
     this.Config = {
-        Position = vec2(50, 94),
+        Position = vec2(40.75, 94),
     }
     local hud = Horizon.GetModule("HUD Core")
 
-    local base = HUDObject(this.Config.Position.x, this.Config.Position.y)
+    local base = HUDPanel(this.Config.Position.x, this.Config.Position.y, 18.5, 3.8)
     base.Memory = Horizon.Memory
     base.Round = function(num, numDecimalPlaces)
         local mult = 10^(numDecimalPlaces or 0)
         return math.floor(num * mult + 0.5) / mult
     end
-    base._wrapStart = [[<panel class="filled row" style="padding:1em;position:absolute;left:$(GetAbsolutePos().x)vw;top:$(GetAbsolutePos().y)vh;transform:translateX(-50%)">]]
-    base._wrapEnd = [[</panel>]]
-    base.Content = [[
-        <uilabel>V $(Round(Memory.Static.World.Velocity:len()*3.6,2)) km/h</uilabel>
-        <uilabel>ΔV $(Round(Memory.Static.World.Acceleration:len()*3.6,2)) m/s</uilabel>
-        <uilabel>↕ $(Round(Memory.Static.World.Velocity:dot(-Memory.Static.World.Gravity:normalize()),2)) m/s</uilabel>]]
-    base.OnUpdate = function(ref) ref.IsDirty = true end
+    base.Class = "filled"
+    base.Padding = 0.5
+
+    local function splitNumber(num)
+        local major = math.floor(num)
+        local minor = tonumber(math.floor((num % 1) * 100))
+        return {
+            Major = major,
+            Minor = string.format("%02d", minor)
+        }
+    end
+
+    local xformed = hud.TransformSize(1.3)
+    local velocity = HUDPanel(0,0,5.5,xformed.y)
+    velocity.AlwaysDirty = true
+    velocity.OnUpdate = function()
+        velocity.Number = splitNumber(Horizon.Memory.Static.World.Velocity:len()*3.6)
+    end
+    velocity.Content = [[<uilabel style="width: 100%;height:100%">V $(Number.Major)<sup>$(Number.Minor)</sup> km/h</uilabel>]]
+    base.AddChild(velocity)
+
+    local dV = HUDPanel(6,0,5.5,xformed.y)
+    dV.AlwaysDirty = true
+    dV.OnUpdate = function()
+        dV.Number = splitNumber(Horizon.Memory.Static.World.Acceleration:len()*3.6)
+    end
+    dV.Content = [[<uilabel style="width: 100%;height:100%">ΔV $(Number.Major)<sup>$(Number.Minor)</sup> km/h</uilabel>]]
+    base.AddChild(dV)
+
+    local vV = HUDPanel(12,0,5.5,xformed.y)
+    vV.AlwaysDirty = true
+    vV.OnUpdate = function()
+        vV.Number = splitNumber(Horizon.Memory.Static.World.VerticalVelocity)
+    end
+    vV.Content = [[<uilabel style="width: 100%;height:100%">↕ $(Number.Major)<sup>$(Number.Minor)</sup> km/h</uilabel>]]
+    base.AddChild(vV)
+
+
     hud.AddWidget(base)
 
     return this
 end)()
 Horizon.RegisterModule(HUDSimpleStats)
+
+HUDArtificialHorizon = (function()
+    local this = HorizonModule("HUD Artificial Horizon", "Artificial Horizon", "PreUpdate", true, 0)
+    local vec2 = require("cpml/vec2")
+    this.Tags = "system,hud,data"
+    
+    local rollSVG = [[<svg viewBox="0 0 598 598" style="transform: rotate($(-Memory.Ship.Roll)deg)"><defs><clipPath id="a" transform="translate(-1 -1)"><path d="M0 300h600v300H0z" class="a"/></clipPath><clipPath id="b" transform="translate(-1 -1)"><path d="M0 0h600v300H0z" class="a"/></clipPath><style>.a{fill:none}.c{fill:#fff}.g{fill:#ae0f12}</style></defs><g clip-path="url(#a)"><path d="M300 30l2.29-8.12L300 0v30zM298 30l-2.28-8.12L298 0v30zM30 298l-8.12-2.28L0 298h30zM30 300l-8.12 2.29L0 300h30zM298 568l-2.28 8.12L298 598v-30zM300 568l2.29 8.12L300 598v-30zM568 300l8.12 2.29L598 300h-30zM568 298l8.12-2.28L598 298h-30zM91.11 91.11l13.55 11.74 2.72 4.53-4.53-2.72-11.74-13.55zM91.11 506.89l11.74-13.55 4.53-2.71-2.72 4.52-13.55 11.74zM506.89 506.89l-13.55-11.74-2.71-4.52 4.52 2.71 11.74 13.55zM506.89 91.11l-11.74 13.55-4.52 2.72 2.71-4.53 13.55-11.74zM188.19 31.49l3.08 10.15 1.92-.8-5-9.35zM31.49 409.81l10.15-3.08-.8-1.92-9.35 5zM409.81 566.51l-3.08-10.14-1.92.79 5 9.35zM566.51 188.19l-10.14 3.08.79 1.92 9.35-5zM31.49 188.19l9.35 5 .8-1.92-10.15-3.08zM188.19 566.51l5-9.35-1.92-.79-3.08 10.14zM566.51 409.81l-9.35-5-.79 1.92 10.14 3.08zM409.81 31.49l-5 9.35 1.92.8 3.08-10.15zM242.83114619 21.80721805l1.96157056-.39018065.75109774 3.77602333-1.96157056.39018065zM22.29773466 355.67013528l-.39018064-1.96157056 3.77602333-.75109774.39018064 1.96157056zM356.16766776 576.19117602l-1.96157056.39018064-.75109774-3.77602332 1.96157056-.39018065zM576.70150049 242.3316628l.39018064 1.96157057-3.77602333.75109774-.39018064-1.96157057zM141.06616025 64.5945224l1.66293922-1.11114047 2.1389454 3.201158-1.66293922 1.11114047zM65.08622624 457.4426866l-1.11114046-1.66293922 3.201158-2.1389454 1.11114047 1.66293923zM457.93266807 533.4104826l-1.66293923 1.11114047-2.1389454-3.201158 1.66293923-1.11114048zM533.92050114 140.57062309l1.11114047 1.66293922-3.201158 2.1389454-1.11114047-1.66293922zM63.42062458 143.0587569l1.11114047-1.66293922 3.201158 2.1389454-1.11114046 1.66293922zM143.56247801 535.08548144l-1.66293922-1.11114046 2.1389454-3.20115801 1.66293922 1.11114047zM535.58176033 454.94141596l-1.11114047 1.66293922-3.201158-2.1389454 1.11114046-1.66293922zM455.44513707 62.9243457l1.66293923 1.11114047-2.1389454 3.201158-1.66293923-1.11114046zM21.7197539 245.27862541l.39018065-1.96157056 3.77602333.75109774-.39018064 1.96157056zM245.77784687 576.78453541l-1.96157056-.39018064.75109774-3.77602333 1.96157056.39018064zM577.28531396 352.7278638l-.39018064 1.96157057-3.77602333-.75109774.39018064-1.96157056zM352.8374 22.9384l1.96.4-.77 3.773-1.96-.4z" class="c"/><circle cx="299.5" cy="299" r="282.73" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-opacity=".3"/><circle cx="299.5" cy="299" r="278.93" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width=".5"/></g><g clip-path="url(#b)"><path d="M300 30l2.29-8.12L300 0v30zM298 30l-2.28-8.12L298 0v30zM30 298l-8.12-2.28L0 298h30zM30 300l-8.12 2.29L0 300h30zM298 568l-2.28 8.12L298 598v-30zM300 568l2.29 8.12L300 598v-30zM568 300l8.12 2.29L598 300h-30zM568 298l8.12-2.28L598 298h-30zM91.11 91.11l13.55 11.74 2.72 4.53-4.53-2.72-11.74-13.55zM91.11 506.89l11.74-13.55 4.53-2.71-2.72 4.52-13.55 11.74zM506.89 506.89l-13.55-11.74-2.71-4.52 4.52 2.71 11.74 13.55zM506.89 91.11l-11.74 13.55-4.52 2.72 2.71-4.53 13.55-11.74zM188.19 31.49l3.08 10.15 1.92-.8-5-9.35zM31.49 409.81l10.15-3.08-.8-1.92-9.35 5zM409.81 566.51l-3.08-10.14-1.92.79 5 9.35zM566.51 188.19l-10.14 3.08.79 1.92 9.35-5zM31.49 188.19l9.35 5 .8-1.92-10.15-3.08zM188.19 566.51l5-9.35-1.92-.79-3.08 10.14zM566.51 409.81l-9.35-5-.79 1.92 10.14 3.08zM409.81 31.49l-5 9.35 1.92.8 3.08-10.15zM242.83114619 21.80721805l1.96157056-.39018065.75109774 3.77602333-1.96157056.39018065zM22.29773466 355.67013528l-.39018064-1.96157056 3.77602333-.75109774.39018064 1.96157056zM356.16766776 576.19117602l-1.96157056.39018064-.75109774-3.77602332 1.96157056-.39018065zM576.70150049 242.3316628l.39018064 1.96157057-3.77602333.75109774-.39018064-1.96157057zM141.06616025 64.5945224l1.66293922-1.11114047 2.1389454 3.201158-1.66293922 1.11114047zM65.08622624 457.4426866l-1.11114046-1.66293922 3.201158-2.1389454 1.11114047 1.66293923zM457.93266807 533.4104826l-1.66293923 1.11114047-2.1389454-3.201158 1.66293923-1.11114048zM533.92050114 140.57062309l1.11114047 1.66293922-3.201158 2.1389454-1.11114047-1.66293922zM63.42062458 143.0587569l1.11114047-1.66293922 3.201158 2.1389454-1.11114046 1.66293922zM143.56247801 535.08548144l-1.66293922-1.11114046 2.1389454-3.20115801 1.66293922 1.11114047zM535.58176033 454.94141596l-1.11114047 1.66293922-3.201158-2.1389454 1.11114046-1.66293922zM455.44513707 62.9243457l1.66293923 1.11114047-2.1389454 3.201158-1.66293923-1.11114046zM21.7197539 245.27862541l.39018065-1.96157056 3.77602333.75109774-.39018064 1.96157056zM245.77784687 576.78453541l-1.96157056-.39018064.75109774-3.77602333 1.96157056.39018064zM577.28531396 352.7278638l-.39018064 1.96157057-3.77602333-.75109774.39018064-1.96157056zM352.8374 22.9384l1.96.4-.77 3.773-1.96-.4z" class="g"/><circle cx="299.5" cy="299" r="282.73" fill="none" stroke="#ae0f12" stroke-miterlimit="10" stroke-opacity=".3"/><circle cx="299.5" cy="299" r="278.93" fill="none" stroke="#ae0f12" stroke-miterlimit="10" stroke-width=".5"/></g></svg>]]
+    local pitchSVG = [[<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20.18 724"><path fill="#fff" d="M10.09 720l-10 1h20l-10-1zM10.09 724l10-1h-20l10 1zM9.734 721.996l.354-.354.354.354-.354.353zM10.09 540l-10 1h20l-10-1zM10.09 544l10-1h-20l10 1zM9.735 541.997l.354-.354.353.354-.353.353zM10.09 360l-10 1h20l-10-1zM10.09 364l10-1h-20l10 1zM9.736 361.997l.354-.353.353.353-.353.354zM10.09 180l-10 1h20l-10-1zM10.09 184l10-1h-20l10 1zM9.737 181.998l.353-.353.354.353-.354.354zM10.09 0l-10 1h20l-10-1zM10.09 4l10-1h-20l10 1zM9.738 1.999l.353-.354.354.354-.354.353z"/><path fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width=".25" d="M.09 634.5l2.5-2.5h15l2.5 2.5M.09 629.5l2.5 2.5h15l2.5-2.5M.09 454.5l2.5-2.5h15l2.5 2.5M.09 449.5l2.5 2.5h15l2.5-2.5M.09 274.5l2.5-2.5h15l2.5 2.5M.09 269.5l2.5 2.5h15l2.5-2.5M.09 94.5l2.5-2.5h15l2.5 2.5M.09 89.5l2.5 2.5h15l2.5-2.5M.09 319.5l2.5-2.5h15l2.5 2.5M.09 224.5l2.5 2.5h15l2.5-2.5M.09 404.5l2.5 2.5h15l2.5-2.5M.09 584.5l2.5 2.5h15l2.5-2.5M.09 44.5l2.5 2.5h15l2.5-2.5M.09 499.5l2.5-2.5h15l2.5 2.5M.09 679.5l2.5-2.5h15l2.5 2.5M.09 139.5l2.5-2.5h15l2.5 2.5M6.09 24.5h8M6.09 69.5h8M6.09 114.5h8M6.09 159.5h8M6.09 204.5h8M6.09 249.5h8M6.09 294.5h8M6.09 339.5h8M6.09 384.5h8M6.09 429.5h8M6.09 474.5h8M6.09 519.5h8M6.09 564.5h8M6.09 609.5h8M6.09 654.5h8M6.09 699.5h8"/><path fill="none" stroke="#fff" stroke-dasharray=".23 11.02" stroke-miterlimit="10" d="M10.09 1.87v720"/></svg>]]
+
+    local hud = Horizon.GetModule("HUD Core")
+    local roll = HUDPanel(30, 30, 40, 40)
+    roll.Round = function(num, numDecimalPlaces)
+        local mult = 10^(numDecimalPlaces or 0)
+        return math.floor(num * mult + 0.5) / mult
+    end
+    roll.Memory = Horizon.Memory.Static
+    roll.AlwaysDirty = true
+    -- base.Content = "P:$(Round(Memory.Ship.Pitch,1)) R:$(Round(Memory.Ship.Roll,1)) Y:$(Round(Memory.Ship.Yaw,1))"
+    -- -webkit-mask-image: -webkit-linear-gradient(bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 60%)
+    roll.Content = [[<panel style="position:fixed;width:$(Width)vw;height:$(Height)vh;-webkit-mask-image: -webkit-linear-gradient(bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 60%)">]]..rollSVG..[[</panel>]]
+    local rollText = HUDPanel(18,39,4,4)
+    rollText.Memory = Horizon.Memory.Static
+    rollText.Transform = function(roll)
+        if roll > 180 then roll = roll - 360 end
+        local mult = 10
+        local roll = math.floor(roll * mult + 0.5) / mult
+        return math.abs(roll)
+    end
+    rollText.Content = [[<readout>$(Transform(Memory.Ship.Roll))</readout>
+    <div style="position:absolute;width:4vw;height:4vh;top:1vh;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2.57 23" style="display: block;height:2vh;margin: 0 auto;"><path fill="#fff" d="M1.28 0l1.29 17.88L1.28 23 0 17.88 1.28 0z"/></svg>
+    </div>]]
+    rollText.AlwaysDirty = true
+    roll.AddChild(rollText)
+
+    local pitch = HUDPanel(25,25,50,50)
+    pitch.Memory = Horizon.Memory.Static
+    pitch.AlwaysDirty = true
+    pitch.Style = [[-webkit-mask-image: -webkit-radial-gradient(rgba(0,0,0,1) 25%, rgba(0,0,0,0) 40%)]]
+    pitch.Transform = function(pitch)
+        pitch = (pitch % 360) / 360
+        return -25 + (math.abs(pitch) * 50)
+    end
+    pitch.Content = [[
+        <panel style="position:fixed;width:$(Width)vw;height:$(Height)vh;transform: scale(2) rotate($(-Memory.Ship.Roll)deg) translateY($(Transform(-Memory.Ship.Pitch))%)">
+        ]].. pitchSVG ..[[
+        </panel>
+    ]]
+
+    local pitchText = HUDPanel(23,25.5,4,3)
+    pitchText.AlwaysDirty = true
+    pitchText.Memory = Horizon.Memory.Static
+    pitchText.Transform = function(pitch)
+        pitch = pitch % 180
+        if pitch > 90 then pitch = pitch - 180 end
+        local mult = 10
+        local pitch = math.floor(pitch * mult + 0.5) / mult
+        return math.abs(pitch)
+    end
+    pitchText.Content = [[<readout>$(Transform(Memory.Ship.Pitch))</readout>]]
+    pitch.AddChild(pitchText)
+
+    hud.AddWidget(pitch)
+    hud.AddWidget(roll)
+
+    return this
+end)()
+Horizon.RegisterModule(HUDArtificialHorizon)
+
+GameHUDRemover = (function()
+    local this = HorizonModule("Stock HUD remover", "Removes the stock game HUD", "Start", true, 0)
+
+    this.Stop = function()
+        system.print("Showing UI")
+        system.print([[
+            <style>
+            #reticle_crosshair_wrapper,
+            #action_bar,
+            #BuildHelperButtonZone,
+            #main_chat_notification_icon,
+            #persistent_notification,
+            #playerStatus_wrapper,
+            #custom_screen_click_layer,
+            #minimap_bezel,
+            #minimap_face,
+            #clip_mask,
+            #minimap_blips
+            { display: block !important; }
+            #minimap {
+                width: 23.14814815vh;
+                height: 23.14814815vh;
+                top: 2.77777778vh;
+                right: 2.77777778vh;
+                z-index: 1;
+            }
+            #main-chat, #main-chat > * {
+                user-select: none !important;
+                pointer-events: all !important;
+            }
+            #main-chat > .message_queue {
+                background: rgba(0, 10, 26, 0.6) !important;
+            }
+            </style>
+        ]])
+    end
+    this.Update = function()
+        system.print("Hiding UI")
+        system.print([[
+            <style>
+                #reticle_crosshair_wrapper,
+                #action_bar,
+                #BuildHelperButtonZone,
+                #main_chat_notification_icon,
+                #persistent_notification,
+                #playerStatus_wrapper,
+                #custom_screen_click_layer,
+                #minimap_bezel,
+                #minimap_face,
+                #clip_mask,
+                #minimap_blips
+                { display: none !important; }
+                #minimap {
+                    width: 20vh;
+                    height: 20vh;
+                    top: -1vh;
+                    right: calc(50vw - (20vh / 2));
+                    z-index: -100;
+                }
+                #main-chat, #main-chat > * {
+                    user-select: all !important;
+                    -webkit-user-select: all !important;
+                    pointer-events: all !important;
+                    cursor: text !important;
+                }
+                #main-chat > .message_queue {
+                    background: transparent !important;
+                }
+            </style>
+        ]])
+    end
+
+    Horizon.Event.Stop.Add(this.Stop)
+
+    return this
+end)()
+Horizon.RegisterModule(GameHUDRemover)
