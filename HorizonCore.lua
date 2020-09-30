@@ -65,8 +65,9 @@ Horizon = (function (slotContainer)
     local this = {}
 
     if not slotContainer.Core then error("The core has not been linked") end
+    if not slotContainer.Unit then error("The code is running on an unknown program unit, slot detected needs updating") end
     this.Core = slotContainer.Core
-    this.Controller = unit
+    this.Controller = slotContainer.Unit
     this.Modules = {}
     this.HUD = nil
     this.Memory = {
