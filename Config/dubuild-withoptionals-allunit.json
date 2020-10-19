@@ -1,0 +1,95 @@
+{
+    "Minify": false,
+    "Slots":[
+        {
+            "Files": ["datalib/Fuels.lua", "datalib/FuelTanks.lua"],
+            "Slot": "-1",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["utility-library/Utils3d.lua"],
+            "Slot": "-1",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["slotdetector/SlotDetector.lua"],
+            "Slot": "-1",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["HorizonModule.lua"],
+            "Slot": "-1",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["HorizonCore.lua"],
+            "Slot": "-1",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Directory": "Modules/CoreModules/*.lua",
+            "Slot": "-1",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["Modules/OptionalModules/GravityCounter.lua"],
+            "Slot": "-1",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["Modules/OptionalModules/SimpleInertialDamping.lua"],
+            "Slot": "-1",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["Modules/OptionalModules/CruiseControlModule.lua"],
+            "Slot": "-1",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Files": ["Modules/OptionalModules/GravityFollow.lua"],
+            "Slot": "-1",
+            "Signature": "start()",
+            "Args": ""
+        },
+        {
+            "Code": "Horizon.Event.PreFlush() Horizon.Event.Flush() Horizon.Event.PostFlush()",
+            "Slot": "-2",
+            "Signature": "flush()",
+            "Args": ""
+        },
+        {
+            "Code": "Horizon.Event.PreUpdate() Horizon.Event.Update() Horizon.Event.PostUpdate()",
+            "Slot": "-2",
+            "Signature": "update()",
+            "Args": ""
+        },
+        {
+            "Code": "Horizon.Event.Stop()",
+            "Slot": "-2",
+            "Signature": "stop()",
+            "Args": ""
+        },
+        {
+            "Code": "Horizon.Event.KeyDown(action)",
+            "Slot": "-2",
+            "Signature": "actionStart(action)",
+            "Args": "*"
+        },
+        {
+            "Code": "Horizon.Event.KeyUp(action)",
+            "Slot": "-2",
+            "Signature": "actionStop(action)",
+            "Args": "*"
+        }
+    ]
+}
