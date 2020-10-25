@@ -1,4 +1,5 @@
 --@require UIController
+--@require UI
 CSS =
     [[
     #horizon {
@@ -208,3 +209,5 @@ CSS =
         border-right: var(--border);
     }
 ]]
+
+Horizon.GetModule("UI Controller").Add(UICore(SystemDisplay,CSS))
