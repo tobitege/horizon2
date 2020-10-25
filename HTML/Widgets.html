@@ -1,6 +1,6 @@
 <html>
     <head>
-        <link rel="stylesheet" href="http://dustreaming.shadowtemplar.org/adam.css" crossorigin="anonymous">
+        <link rel="stylesheet" href="http://du.static.internal.st/adam.css" crossorigin="anonymous">
         <style>
         body, html {
             background-color: black;
@@ -22,10 +22,18 @@
                 --border-primary: 0.05em solid var(--primary);
                 --glow: 0 0 0.25vw 0.05vw var(--primary);
                 --text-glow: 0 0 0.25vw var(--primary);
-                --spacing: 0.25em;
-                --corner-bg-bottom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='6'%3E%3Cdefs%3E%3Csvg xmlns='http://www.w3.org/2000/svg' id='blBorder' stroke='%23fff' stroke-width='2' viewBox='0 0 10 10' preserveAspectRatio='xMinYMax meet'%3E%3Cpath d='M0 0 L0 10 L10 10' fill='none' /%3E%3C/svg%3E%3Csvg xmlns='http://www.w3.org/2000/svg' id='brBorder' stroke='%23fff' stroke-width='2' viewBox='0 0 10 10' preserveAspectRatio='xMaxYMax meet'%3E%3Cpath d='M10 0 L10 10 L0 10' fill='none' /%3E%3C/svg%3E%3C/defs%3E%3Cuse href='%23blBorder' /%3E%3Cuse href='%23brBorder' /%3E%3C/svg%3E") no-repeat bottom center;
-                --corner-bg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='6'%3E%3Cdefs%3E%3Csvg xmlns='http://www.w3.org/2000/svg' id='tlBorder' stroke='%23fff' stroke-width='2' viewBox='0 0 10 10' preserveAspectRatio='xMinYMin meet'%3E%3Cpath d='M0 10 L0 0 L10 0' fill='none' /%3E%3C/svg%3E%3Csvg xmlns='http://www.w3.org/2000/svg' id='trBorder' stroke='%23fff' stroke-width='2' viewBox='0 0 10 10' preserveAspectRatio='xMaxYMin meet'%3E%3Cpath d='M0 0 L0 0 L10 0 L10 10' fill='none' /%3E%3C/svg%3E%3C/defs%3E%3Cuse href='%23tlBorder' /%3E%3Cuse href='%23trBorder' /%3E%3C/svg%3E") no-repeat top center;
+                --spacing: 0.3vh;
+                --corner-bg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='10'%3E%3Csvg xmlns='http://www.w3.org/2000/svg' stroke-width='20' viewBox='0 0 200 200' preserveAspectRatio='xMinYMin meet'%3E%3Cpath d='M0 200 L0 0 L200 0' fill='none' stroke='%23fff' /%3E%3C/svg%3E%3Csvg xmlns='http://www.w3.org/2000/svg' stroke-width='20' viewBox='0 0 200 200' preserveAspectRatio='xMaxYMin meet'%3E%3Cpath d='M0 0 L0 0 L200 0 L200 200' fill='none' stroke='%23fff' /%3E%3C/svg%3E%3C/svg%3E") no-repeat top center;
+                --corner-bg-bottom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='10'%3E%3Csvg stroke-width='20' viewBox='0 0 200 200' preserveAspectRatio='xMinYMax meet'%3E%3Cpath d='M0 0 L0 200 L200 200' fill='none' stroke='%23fff' /%3E%3C/svg%3E%3Csvg stroke-width='20' viewBox='0 0 200 200' preserveAspectRatio='xMaxYMax meet'%3E%3Cpath d='M200 0 L200 200 L0 200' fill='none' stroke='%23fff' /%3E%3C/svg%3E%3C/svg%3E") no-repeat bottom center;
                 --warning: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-10 -10 120 120' preserveAspectRatio='xMidYMid meet'%3E%3Cpath d='M0 100 L50 0 L100 100 L0 100 L50 0' stroke='%23ae0f12' stroke-width='10' fill='none' /%3E%3Crect x='45' y='32' width='10' height='40' fill='%23ae0f12' /%3E%3Ccircle cx='50' cy='85' r='6' fill='%23ae0f12' /%3E%3C/svg%3E");
+            }
+            uicursor {
+                display: block;
+                position: absolute;
+                width: 2vh;
+                height: 2vh;
+                background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PHBhdGggZmlsbD0iI2FlMGYxMiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMzAgNzNMMCAxMDBWMGwxMDAgMTAwLTcwLTI3ek05IDgwbDE5LTE3IDM3IDE0TDkgMjF2NTl6Ii8+PC9zdmc+");
+                z-index: 999;
             }
             panel {
                 font-family: "adam";
@@ -224,6 +232,8 @@
             }
         </style>
 
+        <uicursor style="left: 10vw; top: 20vh;"></uicursor>
+
         <panel class="filled" style="top: 50%;left:50%;transform: translate(-50%, -50%);background-color: transparent;z-index: 9999;">
 
         </panel>
@@ -334,5 +344,12 @@
                 </svg>
             </div>
         </div>
+        <panel style="top: 10vh;left: 20vh;width: 20vw;height:40vh" class="filled">
+
+            <uiheading>Hello</uiheading>
+            <panel style="top: 15vh;left: 0;width: 20vw;height:40vh" class="filled">
+                sda
+            </panel>
+        </panel>
     </body>
 </html>
