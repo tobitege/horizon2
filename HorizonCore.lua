@@ -25,18 +25,32 @@ function HorizonDelegate(eventType)
     end
 
     function this.Call(...)
-        for currentPriority=0,5 do
-            for i=1,#this.Delegates do
-                local deltaTime = system.getTime() - lastTime
-                if this.Delegates[i].Enabled and this.Delegates[i].Priority == currentPriority then 
-                    local _, err = pcall(this.Delegates[i], eventType, deltaTime, ...)
-                    if err then
-                        Horizon.Event.Error.Call(err)
+        local anonymous = {}
+        local deltaTime = system.getTime() - lastTime
+        for currentPriority = 0, 5 do
+            for i = 1, #this.Delegates do
+                if type(this.Delegates[i]) == "function" 
+                    or this.Delegates[i].Enabled 
+                    and this.Delegates[i].Priority == currentPriority then
+                    local block = false
+                    for k, v in pairs(anonymous) do
+                        if v == this.Delegates[i] then
+                            block = true
+                        end
+                    end
+                    if not block then
+                        local _, err = pcall(this.Delegates[i], eventType, deltaTime, ...)
+                        if type(this.Delegates[i]) == "function" then
+                            table.insert(anonymous, this.Delegates[i])
+                        end
+                        if err then
+                            Horizon.Event.Error.Call(err)
+                        end
                     end
                 end
-                lastTime = system.getTime()
             end
         end
+        lastTime = system.getTime()
     end
 
     function this.Count() return #this.Delegates end
@@ -100,7 +114,8 @@ Horizon = (function (slotContainer)
         MouseMove = HorizonDelegate("mousemove"),
         Stop = HorizonDelegate("stop"),
         Error = HorizonDelegate("error"),
-        MouseWheel = HorizonDelegate("mousewheel")
+        MouseWheel = HorizonDelegate("mousewheel"),
+        Click = HorizonDelegate("click")
     }
     this.Version = "2.0.1a RC1 CI_COMMIT_BRANCH CI_COMMIT_SHORT_SHA"
 
