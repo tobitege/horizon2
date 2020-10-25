@@ -1,12 +1,5 @@
-ReadingsModule =
-    (function()
-    local this =
-        HorizonModule(
-        "Ship Readings",
-        "Gathers ship and environment data and makes it available to other modules",
-        "PreFlush",
-        true
-    )
+ReadingsModule = (function()
+    local this = HorizonModule("Ship Readings", "Gathers ship and environment data and makes it available to other modules", "PreFlush", true)
     this.Tags = "system,readings"
     this.Config.Version = "CI_FILE_LAST_COMMIT"
 
@@ -40,7 +33,7 @@ ReadingsModule =
         World.AngularAirFriction = vec3(core.getWorldAirFrictionAngularAcceleration())
 
         -- Ship
-        Ship.Altitude = core.getAltitude()
+        Ship.Altitude = vec3(core.getAltitude())
         Ship.Id = core.getConstructId()
         Ship.Mass = core.getConstructMass()
         Ship.CrossSection = core.getConstructCrossSection()
@@ -74,21 +67,11 @@ ReadingsModule =
             Left = math.abs(tkRight[2 + tkOffset] - virtualGravityEngine.x)
         }
 
-        Ship.Pitch = math.asin(World.Vertical:dot(World.Forward)) * -constants.rad2deg
-        Ship.Roll = math.asin(World.Vertical:dot(World.Right)) * constants.rad2deg
-
-        local forward = vec3(World.Forward:project_on_plane(World.Vertical)):normalize()
-        local right = vec3(World.Right:project_on_plane(World.Vertical)):normalize()
-        local north = vec3(vec3(0, 0, 1):project_on_plane(World.Vertical)):normalize()
-        local angleUp = World.Up:dot(World.Vertical)
-        if angleUp > 0 then right = -right end
-        local angleForward = math.acos(forward:dot(north)) * constants.rad2deg
-        local angleRight = math.acos(right:dot(north)) * constants.rad2deg
-
-        Ship.Yaw = angleForward
-        if angleRight < 90 then
-            Ship.Yaw = (180 - angleForward) + 180
-        end
+        local localGrav = vec3(library.systemResolution3({World.Right:unpack()}, {World.Forward:unpack()}, {World.Up:unpack()}, {World.Vertical:unpack()}))
+        local localVert = vec3(library.systemResolution3({(World.Vertical:cross(World.Forward)):unpack()}, {World.Forward:unpack()}, {World.Vertical:unpack()}, {vec3(0,0,1):unpack()}))
+        Ship.Yaw = (math.atan(-localVert.x, localVert.y) * constants.rad2deg) % 360
+        Ship.Pitch = 180 - (math.atan(localGrav.y, localGrav.z) * constants.rad2deg)
+        Ship.Roll = 180 - (math.atan(localGrav.x, localGrav.z) * constants.rad2deg)
 
         -- Local
         Local.Velocity = vec3(core.getVelocity())
