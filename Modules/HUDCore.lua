@@ -21,12 +21,14 @@ CSS =
       --glow: 0 0 0.25vw 0.05vw var(--primary);
       --text-glow: 0 0 0.25vw var(--primary);
       --spacing: 0.25em;
-      --warning: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-10 -10 120 120' preserveAspectRatio='xMidYMid meet'%3E%3Cpath d='M0 100 L50 0 L100 100 L0 100 L50 0' stroke='%23ae0f12' stroke-width='10' fill='none' /%3E%3Crect x='45' y='32' width='10' height='40' fill='%23ae0f12' /%3E%3Ccircle cx='50' cy='85' r='6' fill='%23ae0f12' /%3E%3C/svg%3E");
     }
     * {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+    svg {
+        position: relative !important;
     }
     uicursor {
         display: block;
@@ -204,30 +206,13 @@ CSS =
         border-left: var(--border);
         border-right: var(--border);
     }
-    warning {
-        display: inline-block;
-        background: var(--warning) no-repeat center center;
-        margin-bottom: 0.1em;
-        height: 0.9em;
-        width: 1em;
-        vertical-align: bottom;
-    }
-    warning::after {
-        content: "";
-        display: inline-block;
-        position: absolute;
-        height: 0.9em;
-        width: 1em;
-        background: var(--warning) no-repeat center center;
-        filter: blur(0.1em);
-    }
 ]]
 
-HUDObject = function(x, y, width, height, content)
+UIObject = function(x, y, width, height, content)
     local this = {}
     local vec2 = require("cpml/vec2")
     local typeof = require("pl/types").type
-    setmetatable(this, {_name = "HUDObject"})
+    setmetatable(this, {_name = "UIObject"})
     this.Enabled = false
     this.Name = nil
     this.AlwaysDirty = false
@@ -256,7 +241,7 @@ HUDObject = function(x, y, width, height, content)
     }
     this.IsClickable = true
 
-    this.HUD = Horizon.GetModule("HUD Core")
+    this.UI = nil
     this.Horizon = Horizon
 
     this.GUID =
@@ -283,10 +268,9 @@ HUDObject = function(x, y, width, height, content)
         selfPos.x = selfPos.x + this.Padding
         selfPos.y = selfPos.y + this.Padding
 
-        if
-            pos.x >= selfPos.x and pos.x <= selfPos.x + this.Width and pos.y >= selfPos.y and
-                pos.y <= selfPos.y + this.Height
-         then
+        if pos.x >= selfPos.x and pos.x <= selfPos.x + this.Width and pos.y >= selfPos.y and
+            pos.y <= selfPos.y + this.Height
+        then
             return true
         end
         return false
@@ -296,7 +280,7 @@ HUDObject = function(x, y, width, height, content)
         local pos = this.Position + this.Offset
         if this.Parent then
             pos = pos + this.Parent.GetAbsolutePos()
-            local pad = this.HUD.TransformSize(this.Parent.Padding)
+            local pad = this.UI.TransformSize(this.Parent.Padding)
             pos = pos + pad
         end
         return pos
@@ -306,7 +290,8 @@ HUDObject = function(x, y, width, height, content)
         if this.Parent ~= nil then
         -- Recalc pos,size based on anchoring, set IsDirty if changed
         end
-        if this.Contains(this.HUD.MousePos) then
+        
+        if this.Contains(this.UI.MousePos) then
             if not this.IsHovered then
                 this.IsHovered = true
                 this.IsDirty = true
@@ -323,13 +308,14 @@ HUDObject = function(x, y, width, height, content)
         this.OnUpdate(this)
 
         for _, v in ipairs(this.Children) do
+            if v.UI == nil then v.UI = this.UI or this.Parent.UI end
             v._update()
         end
     end
 
     function this.AddChild(child)
-        if typeof(child) ~= "HUDObject" then
-            error("Trying to add a non-HUDObject")
+        if typeof(child) ~= "UIObject" then
+            error("Trying to add a non-UIObject")
             return
         end
         for k, v in ipairs(this.Children) do
@@ -339,16 +325,18 @@ HUDObject = function(x, y, width, height, content)
             end
         end
         child.Parent = this
+        child.UI = this.UI
         this.Children[#this.Children + 1] = child
     end
 
     function this.RemoveChild(child)
-        if typeof(child) ~= "HUDObject" then
-            error("Trying to remove a non-HUDObject")
+        if typeof(child) ~= "UIObject" then
+            error("Trying to remove a non-UIObject")
             return
         end
         for k, v in ipairs(this.Children) do
             if v.GUID == child.GUID then
+                v.UI = nil
                 v.Parent = nil
                 table.remove(this.Children, k)
                 v.Offset = {
@@ -396,16 +384,16 @@ HUDObject = function(x, y, width, height, content)
     return this
 end
 
-HUDPanel = function(x, y, width, height, content)
-    local this = HUDObject(x, y, width, height, content)
+UIPanel = function(x, y, width, height, content)
+    local this = UIObject(x, y, width, height, content)
     this._wrapStart =
         [[<panel style="position:absolute;left:$(GetAbsolutePos().x)vw;top:$(GetAbsolutePos().y)vh;width:$(Width)vw;height:$(Height)vh;z-index:$(Zindex);$(Style)" class="$(Class)">]]
     this._wrapEnd = [[</panel>]]
     return this
 end
 
-HUDExpandable = function(x, y, content)
-    local this = HUDPanel(x, y, width, height, content)
+UIExpandable = function(x, y, content)
+    local this = UIPanel(x, y, width, height, content)
     this.Width = 0
     this.Height = 0
 
@@ -427,7 +415,7 @@ HUDExpandable = function(x, y, content)
             end
         end
         if this.IsDirty then
-            local pad = this.HUD.TransformSize(this.Padding) * 2
+            local pad = this.UI.TransformSize(this.Padding) * 2
             this.Width = maxWidth + pad.x
             this.Height = maxHeight + pad.y
         end
@@ -437,8 +425,8 @@ HUDExpandable = function(x, y, content)
     return this
 end
 
-HUDFillHorizontal = function(x, y, width, height, content)
-    local this = HUDPanel(x, y, width, height, content)
+UIFillHorizontal = function(x, y, width, height, content)
+    local this = UIPanel(x, y, width, height, content)
 
     local baseUpdate = this._update
     function this._update()
@@ -455,27 +443,23 @@ HUDFillHorizontal = function(x, y, width, height, content)
     return this
 end
 
-HUDCore =
-    (function(CSS)
+UICore = function(adapter, CSS)
     local template = require("pl/template")
-    local this = HorizonModule("HUD Core", "Heads Up Display core driver","PostUpdate", true, 5)
+    local this = {}
+    setmetatable(this, {__call = function(ref, ...) ref.Update(...) end, _name = "UICore" })
     local vec2 = require("cpml/vec2")
     local typeof = require("pl/types").type
     this.Tags = "hud,core"
-    this.Config = {
-        EnableMouse = true,
-        MouseSensitivity = 1.2,
-        ScreenSize = vec2(2560, 1440)
-    }
+    this.Config = adapter.Config
     this.Widgets = {}
-    this.CSS = CSS
+    this.CSS = CSS or ""
+    this.Adapter = adapter
 
     local header = ""
     if this.CSS then
         header = "<style>" .. this.CSS .. "</style>"
     end
 
-    local MousePos = vec2(this.Config.ScreenSize.x * 0.5, this.Config.ScreenSize.y * 0.5)
     this.MousePos = vec2(this.Config.ScreenSize.x * 0.5, this.Config.ScreenSize.y * 0.5)
 
     system.showScreen(1)
@@ -489,40 +473,18 @@ HUDCore =
         return false
     end
 
-    local function xform(pos)
-        return vec2((pos.x / this.Config.ScreenSize.x) * 100, (pos.y / this.Config.ScreenSize.y) * 100)
-    end
-
-    function processMouse(x, y)
-        MousePos.x = MousePos.x + (x * this.Config.MouseSensitivity)
-        MousePos.y = MousePos.y + (y * this.Config.MouseSensitivity)
-        if MousePos.x < 0 then
-            MousePos.x = 0
-        end
-        if MousePos.x > this.Config.ScreenSize.x then
-            MousePos.x = this.Config.ScreenSize.x
-        end
-        if MousePos.y < 0 then
-            MousePos.y = 0
-        end
-        if MousePos.y > this.Config.ScreenSize.y then
-            MousePos.y = this.Config.ScreenSize.y
-        end
-        this.MousePos = xform(MousePos)
-    end
-
     function this.TransformSize(size)
-        return vec2(size, size + ((size / HUDCore.Config.ScreenSize.y) * 1000))
+        return vec2(size, size + ((size / this.Config.ScreenSize.y) * 1000))
     end
 
     function this.Update(eventType, deltaTime)
-        processMouse(system.getMouseDeltaX(), system.getMouseDeltaY())
+        this.MousePos = this.Adapter.GetMouse()
         local buffer = header .. [[<div id="horizon">]]
         for k, v in ipairs(this.Widgets) do
             v._update()
             buffer = buffer .. v.Render(v)
         end
-        system.setScreen(buffer .. "</div>")
+        this.Adapter.Set(buffer .. "</div>")
     end
 
     local function getContained(objArray, targetArr)
@@ -554,7 +516,7 @@ HUDCore =
     end
 
     function this.AddWidget(widget)
-        if typeof(widget) ~= "HUDObject" then
+        if typeof(widget) ~= "UIObject" then
             return
         end
         for k, v in ipairs(this.Widgets) do
@@ -562,15 +524,17 @@ HUDCore =
                 return
             end
         end
+        widget.UI = this
         table.insert(this.Widgets, widget)
     end
 
     function this.RemoveWidget(widget)
-        if typeof(widget) ~= "HUDObject" then
+        if typeof(widget) ~= "UIObject" then
             return
         end
         for k, v in ipairs(this.Widgets) do
             if v.GUID == widget.GUID then
+                v.UI = nil
                 table.remove(this.Widgets, k)
                 return
             end
@@ -587,33 +551,135 @@ HUDCore =
     end
 
     return this
-end)(CSS)
-Horizon.RegisterModule(HUDCore)
-
-local cursor = HUDObject(50, 50)
-cursor.OnUpdate = function(this)
-    this.Position.x = HUDCore.MousePos.x
-    this.Position.y = HUDCore.MousePos.y
-    this.IsDirty = true
 end
-cursor.Content =
-    [[
-<uicursor style="left: $(Position.x)vw;top: $(Position.y)vh">
-	<svg xmlns="http://www.w3.org/2000/svg" stroke="black" stroke-width="1" preserveAspectRatio="xMidYMid" viewBox="0 0 100 100"><path fill="#ae0f12" fill-rule="evenodd" d="M30 73L0 100V0l100 100-70-27zM9 80l19-17 37 14L9 21v59z"/></svg>
-</uicursor>
-]]
-cursor.IsClickable = false
-HUDCore.AddWidget(cursor)
+
+DisplayAdapter = function(slot)
+    local this = {}
+    setmetatable(this, { _name = "DisplayAdapter" })
+    this.Slot = slot
+    local vec2 = require("cpml/vec2")
+    this.Config = {
+        EnableMouse = true,
+        MouseSensitivity = 1.2,
+        ScreenSize = vec2(2560, 1440)
+    }
+    this.Enable = function() end
+    this.Disable = function() end
+    this.Set = function(content) end
+    this.GetMouse = function() end
+    return this
+end
+
+SystemDisplay = (function(system)
+    local this = DisplayAdapter(system)
+    local vec2 = require("cpml/vec2")
+    this.Config = {
+        EnableMouse = true,
+        MouseSensitivity = 1.2,
+        ScreenSize = vec2(2560, 1440)
+    }
+    this.Config.MousePos = vec2(this.Config.ScreenSize.x * 0.5, this.Config.ScreenSize.y * 0.5)
+    this.Enable = function() system.showScreen(1) end
+    this.Disable = function() system.showScreen(0) end
+    this.Set = function(content) system.setScreen(content) end
+    local mousePos = vec2(50,50)
+    local function xform(pos)
+        return vec2((pos.x / this.Config.ScreenSize.x) * 100, (pos.y / this.Config.ScreenSize.y) * 100)
+    end
+
+    local function processMouse(x, y)
+        mousePos = mousePos + (vec2(x, y) * this.Config.MouseSensitivity)
+        if mousePos.x < 0 then
+            mousePos.x = 0
+        end
+        if mousePos.x > this.Config.ScreenSize.x then
+            mousePos.x = this.Config.ScreenSize.x
+        end
+        if mousePos.y < 0 then
+            mousePos.y = 0
+        end
+        if mousePos.y > this.Config.ScreenSize.y then
+            mousePos.y = this.Config.ScreenSize.y
+        end
+        return xform(mousePos)
+    end
+    this.GetMouse = function()
+        return processMouse(system.getMouseDeltaX(), system.getMouseDeltaY())
+    end
+    return this
+end)(system)
+
+ScreenDisplay = function(screen)
+    local this = DisplayAdapter(screen)
+    local vec2 = require("cpml/vec2")
+    this.Config = {
+        EnableMouse = true,
+        MouseSensitivity = 1,
+        ScreenSize = vec2(1920, 1080)
+    }
+    local mousePos = vec2(50,50)
+    this.Enable = function() screen.enable() end
+    this.Disable = function() screen.disable() end
+    this.Set = function(content) screen.setHTML(content) end
+    this.Click = function(x, y) end
+    this.GetMouse = function()
+        mousePos.x = screen.getMouseX() * 100
+        mousePos.y = screen.getMouseY() * 100
+        return mousePos
+    end
+    return this
+end
+
+UIController = (function()
+    local this = HorizonModule("UI Controller", "UI Display Driver", "PostUpdate", true, 5)
+    this.Displays = {}
+    Horizon.HUD = Horizon.HUD or this
+    this.Update = function(deltaTime)
+        for _,v in ipairs(this.Displays) do
+            v.Update()
+        end
+    end
+
+    this.Add = function(ui)
+        table.insert(this.Displays, ui)
+    end
+
+    this.Get = function (name)
+        for _,v in ipairs(this.Displays) do
+            if v.Name == name then return v end
+        end
+    end
+
+    local handleClick = function (event, dt, ref)
+        for _,v in ipairs(this.Displays) do
+            if v.Adapter.Slot == ref then
+                v.Click()
+            end
+        end
+    end
+
+    Horizon.Event.Click.Add(handleClick)
+    return this
+end)()
+Horizon.RegisterModule(UIController)
+
+SystemUI = UICore(SystemDisplay, CSS)
+UIController.Add(SystemUI)
 
 -- Actual HUD WIP
-local Version = HUDPanel(90, 98, 10, 2)
-Version.Content = "<uilabel>Horizon " .. Horizon.Version .. "</uilabel>"
-Version.Style = "font-size: 0.85vh"
-HUDCore.AddWidget(Version)
+HUDVersion = (function()
+    local this = HorizonModule("HUD Horizon Version", "Error logging for the HUD", "Start", true, 5)
+    local hud = Horizon.GetModule("UI Controller").Displays[1]
+    local Version = UIPanel(90, 98, 10, 2)
+    Version.Content = "<uilabel>Horizon " .. Horizon.Version .. "</uilabel>"
+    Version.Style = "font-size: 0.85vh"
+    hud.AddWidget(Version)
+    return true
+end)()
 
 HUDErrorLog =
     (function()
-    local this = HorizonModule("HUD Error Log", "Error logging for the HUD","Error", true, 5)
+    local this = HorizonModule("HUD Error Log", "Error logging for the HUD", "Error", true, 5)
     local vec2 = require("cpml/vec2")
     this.Tags = "system,hud,log"
     this.Config = {
@@ -621,10 +687,10 @@ HUDErrorLog =
         Width = 30
     }
 
-    local hud = Horizon.GetModule("HUD Core")
+    local hud = Horizon.GetModule("UI Controller").Displays[1]
     local rollXform = hud.TransformSize(1)
 
-    local base = HUDExpandable(this.Config.Position.x - (this.Config.Width * 0.5), this.Config.Position.y)
+    local base = UIExpandable(this.Config.Position.x - (this.Config.Width * 0.5), this.Config.Position.y)
     base.Class = "filled"
     base.Padding = 0.5
     base.Zindex = -1
@@ -638,10 +704,10 @@ HUDErrorLog =
     hud.AddWidget(base)
 
     local function createWidget(err)
-        local w = HUDPanel(0, #base.Children * rollXform.y + #base.Children, this.Config.Width - rollXform.x, rollXform.y)
+        local w = UIPanel(0, #base.Children * rollXform.y + #base.Children, this.Config.Width - rollXform.x, rollXform.y)
         w.Content = "<uilabel style='height:100%'>" .. err .. "</uilabel>"
         w.Style = "font-size: 0.85vh"
-        local closeBtn = HUDPanel(this.Config.Width - rollXform.x, 0, rollXform.x, rollXform.y)
+        local closeBtn = UIPanel(this.Config.Width - rollXform.x, 0, rollXform.x, rollXform.y)
         closeBtn.Style = "text-align: center;border: 1px solid var(--primary);background: var(--bg);font-size:1vh;"
         closeBtn.Content = "&times;"
         closeBtn.OnClick = function(ref)
@@ -679,9 +745,9 @@ HUDSimpleStats = (function()
     this.Config = {
         Position = vec2(40.75, 94),
     }
-    local hud = Horizon.GetModule("HUD Core")
+    local hud = Horizon.GetModule("UI Controller").Displays[1]
 
-    local base = HUDPanel(this.Config.Position.x, this.Config.Position.y, 18.5, 3.8)
+    local base = UIPanel(this.Config.Position.x, this.Config.Position.y, 18.5, 3.8)
     base.Memory = Horizon.Memory
     base.Round = function(num, numDecimalPlaces)
         local mult = 10^(numDecimalPlaces or 0)
@@ -700,7 +766,7 @@ HUDSimpleStats = (function()
     end
 
     local rollXform = hud.TransformSize(1.3)
-    local velocity = HUDPanel(0,0,5.5,rollXform.y)
+    local velocity = UIPanel(0,0,5.5,rollXform.y)
     velocity.AlwaysDirty = true
     velocity.OnUpdate = function()
         velocity.Number = splitNumber(Horizon.Memory.Static.World.Velocity:len()*3.6)
@@ -708,7 +774,7 @@ HUDSimpleStats = (function()
     velocity.Content = [[<uilabel style="width: 100%;height:100%">V $(Number.Major)<sup>$(Number.Minor)</sup> km/h</uilabel>]]
     base.AddChild(velocity)
 
-    local dV = HUDPanel(6,0,5.5,rollXform.y)
+    local dV = UIPanel(6,0,5.5,rollXform.y)
     dV.AlwaysDirty = true
     dV.OnUpdate = function()
         dV.Number = splitNumber(Horizon.Memory.Static.World.Acceleration:len()*3.6)
@@ -716,7 +782,7 @@ HUDSimpleStats = (function()
     dV.Content = [[<uilabel style="width: 100%;height:100%">ΔV $(Number.Major)<sup>$(Number.Minor)</sup> km/h</uilabel>]]
     base.AddChild(dV)
 
-    local vV = HUDPanel(12,0,5.5,rollXform.y)
+    local vV = UIPanel(12,0,5.5,rollXform.y)
     vV.AlwaysDirty = true
     vV.OnUpdate = function()
         vV.Number = splitNumber(Horizon.Memory.Static.World.VerticalVelocity)
@@ -741,9 +807,9 @@ HUDArtificialHorizon = (function()
     --style="transform: translateY(-50%) translateY($(Height*0.5)vh) rotate($(-Memory.Ship.Roll)deg) scale(1.5)"
     local horizonSVG = [[<svg xmlns="http://www.w3.org/2000/svg" style="transform: translateY(-50%) translateY($(Height*0.5)vh) rotate($(-Memory.Ship.Roll)deg) scale(1.5)" viewBox="0 0 600 24.25"><path fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width=".25" d="M600 12.13H340l-20-12h-40l-20 12-260 .5"/><path fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width=".25" d="M0 12.13h260l20 12h40l20-12h260"/><path fill="#fff" d="M280 3.2l-15.13 8.93L280 20.54l-14.47-8.41L280 3.2zM320 3.2l15.13 8.93L320 20.54l14.47-8.41L320 3.2z"/><path fill="#fff" stroke="#fff" stroke-miterlimit="10" stroke-opacity=".4" stroke-width=".25" d="M265.53 12.13h68.94"/></svg>]]
 
-    local hud = Horizon.GetModule("HUD Core")
+    local hud = Horizon.GetModule("UI Controller").Displays[1]
     local rollXform = hud.TransformSize(22)
-    local roll = HUDPanel(50 - (rollXform.x * 0.5), 50 - (rollXform.y * 0.5), rollXform.x, rollXform.y)
+    local roll = UIPanel(50 - (rollXform.x * 0.5), 50 - (rollXform.y * 0.5), rollXform.x, rollXform.y)
     roll.Round = function(num, numDecimalPlaces)
         local mult = 10^(numDecimalPlaces or 0)
         return math.floor(num * mult + 0.5) / mult
@@ -756,7 +822,7 @@ HUDArtificialHorizon = (function()
                         <panel style="position:fixed;width:$(Width)vw;height:$(Height)vh;-webkit-mask-image:-webkit-linear-gradient(bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 60%)">]]..
                     rollSVG..
                     [[</panel>]]
-    local rollText = HUDPanel((rollXform.x * 0.5) - 1.99, rollXform.y, 4,4)
+    local rollText = UIPanel((rollXform.x * 0.5) - 1.99, rollXform.y, 4,4)
     rollText.Memory = Horizon.Memory.Static
     rollText.Transform = function(roll)
         if roll > 180 then roll = roll - 360 end
@@ -772,7 +838,7 @@ HUDArtificialHorizon = (function()
     roll.AddChild(rollText)
 
     local pitchXform = hud.TransformSize(30)
-    local pitch = HUDPanel(50 - (pitchXform.x * 0.5),50 - (pitchXform.y * 0.5),pitchXform.x,pitchXform.y)
+    local pitch = UIPanel(50 - (pitchXform.x * 0.5),50 - (pitchXform.y * 0.5), pitchXform.x, pitchXform.y)
     pitch.Memory = Horizon.Memory.Static
     pitch.AlwaysDirty = true
     pitch.Style = [[-webkit-mask-image: -webkit-radial-gradient(rgba(0,0,0,1) 25%, rgba(0,0,0,0) 40%)]]
@@ -786,7 +852,7 @@ HUDArtificialHorizon = (function()
         </panel>
     ]]
 
-    local pitchText = HUDPanel((pitchXform.x * 0.5) - 2,(pitchXform.y * 0.5) + 1.5, 4,3)
+    local pitchText = UIPanel((pitchXform.x * 0.5) - 2,(pitchXform.y * 0.5) + 1.5, 4,3)
     pitchText.AlwaysDirty = true
     pitchText.Memory = Horizon.Memory.Static
     pitchText.Transform = function(pitch)
