@@ -28,6 +28,7 @@ InertialDampeningModule = (function()
         dynamicShip.Thrust = dynamicShip.Thrust - delta
     end
 
+    Horizon.Emit.Subscribe("InertialDamping", function(evt, keyDown) if keyDown then this.ToggleEnabled() end end)
 
     return this
 end)()

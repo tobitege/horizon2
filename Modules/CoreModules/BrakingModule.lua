@@ -15,8 +15,9 @@ BrakingModule = (function()
         local dship = Horizon.Memory.Dynamic.Ship
         
         dship.Thrust = -world.Velocity * ship.Mass * deltaTime
-        time = system.getTime()
     end
+
+    Horizon.Emit.Subscribe("Brake", function() this.ToggleEnabled() end)
 
     return this
 end)()
