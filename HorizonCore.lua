@@ -106,6 +106,46 @@ function HorizonDelegate(eventType)
     return this
 end
 
+function EventEmitter()
+    local this = {}
+    this.Subscribed = {}
+
+    this.Subscribe = function(filter, callback)
+        if type(callback) ~= "function" then error("Attempting to add a non-function callback to EventEmitter") end
+        if not this.Subscribed[filter] then
+            this.Subscribed[filter] = {}
+        end
+        table.insert(this.Subscribed[filter], callback)
+    end
+    this.Add = this.Subscribe
+
+    this.Unsubscribe = function(callback)
+        for evtName,evt in pairs(this.Subscribed) do
+            for key,cb in ipairs(evt) do
+                if cb == callback then
+                    table.remove(evt,key)
+                end
+            end
+        end
+    end
+    this.Remove = this.Unsubscribe
+
+    this.Call = function(event, ...)
+        event = string.lower(event)
+        for evtName,evt in pairs(this.Subscribed) do
+            local ename = string.lower(evtName)
+            local match = string.match(event, ename)
+            if match then
+                for _,cb in ipairs(evt) do cb(event, ...) end
+            end
+        end
+    end
+
+    setmetatable(this, { __call = function(ref, ...) this.Call(...) end })
+
+    return this
+end
+
 --@require SlotDetector
 local slots = SlotDetector.DetectSlotsInNamespace(_G)
 Horizon = (function (slotContainer)
@@ -152,6 +192,9 @@ Horizon = (function (slotContainer)
         Click = HorizonDelegate("click")
     }
     this.Version = "2.0.1a RC1 CI_COMMIT_BRANCH CI_COMMIT_SHORT_SHA"
+
+
+    this.Emit = EventEmitter()
 
     setmetatable(this.Slots, {__index={}, __newindex=function() end})
     setmetatable(this.Memory.Static, {__index={}, __newindex=function() end})
