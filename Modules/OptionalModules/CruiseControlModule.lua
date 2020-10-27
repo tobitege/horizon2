@@ -14,13 +14,11 @@ CruiseControlModule = (function()
         local dship = Horizon.Memory.Dynamic.Ship
         
         dship.Thrust = dship.Thrust + world.Forward * ship.MaxKinematics.Forward
-
-        --[[if dship.MoveDirection.x ~= 0 or dship.MoveDirection.y ~= 0 or dship.MoveDirection.z ~= 0 then
-            this.Disable()
-        end]]
-
     end
-
+    
+    Horizon.Emit.Subscribe("CruiseControl", function() this.ToggleEnabled() end)
+    Horizon.Emit.Subscribe("Move.Direction.*", function() this.Disable() end)
+    
     return this
 end)()
 Horizon.RegisterModule(CruiseControlModule)

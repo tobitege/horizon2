@@ -6,7 +6,7 @@
 --@require ReadingsModule
 
 BrakingModule = (function() 
-    local this = HorizonModule("Velocity Braking", "When enabled, negates all ship velocity", "PreFlush", false, 5)
+    local this = HorizonModule("Velocity Braking", "When enabled, negates all ship velocity", "PostFlush", false, 5)
     this.Tags = "thrust,braking"
 
     function this.Update(eventType, deltaTime)

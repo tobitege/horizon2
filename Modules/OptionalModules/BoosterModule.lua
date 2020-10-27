@@ -12,6 +12,8 @@ BoosterModule = (function()
         this.Enabled = false
     end
 
+    Horizon.Emit.Subscribe("Boost", function() this.ToggleEnabled() end)
+
     return this
 end)()
 Horizon.RegisterModule(BoosterModule)

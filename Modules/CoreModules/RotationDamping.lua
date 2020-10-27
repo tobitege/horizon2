@@ -5,7 +5,7 @@ RotationDamping = (function()
     function this.Update(eventType, deltaTime)
         local staticWorld = Horizon.Memory.Static.World
         local dynamicShip = Horizon.Memory.Dynamic.Ship
-
+        
         dynamicShip.Rotation = dynamicShip.Rotation - ((staticWorld.AngularVelocity * 2) - (staticWorld.AngularAirFriction * 2))
     end
 

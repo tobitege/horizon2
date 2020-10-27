@@ -1,15 +1,15 @@
--- { event, keyDownOnly }
+-- { event, isToggle }
 Config = {
     antigravity = nil, --Default bind Alt-G
 
-    forward = { {"Move.Linear.Forward"} },
-    backward = { {"Move.Linear.Backward"} },
-    yawleft = { {"Move.Linear.Left"} },
-    yawright = { {"Move.Linear.Right"} },
-    up = { {"Move.Linear.Up"} },
-    down = { {"Move.Linear.Down"} },
-    left = { {"Move.Angular.RollLeft"} },
-    right = { {"Move.Angular.RollRight"}  },
+    forward = { {"Move.Direction.Forward"} },
+    backward = { {"Move.Direction.Backward"} },
+    yawleft = { {"Move.Direction.Left"} },
+    yawright = { {"Move.Direction.Right"} },
+    up = { {"Move.Direction.Up"} },
+    down = { {"Move.Direction.Down"} },
+    left = { {"Move.Rotation.RollLeft"} },
+    right = { {"Move.Rotation.RollRight"}  },
     brake = { {"Brake"} },
 
     booster = { {"Booster"} }, --Default bind B
@@ -22,7 +22,7 @@ Config = {
     option1 = { {"CruiseControl", true} },
     option2 = { {"InertialDamping", true} },
     option3 = { {"GravityCounter", true} },
-    option4 = { {"SoftLanding", true} },
+    option4 = { {"GravityFollow", true} },
     option5 = nil,
     option6 = nil,
     option7 = nil,
@@ -65,7 +65,7 @@ KeybindsModule = (function()
                 --For each keybind defined
                 for _,command in ipairs(event) do
                     local eventName = command[1]
-                    local keyUpOnly = command[2]
+                    local keyDownOnly = command[2]
                     if (not keyDownOnly) or (isKeyDown and keyDownOnly) then
                         Horizon.Emit(eventName, isKeyDown)
                     end
