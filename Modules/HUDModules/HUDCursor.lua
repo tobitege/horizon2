@@ -3,6 +3,7 @@ HUDCursor = (function()
     this.Tags = "hud"
 
     local hud = Horizon.GetModule("UI Controller").Displays[1]
+    local vec2 = require("cpml/vec2")
 
     local cursorSVG = [[<svg viewBox="0 0 90 100"><g data-name="Layer 2"><path fill="#fff" d="M0 0v100l29.49-22.67L90 90 0 0z" opacity=".5"/><path d="M.25.6l89 89-59.71-12.52h-.05a.25.25 0 00-.15 0L.25 99.49V.6M0 0v100l29.49-22.67L90 90 0 0z" opacity=".3"/></g></svg>]]
 
@@ -20,7 +21,13 @@ HUDCursor = (function()
     hud.AddWidget(cursor)
 
     Horizon.Emit.Subscribe("HUD.Click", function()
-        hud.Click()
+        system.print("click")
+        local pos = nil
+        if not cursor.Enabled then
+            pos = vec2(hud.Config.ScreenSize.x * 0.5, hud.Config.ScreenSize.y * 0.5)
+        end
+        system.print(tostring(pos))
+        hud.Click(pos)
     end)
 
     Horizon.Emit.Subscribe("HUD.Cursor.Toggle", function()
