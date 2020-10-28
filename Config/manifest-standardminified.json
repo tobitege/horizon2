@@ -1,0 +1,7 @@
+{
+    "MainFile": "Main_StandardBuild.lua",
+    "Minify": true,
+    "OutputFilename": "Standard.json",
+    "Resources": []
+  }
+  
