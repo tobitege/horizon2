@@ -43,7 +43,7 @@ ManeuverFlightMode = (function()
         event = string.lower(event)
         local property = string.match(event, '%.([^%.]*)%.')
         local direction = string.match(event, '%.([^%.]*)$')
-        if movement[property][direction] then
+        if movement[property] and movement[property][direction] then
             local sign = 1
             if not keyDown then sign = -1 end
             if property == "direction" then
@@ -51,6 +51,9 @@ ManeuverFlightMode = (function()
             else
                 this.Rotation = this.Rotation + (movement[property][direction] * sign)
             end
+        else
+            this.Direction = vec3(0,0,0)
+            this.Rotation = vec3(0,0,0)
         end
     end
 
@@ -91,7 +94,7 @@ ManeuverFlightMode = (function()
             thrustToApply = thrustToApply + (-world.Right * stats.MaxKinematics.Left)
         end
 
-        ship.Thrust = ship.Thrust:normalize() + (thrustToApply * this.Config.Throttle)
+        ship.Thrust = ship.Thrust + (thrustToApply * this.Config.Throttle)
         ship.Rotation = ship.Rotation + ((world.Forward * this.Rotation.y) * this.Config.TurnSpeed)
 
         ship.MoveDirection = this.Direction
