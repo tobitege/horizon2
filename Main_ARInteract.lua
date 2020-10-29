@@ -11,7 +11,7 @@
 --@require HUDVersion
 --@require ARInteract
 
---@class Main
+--@class ARMain
 
 _G.BuildUnit = {}
 local Unit = _G.BuildUnit
