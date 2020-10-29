@@ -18,6 +18,7 @@ CruiseControlModule = (function()
     
     Horizon.Emit.Subscribe("CruiseControl", function() this.ToggleEnabled() end)
     Horizon.Emit.Subscribe("Move.Direction.*", function() this.Disable() end)
+    Horizon.Emit.Subscribe("Brake", function() this.Disable() end)
     
     return this
 end)()
