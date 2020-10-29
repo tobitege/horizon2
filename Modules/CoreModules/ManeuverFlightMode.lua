@@ -94,7 +94,7 @@ ManeuverFlightMode = (function()
             thrustToApply = thrustToApply + (-world.Right * stats.MaxKinematics.Left)
         end
 
-        ship.Thrust = ship.Thrust + (thrustToApply * this.Config.Throttle)
+        ship.Thrust = ship.Thrust + ((thrustToApply * this.Config.Throttle) / stats.Mass)
         ship.Rotation = ship.Rotation + ((world.Forward * this.Rotation.y) * this.Config.TurnSpeed)
 
         ship.MoveDirection = this.Direction
