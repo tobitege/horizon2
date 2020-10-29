@@ -37,7 +37,7 @@ ReadingsModule = (function()
         World.AngularAirFriction = vec3(core.getWorldAirFrictionAngularAcceleration())
 
         -- Ship
-        Ship.Altitude = vec3(core.getAltitude())
+        Ship.Altitude = core.getAltitude()
         Ship.Id = core.getConstructId()
         Ship.Mass = core.getConstructMass()
         Ship.CrossSection = core.getConstructCrossSection()
