@@ -1,3 +1,6 @@
+--@class HUDCursor
+--@require UI
+
 HUDCursor = (function() 
     local this = HorizonModule("HUD Cursor", "Allows HUD interaction", "Start", true)
     this.Tags = "hud"
@@ -21,12 +24,10 @@ HUDCursor = (function()
     hud.AddWidget(cursor)
 
     Horizon.Emit.Subscribe("HUD.Click", function()
-        system.print("click")
         local pos = nil
         if not cursor.Enabled then
             pos = vec2(hud.Config.ScreenSize.x * 0.5, hud.Config.ScreenSize.y * 0.5)
         end
-        system.print(tostring(pos))
         hud.Click(pos)
     end)
 
@@ -37,4 +38,3 @@ HUDCursor = (function()
     return this
 end
 )()
-Horizon.RegisterModule(HUDCursor)

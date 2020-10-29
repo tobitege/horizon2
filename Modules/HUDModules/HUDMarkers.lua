@@ -1,4 +1,7 @@
+--@class HUDMarkers
+--@require UI
 --@require UnitConversion
+
 ARMarker = function(pos, name)
     local this = {}
     this.Position = pos
@@ -8,9 +11,9 @@ ARMarker = function(pos, name)
 end
 
 HUDMarkers = (function()
-    local this = HorizonModule("HUD Markers", "aR HUD Markers","PreUpdate", true, 0)
+    local this = HorizonModule("HUD Markers", "AR HUD Markers","PreUpdate", true, 0)
     local vec2 = require("cpml/vec2")
-    this.Tags = "system,hud,data"
+    this.Tags = "hud,navigation"
     this.Config = {
         FOV = 43,
         MaxDistance = 10000,
@@ -92,4 +95,3 @@ HUDMarkers = (function()
 
     return this
 end)()
-Horizon.RegisterModule(HUDMarkers)

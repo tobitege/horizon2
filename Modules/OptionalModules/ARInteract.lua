@@ -1,7 +1,10 @@
+--@class ARInteract
 --@require HUDMarkers
+--@require HUDCursor
+
 ARInteract = (function() 
     local this = HorizonModule("AR Interact", "Allows interaction between elements using emitters and receivers", "PostUpdate", true)
-    this.Tags = "hud,comms"
+    this.Tags = "hud,comms,navigation"
     this.Config = {
         Interval = 5
     }
@@ -56,4 +59,3 @@ ARInteract = (function()
     
     return this
 end)()
-Horizon.RegisterModule(ARInteract)
