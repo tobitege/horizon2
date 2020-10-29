@@ -62,4 +62,3 @@ HUDSimpleStats = (function()
 
     return this
 end)()
-Horizon.RegisterModule(HUDSimpleStats)

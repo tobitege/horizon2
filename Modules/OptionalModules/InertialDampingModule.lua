@@ -32,4 +32,3 @@ InertialDampeningModule = (function()
 
     return this
 end)()
-Horizon.RegisterModule(InertialDampeningModule)

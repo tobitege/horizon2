@@ -38,4 +38,3 @@ AltitudeHoldModule = (function()
 
     return this
 end)()
-Horizon.RegisterModule(AltitudeHoldModule)

@@ -20,4 +20,3 @@ GravityCounterModule = (function()
 
     return this
 end)()
-Horizon.RegisterModule(GravityCounterModule)

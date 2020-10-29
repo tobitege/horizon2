@@ -17,4 +17,3 @@ RotationDampeningModule = (function()
 
     return this
 end)()
-Horizon.RegisterModule(RotationDampeningModule)

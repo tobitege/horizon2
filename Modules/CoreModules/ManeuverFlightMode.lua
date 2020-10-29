@@ -102,4 +102,3 @@ ManeuverFlightMode = (function()
 
     return this
 end)()
-Horizon.RegisterModule(ManeuverFlightMode)

@@ -55,4 +55,3 @@ MouseSteeringModule = (function()
     system.lockView(1)
     return this
 end)()
-Horizon.RegisterModule(MouseSteeringModule)

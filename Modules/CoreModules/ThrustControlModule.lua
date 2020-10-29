@@ -23,4 +23,3 @@ ThrustControlModule = (function()
 
     return this
 end)()
-Horizon.RegisterModule(ThrustControlModule)

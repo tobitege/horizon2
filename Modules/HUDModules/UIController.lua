@@ -34,4 +34,3 @@ UIController = (function()
     Horizon.Event.Click.Add(handleClick)
     return this
 end)()
-Horizon.RegisterModule(UIController)

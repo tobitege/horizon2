@@ -74,4 +74,3 @@ GameHUDRemover = (function()
 
     return this
 end)()
-Horizon.RegisterModule(GameHUDRemover)

@@ -37,5 +37,7 @@ HorizonModule = function (name, description, defaultEventName, defaultEnable, pr
             Horizon.Event[defaultEventName].Remove(this)
         end
     end
+    
+    Horizon.RegisterModule(this)
     return this
 end

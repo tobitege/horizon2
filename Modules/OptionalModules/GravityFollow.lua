@@ -30,4 +30,3 @@ GravityFollow = (function()
 
     return this
 end)()
-Horizon.RegisterModule(GravityFollow)

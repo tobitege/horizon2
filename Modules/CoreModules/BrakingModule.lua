@@ -21,4 +21,3 @@ BrakingModule = (function()
 
     return this
 end)()
-Horizon.RegisterModule(BrakingModule)

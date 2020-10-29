@@ -19,4 +19,3 @@ SpeedLimiter = (function()
 
     return this
 end)()
-Horizon.RegisterModule(AtmosphericStability)
