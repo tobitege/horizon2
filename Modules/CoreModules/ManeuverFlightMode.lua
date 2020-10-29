@@ -55,7 +55,6 @@ ManeuverFlightMode = (function()
     end
 
     local function handleThrottle(event, keyDown)
-        if not keyDown then return end
         event = string.lower(event)
         local direction = string.match(event, '%.([^%.]*)$')
         if direction == "up" then
