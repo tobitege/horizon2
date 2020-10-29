@@ -1,3 +1,9 @@
+--@class HUDErrorLog
+--@require HorizonCore
+--@require HorizonModule
+--@require UIController
+--@require UICSS
+
 HUDErrorLog =
     (function()
     local this = HorizonModule("HUD Error Log", "Error logging for the HUD", "Error", true, 5)

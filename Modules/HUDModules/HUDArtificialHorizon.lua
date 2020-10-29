@@ -1,3 +1,10 @@
+--@class HUDArtificialHorizon
+--@require HorizonCore
+--@require HorizonModule
+--@require UIController
+--@require ReadingsModule
+--@require UICSS
+
 HUDArtificialHorizon = (function()
     local this = HorizonModule("HUD Artificial Horizon", "Artificial Horizon", "PreUpdate", true, 0)
     local vec2 = require("cpml/vec2")

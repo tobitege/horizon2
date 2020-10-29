@@ -1,3 +1,8 @@
+--@class UIController
+--@require HorizonCore
+--@require HorizonModule
+--@require UI
+
 UIController = (function()
     local this = HorizonModule("UI Controller", "UI Display Driver", "PostUpdate", true, 5)
     this.Displays = {}

@@ -1,3 +1,10 @@
+--@class ManeuverFlightMode
+--@require HorizonCore
+--@require HorizonModule
+--@require ThrustControlModule
+--@require KeybindsModule
+--@require ReadingsModule
+
 ManeuverFlightMode = (function() 
     local this = HorizonModule("Maneuver Flight Mode", "Flight mode that allows 6DOF movement", "Flush", true)
     this.Tags = "control,thrust,steering,input"

@@ -1,5 +1,7 @@
+--@class UICSS
 --@require UIController
 --@require UI
+
 CSS =
     [[
     #horizon {

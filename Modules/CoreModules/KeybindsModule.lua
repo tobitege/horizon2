@@ -16,8 +16,8 @@
         light = nil,
         lshift = nil,
         option1 = { {"Cruise Control", "ToggleEnabled", true} },
-        option2 = { {"Simple Inertial Dampening", "ToggleEnabled", true} },
-        option3 = { {"Gravity Suppression", "ToggleEnabled", true} },
+        option2 = { {"Inertial Dampening", "ToggleEnabled", true} },
+        option3 = { {"Gravity Counter", "ToggleEnabled", true} },
         option4 = { {"Landing Gear", "ToggleSoftland", true}  },
         option5 = nil,
         option6 = nil,
@@ -39,6 +39,9 @@
         external1 = { {"Cruise Control", "Disable", true}, {"Velocity Braking", "Enable", true} },
     }
 
+--@class KeybindsModule
+--@require HorizonCore
+--@require HorizonModule
 
 KeybindsModule = (function() 
     local this = HorizonModule("Keybinds Module", "Takes keyboard input and forwards it to the configured modules", "PreFlush", true, 1)

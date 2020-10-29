@@ -1,3 +1,10 @@
+--@class LandingModule
+--@require HorizonCore
+--@require HorizonModule
+--@require ThrustControlModule
+--@require KeybindsModule
+--@require ReadingsModule
+
 LandingModule = (function() 
     local this = HorizonModule("Landing Gear", "Allows manual or automatic landing gear activation. Also includes a soft landing function", "PostFlush", true)
     this.Config = {

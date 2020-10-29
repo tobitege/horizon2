@@ -1,4 +1,11 @@
-BreakingModule = (function() 
+--@class BrakingModule
+--@require HorizonCore
+--@require HorizonModule
+--@require ThrustControlModule
+--@require KeybindsModule
+--@require ReadingsModule
+
+BrakingModule = (function() 
     local this = HorizonModule("Velocity Braking", "When enabled, negates all ship velocity", "PreFlush", false, 5)
     this.Tags = "thrust,braking"
 
@@ -13,4 +20,4 @@ BreakingModule = (function()
 
     return this
 end)()
-Horizon.RegisterModule(BreakingModule)
+Horizon.RegisterModule(BrakingModule)
