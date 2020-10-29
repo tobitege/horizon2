@@ -9,6 +9,7 @@
 --@require HUDArtificialHorizon
 --@require HUDSimpleStats
 --@require HUDVersion
+--@require SerializationModule
 
 --@class Main
 
