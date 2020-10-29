@@ -9,7 +9,6 @@
 --@require HUDArtificialHorizon
 --@require HUDSimpleStats
 --@require HUDVersion
---@require ARInteract
 
 --@class Main
 --@outFilename Standard.json
