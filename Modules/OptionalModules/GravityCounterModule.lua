@@ -16,6 +16,8 @@ GravityCounterModule = (function()
         ship.Thrust = ship.Thrust - world.Gravity
     end
 
+    Horizon.Emit.Subscribe("GravityCounter", function() this.ToggleEnabled() end)
+
     return this
 end)()
 Horizon.RegisterModule(GravityCounterModule)
