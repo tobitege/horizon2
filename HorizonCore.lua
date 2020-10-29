@@ -120,10 +120,10 @@ function EventEmitter()
     this.Add = this.Subscribe
 
     this.Unsubscribe = function(callback)
-        for evtName,evt in pairs(this.Subscribed) do
+        for _,evt in pairs(this.Subscribed) do
             for key,cb in ipairs(evt) do
                 if cb == callback then
-                    table.remove(evt,key)
+                    table.remove(evt, key)
                 end
             end
         end
@@ -132,9 +132,9 @@ function EventEmitter()
 
     this.Call = function(event, ...)
         event = string.lower(event)
-        for evtName,evt in pairs(this.Subscribed) do
-            local ename = string.lower(evtName)
-            local match = string.match(event, ename)
+        for filter,evt in pairs(this.Subscribed) do
+            filter = string.lower(filter)
+            local match = string.match(event, "^"..filter.."$")
             if match then
                 for _,cb in ipairs(evt) do cb(event, ...) end
             end
