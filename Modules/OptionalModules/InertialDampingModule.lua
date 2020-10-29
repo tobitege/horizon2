@@ -1,5 +1,13 @@
-SimpleInertialDampening = (function() 
-    local this = HorizonModule("Simple Inertial Dampening", "Slows velocity in any direction that the user is not applying thrust to 0, ie soft braking", "PostFlush", true)
+--@class InertialDampeningModule
+--@require HorizonCore
+--@require HorizonModule
+--@require ThrustControlModule
+--@require KeybindsModule
+--@require ReadingsModule
+--@require Utils3D
+
+InertialDampeningModule = (function() 
+    local this = HorizonModule("Inertial Dampening", "Slows velocity in any direction that the user is not applying thrust to 0, ie soft braking", "PostFlush", true)
     this.Tags = "stability,thrust"
 
     function this.Update(eventType, deltaTime)
@@ -23,4 +31,4 @@ SimpleInertialDampening = (function()
 
     return this
 end)()
-Horizon.RegisterModule(SimpleInertialDampening)
+Horizon.RegisterModule(InertialDampeningModule)

@@ -1,5 +1,9 @@
-ThrustController = (function() 
-    local this = HorizonModule("Thrust Controller", "Converts horizon thrust directives to actual thruster actions", "PostFlush", true, 5)
+--@class ThrustControlModule
+--@require HorizonCore
+--@require HorizonModule
+
+ThrustControlModule = (function() 
+    local this = HorizonModule("Thrust Control", "Converts horizon thrust directives to actual thruster actions", "PostFlush", true, 5)
     this.Tags = "system,thrust"
 
     local core = Horizon.Core
@@ -19,4 +23,4 @@ ThrustController = (function()
 
     return this
 end)()
-Horizon.RegisterModule(ThrustController)
+Horizon.RegisterModule(ThrustControlModule)

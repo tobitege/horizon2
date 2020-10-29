@@ -1,3 +1,9 @@
+--@class HUDVersion
+--@require HorizonCore
+--@require HorizonModule
+--@require UIController
+--@require UICSS
+
 HUDVersion = (function()
     local this = HorizonModule("HUD Horizon Version", "Error logging for the HUD", "Start", true, 5)
     local hud = Horizon.GetModule("UI Controller").Displays[1]

@@ -1,3 +1,6 @@
+--@class HorizonCore
+--@require SlotDetector
+
 function HorizonDelegate(eventType)
     local typeof = types.type
     local this = {}

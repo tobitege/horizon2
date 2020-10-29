@@ -1,3 +1,10 @@
+--@class HUDSimpleStats
+--@require HorizonCore
+--@require HorizonModule
+--@require UIController
+--@require ReadingsModule
+--@require UICSS
+
 HUDSimpleStats = (function()
     local this = HorizonModule("HUD Simple Stats", "Simple flight stats","PreUpdate", true, 0)
     local vec2 = require("cpml/vec2")

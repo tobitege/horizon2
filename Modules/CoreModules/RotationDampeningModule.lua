@@ -1,4 +1,10 @@
-RotationDampening = (function() 
+--@class RotationDampeningModule
+--@require HorizonCore
+--@require HorizonModule
+--@require ThrustControlModule
+--@require ReadingsModule
+
+RotationDampeningModule = (function() 
     local this = HorizonModule("Rotation Dampening", "Slows rotation over time, preventing unintended spin", "PostFlush", true)
     this.Tags = "stability,rotation"
 
@@ -11,4 +17,4 @@ RotationDampening = (function()
 
     return this
 end)()
-Horizon.RegisterModule(RotationDampening)
+Horizon.RegisterModule(RotationDampeningModule)

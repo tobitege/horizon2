@@ -1,3 +1,7 @@
+--@class ReadingsModule
+--@require HorizonCore
+--@require HorizonModule
+
 ReadingsModule = (function()
     local this = HorizonModule("Ship Readings", "Gathers ship and environment data and makes it available to other modules", "PreFlush", true)
     this.Tags = "system,readings"

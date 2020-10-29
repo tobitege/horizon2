@@ -1,4 +1,8 @@
-MouseSteering = (function() 
+--@class MouseSteeringModule
+--@require HorizonCore
+--@require HorizonModule
+
+MouseSteeringModule = (function() 
     local this = HorizonModule("Mouse Steering", "Locks the mouse and redirects input to ship rotation", "Flush", true)
     this.Tags = "steering,control"
 
@@ -49,4 +53,4 @@ MouseSteering = (function()
     system.lockView(1)
     return this
 end)()
-Horizon.RegisterModule(MouseSteering)
+Horizon.RegisterModule(MouseSteeringModule)

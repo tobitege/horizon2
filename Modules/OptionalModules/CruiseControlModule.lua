@@ -1,3 +1,9 @@
+--@class CruiseControlModule
+--@require HorizonCore
+--@require HorizonModule
+--@require ThrustControlModule
+--@require KeybindsModule
+
 CruiseControlModule = (function() 
     local this = HorizonModule("Cruise Control", "When enabled forward thrust is constantly applied", "PostFlush", false)
     this.Tags = "thrust,breaking"
