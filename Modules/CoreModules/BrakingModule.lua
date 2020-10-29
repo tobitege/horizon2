@@ -6,7 +6,7 @@
 --@require ReadingsModule
 
 BrakingModule = (function() 
-    local this = HorizonModule("Velocity Braking", "When enabled, negates all ship velocity", "PreFlush", false, 5)
+    local this = HorizonModule("Velocity Braking", "When enabled, negates all ship velocity", "PostFlush", false, 5)
     this.Tags = "thrust,braking"
 
     function this.Update(eventType, deltaTime)
@@ -15,8 +15,9 @@ BrakingModule = (function()
         local dship = Horizon.Memory.Dynamic.Ship
         
         dship.Thrust = -world.Velocity * ship.Mass * deltaTime
-        time = system.getTime()
     end
+
+    Horizon.Emit.Subscribe("Brake", function() this.ToggleEnabled() end)
 
     return this
 end)()
