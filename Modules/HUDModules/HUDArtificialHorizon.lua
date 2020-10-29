@@ -86,4 +86,3 @@ HUDArtificialHorizon = (function()
 
     return this
 end)()
-Horizon.RegisterModule(HUDArtificialHorizon)

@@ -22,4 +22,3 @@ CruiseControlModule = (function()
     
     return this
 end)()
-Horizon.RegisterModule(CruiseControlModule)

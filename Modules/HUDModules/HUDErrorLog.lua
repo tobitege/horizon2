@@ -63,4 +63,3 @@ HUDErrorLog =
 
     return this
 end)()
-Horizon.RegisterModule(HUDErrorLog)

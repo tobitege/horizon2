@@ -90,4 +90,3 @@ LandingModule = (function()
 
     return this
 end)()
-Horizon.RegisterModule(LandingModule)

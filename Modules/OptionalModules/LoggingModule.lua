@@ -9,4 +9,3 @@ LoggingModule = (function()
 
     return this
 end)()
-Horizon.RegisterModule(LoggingModule)

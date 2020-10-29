@@ -95,5 +95,4 @@ KeybindsModule = (function()
 
     return this
 end)()
-Horizon.RegisterModule(KeybindsModule)
 KeybindsModule.LoadConfig(Config)

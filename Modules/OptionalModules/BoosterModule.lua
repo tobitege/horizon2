@@ -16,4 +16,3 @@ BoosterModule = (function()
 
     return this
 end)()
-Horizon.RegisterModule(BoosterModule)

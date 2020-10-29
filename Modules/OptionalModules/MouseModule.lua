@@ -14,4 +14,3 @@ MouseModule = (function()
 
     return this
 end)()
-Horizon.RegisterModule(MouseModule)

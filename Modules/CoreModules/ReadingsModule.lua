@@ -90,4 +90,3 @@ ReadingsModule = (function()
 
     return this
 end)()
-Horizon.RegisterModule(ReadingsModule)
