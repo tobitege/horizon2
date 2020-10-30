@@ -51,12 +51,13 @@ function HorizonDelegate(eventType)
                         end
                     end
                     if not block then
-                        local _, err = pcall(this.Delegates[i], eventType, deltaTime, ...)
+                        local success, err = pcall(this.Delegates[i], eventType, deltaTime, ...)
                         if type(this.Delegates[i]) == "function" then
                             table.insert(anonymous, this.Delegates[i])
                         end
-                        if err then
-                            Horizon.Event.Error.Call(err)
+                        if not success then
+                            local errorMessage = (this.Delegates[i].Name or "Unknown").."@"..eventType..": "..err
+                            Horizon.Event.Error.Call(errorMessage)
                         end
                     end
                 end
