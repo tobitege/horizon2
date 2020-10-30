@@ -27,6 +27,7 @@ HUDArtificialHorizon = (function()
         panel.Anchor = UIAnchor.Middle
         panel.AlwaysDirty = true
         panel.Memory = Horizon.Memory.Static
+        panel.Zindex = -100
         return panel, xform
     end
 
