@@ -11,6 +11,7 @@
 --@require HUDVersion
 
 --@class Main
+--@outFilename Standard.json
 
 _G.BuildUnit = {}
 local Unit = _G.BuildUnit
