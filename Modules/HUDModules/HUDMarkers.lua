@@ -1,4 +1,5 @@
 --@class HUDMarkers
+--@require Utils3D
 --@require UI
 --@require UnitConversion
 
