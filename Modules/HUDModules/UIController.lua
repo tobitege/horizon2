@@ -5,6 +5,7 @@
 
 UIController = (function()
     local this = HorizonModule("UI Controller", "UI Display Driver", "PostUpdate", true, 5)
+    this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
     this.Displays = {}
     Horizon.HUD = Horizon.HUD or this
     this.Update = function(deltaTime)

@@ -12,7 +12,7 @@ LandingModule = (function()
         DistanceLimit = 10,
         SoftLandSpeed = 0.5,
         SoftLandTimeout = 10,
-        Version = "CI_FILE_LAST_COMMIT"
+        Version = "%GIT_FILE_LAST_COMMIT%"
     }
 
     this.SoftLandEnabled = false

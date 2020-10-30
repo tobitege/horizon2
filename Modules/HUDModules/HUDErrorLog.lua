@@ -13,6 +13,7 @@ HUDErrorLog =
         Position = vec2(50, 1.8),
         Width = 30
     }
+    this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
 
     local hud = Horizon.GetModule("UI Controller").Displays[1]
     local rollXform = hud.TransformSize(1)

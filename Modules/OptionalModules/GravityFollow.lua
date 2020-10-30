@@ -4,6 +4,7 @@ GravityFollow = (function()
     this.Config = {
         AdjustSpeed = 5
     }
+    this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
     
     function this.Update(eventType, deltaTime)
         local world = Horizon.Memory.Static.World

@@ -12,6 +12,8 @@ HUDSimpleStats = (function()
     this.Config = {
         Position = vec2(40.75, 94),
     }
+    this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
+    
     local hud = Horizon.GetModule("UI Controller").Displays[1]
 
     local base = UIPanel(this.Config.Position.x, this.Config.Position.y, 18.5, 3.8)
