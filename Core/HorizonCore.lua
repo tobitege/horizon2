@@ -192,7 +192,7 @@ Horizon = (function (slotContainer)
         MouseWheel = HorizonDelegate("mousewheel"),
         Click = HorizonDelegate("click")
     }
-    this.Version = "2.0.1a RC1 CI_COMMIT_BRANCH CI_COMMIT_SHORT_SHA"
+    this.Version = "%CI_COMMIT_TAG% %CI_COMMIT_BRANCH% %CI_COMMIT_SHORT_SHA% %GIT_FILE_LAST_COMMIT%"
 
 
     this.Emit = EventEmitter()

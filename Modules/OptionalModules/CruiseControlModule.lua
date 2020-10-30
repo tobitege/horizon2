@@ -7,7 +7,8 @@
 CruiseControlModule = (function() 
     local this = HorizonModule("Cruise Control", "When enabled forward thrust is constantly applied", "PostFlush", false)
     this.Tags = "thrust,breaking"
-
+    this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
+    
     function this.Update(eventType, deltaTime)
         local world = Horizon.Memory.Static.World
         local ship = Horizon.Memory.Static.Ship

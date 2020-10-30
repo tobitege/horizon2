@@ -5,7 +5,7 @@
 ReadingsModule = (function()
     local this = HorizonModule("Ship Readings", "Gathers ship and environment data and makes it available to other modules", "PreFlush", true)
     this.Tags = "system,readings"
-    this.Config.Version = "CI_FILE_LAST_COMMIT"
+    this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
 
     local constants = require("cpml/constants")
     local memory = getmetatable(Horizon.Memory.Static).__index

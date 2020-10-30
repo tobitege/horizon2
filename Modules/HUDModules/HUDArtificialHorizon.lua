@@ -13,6 +13,7 @@ HUDArtificialHorizon = (function()
         RollSize = 22,
         PitchSize = 30
     }
+    this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
     
     Horizon.Controller.hide()
     local hud = Horizon.GetModule("UI Controller").Displays[1]

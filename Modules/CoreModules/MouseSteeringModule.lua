@@ -6,6 +6,8 @@ MouseSteeringModule = (function()
     local this = HorizonModule("Mouse Steering", "Locks the mouse and redirects input to ship rotation", "Flush", true)
     this.Tags = "steering,control"
 
+    this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
+    
     -- Config
     this.Config = {
         FlipX = false,

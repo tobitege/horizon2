@@ -50,7 +50,7 @@ KeybindsModule = (function()
     Horizon.Event.KeyUp.Add(this)
     Horizon.Event.KeyDown.Add(this)
 
-    this.Config.Version = "CI_FILE_LAST_COMMIT"
+    this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
     this.Keybinds = {}
 
     function this.LoadConfig(config)

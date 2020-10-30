@@ -5,7 +5,8 @@
 ThrustControlModule = (function() 
     local this = HorizonModule("Thrust Control", "Converts horizon thrust directives to actual thruster actions", "PostFlush", true, 5)
     this.Tags = "system,thrust"
-
+    this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
+    
     local core = Horizon.Core
     local memory = Horizon.Memory.Dynamic.Ship
     local controller = Horizon.Controller

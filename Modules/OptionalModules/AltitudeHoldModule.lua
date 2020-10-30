@@ -7,7 +7,8 @@
 AltitudeHoldModule = (function() 
     local this = HorizonModule("Altitude Hold", "When enabled a consistent altitude is maintained", "PostFlush", false)
     this.Tags = "thrust,altitude"
-
+    this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
+    
     this.Config.HoldAltitude = 100
     this.Config.MaxDelta = 0.5
     this.Config.MaxVelocity = 1

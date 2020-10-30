@@ -8,7 +8,8 @@
 GravityCounterModule = (function() 
     local this = HorizonModule("Gravity Counter", "Negates the effect of gravity, allowing hovering and linear velocity approaches to planets", "Flush", true)
     this.Tags = "thrust,stability"
-
+    this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
+    
     function this.Update(eventType, deltaTime)
         local world = Horizon.Memory.Static.World
         local ship = Horizon.Memory.Dynamic.Ship

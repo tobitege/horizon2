@@ -19,7 +19,8 @@ OwnerFollowModule = (function()
     this.Config.IdleThreshold = 5
     this.Config.HoverHeight = 4
     this.Config.MaxYawDeviation = 0.09 --In Radians
-
+    this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
+    
     local rad2deg = 57.295779513
 
     local altHold = nil
