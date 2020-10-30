@@ -92,6 +92,7 @@ HUDMarkers = (function()
         end
         local marker = makeMarker(mark)
         hud.AddWidget(marker)
+        return marker
     end
 
     return this

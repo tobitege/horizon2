@@ -51,6 +51,7 @@ MouseSteeringModule = (function()
     end
 
     Horizon.Emit.Subscribe("MouseSteering", function() this.ToggleEnabled() end)
+    Horizon.Emit.Subscribe("MouseSteering.ToggleAndLock", function() this.ToggleEnabled() system.lockView(1) end)
 
     system.lockView(1)
     return this
