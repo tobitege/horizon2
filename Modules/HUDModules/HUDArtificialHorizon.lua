@@ -49,6 +49,7 @@ HUDArtificialHorizon = (function()
         <svg viewBox="0 0 2.57 23" style="display: block;height:2vh;margin: 0 auto;"><path fill="#fff" d="M1.28 0l1.29 17.88L1.28 23 0 17.88 1.28 0z"/></svg>
     </div>]]
     rollText.AlwaysDirty = true
+    rollText.Zindex = -666
     roll.AddChild(rollText)
 
     local horizon = createHUD(this.Config.RollSize)
@@ -79,6 +80,7 @@ HUDArtificialHorizon = (function()
         return math.abs(pitch)
     end
     pitchText.Content = [[<readout>$(Transform(Memory.Ship.Pitch))</readout>]]
+    pitchText.Zindex = -666
     pitch.AddChild(pitchText)
 
     hud.AddWidget(pitch)
