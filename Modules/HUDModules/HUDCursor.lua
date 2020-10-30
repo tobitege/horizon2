@@ -26,7 +26,7 @@ HUDCursor = (function()
     Horizon.Emit.Subscribe("HUD.Click", function()
         local pos = nil
         if not cursor.Enabled then
-            pos = vec2(hud.Config.ScreenSize.x * 0.5, hud.Config.ScreenSize.y * 0.5)
+            pos = vec2(50, 50)
         end
         hud.Click(pos)
     end)
