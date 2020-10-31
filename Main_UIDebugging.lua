@@ -9,7 +9,7 @@
 --@require HUDSimpleStats
 --@require HUDVersion
 
---@class Main
+--@class MainUIDebug
 --@outFilename Standard.json
 
 _G.BuildUnit = {}
