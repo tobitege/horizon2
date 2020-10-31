@@ -8,6 +8,7 @@ ARMarker = function(pos, name)
     this.Position = pos
     this.Name = name
     this.Icon = nil
+    this.MaxDistance = 10000
     return this
 end
 
@@ -17,7 +18,6 @@ HUDMarkers = (function()
     this.Tags = "hud,navigation"
     this.Config = {
         FOV = 43,
-        MaxDistance = 10000,
         MarkerSize = 2.5,
         Markers = {
             ARMarker(vec3(17442773.479904,22652026.603902,1929.3300964928), "Test Marker"),
@@ -39,6 +39,7 @@ HUDMarkers = (function()
         local marker = UIPanel(0,0,xform.x,xform.y)
         marker.Anchor = UIAnchor.Middle
         marker.Content = arm.Icon or defaultMarker
+        marker.Original = arm.Icon or defaultMarker
         marker.Marker = arm
         marker.ShowMarker = true
         marker.OnUpdate = function(ref)
@@ -49,12 +50,12 @@ HUDMarkers = (function()
                     static.World.Forward,
                     static.World.Up,
                     this.Config.FOV)
-            
-            if screenPos.z < 0 then
+            local dist = (ref.Marker.Position - static.World.Position + eyePos):len()
+            if screenPos.z < 0 or dist > ref.Marker.MaxDistance then
                 ref.Content = ""
                 ref.ShowMarker = false
             else
-                ref.Content = defaultMarker
+                ref.Content = ref.Original
                 ref.ShowMarker = true
             end
 
