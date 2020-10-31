@@ -6,6 +6,7 @@
 --@require GravityCounterModule
 --@require InertialDampeningModule
 --@require MouseSteeringModule
+--@require GravityFollow
 --@require HUDArtificialHorizon
 --@require HUDSimpleStats
 --@require HUDVersion

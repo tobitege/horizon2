@@ -1,3 +1,5 @@
+--@class BoosterModule
+
 BoosterModule = (function() 
     local this = HorizonModule("Booster", "When enabled, rocket boosters are activated (BROKEN)", "PostFlush", false)
     this.Tags = "system,thrust"
