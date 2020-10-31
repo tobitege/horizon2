@@ -34,6 +34,7 @@ ARInteract = (function()
             if data then
                 data = json.decode(data)
                 local marker = ARMarker(data.Position, data.Channel)
+                marker.MaxDistance = 200
                 marker.Icon = Icon
 
                 local inst = markers.Add(marker)
@@ -44,7 +45,7 @@ ARInteract = (function()
                 local onUpdate = inst.OnUpdate
                 inst.OnUpdate = function(ref)
                     local distance = (Horizon.Memory.Static.World.Position - data.Position):len()
-                    if distance <= 100 then
+                    if distance <= 90 then
                         ref.Style = origStyle .. ";fill:#0f0 !important;stroke:#0f0 !important;"
                     else
                         ref.Style = origStyle .. ";fill:#f00 !important;stroke:#f00 !important;"
