@@ -26,6 +26,9 @@ function Unit.Stop()
     Horizon.Event.Stop()
 end
 
+function Unit.Tick(timer)
+end
+
 function System.ActionStart(action)
     Horizon.Event.KeyDown(action)
 end
