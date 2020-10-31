@@ -20,19 +20,6 @@ CruiseControlModule = (function()
     Horizon.Emit.Subscribe("CruiseControl", function() this.ToggleEnabled() end)
     Horizon.Emit.Subscribe("Move.Direction.*", function() this.Disable() end)
     Horizon.Emit.Subscribe("Brake", function() this.Disable() end)
-
-    function this.Enable()
-        this.Enabled = true
-        local dship = Horizon.Memory.Dynamic.Ship
-        dship.MoveDirection = dship.MoveDirection or vec(0,0,0)
-        dship.MoveDirection.y = 1
-    end
-    function this.Disable()
-        this.Enabled = false
-        local dship = Horizon.Memory.Dynamic.Ship
-        dship.MoveDirection = dship.MoveDirection or vec(0,0,0)
-        dship.MoveDirection.y = 0
-    end
     
     return this
 end)()
