@@ -12,6 +12,7 @@
 --@require HUDSimpleStats
 --@require HUDVersion
 --@require ARInteract
+--@require HUDOrbitalMarkers
 
 --@class ARMain
 --@outFilename AR-Standard.json

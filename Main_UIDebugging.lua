@@ -8,6 +8,7 @@
 --@require HUDArtificialHorizon
 --@require HUDSimpleStats
 --@require HUDVersion
+--@require HUDOrbitalMarkers
 
 --@class MainUIDebug
 --@outFilename UIDebug.json
