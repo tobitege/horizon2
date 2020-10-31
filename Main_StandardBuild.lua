@@ -1,3 +1,4 @@
+--@require LoggingModule
 --@require ThrustControlModule
 --@require ManeuverFlightMode
 --@require RotationDampeningModule
