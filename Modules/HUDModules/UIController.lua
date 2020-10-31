@@ -4,7 +4,7 @@
 --@require UI
 
 UIController = (function()
-    local this = HorizonModule("UI Controller", "UI Display Driver", "Start", true, 5)
+    local this = HorizonModule("UI Controller", "UI Display Driver", "PreUpdate", true, 5)
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
     this.Displays = {}
     Horizon.HUD = Horizon.HUD or this

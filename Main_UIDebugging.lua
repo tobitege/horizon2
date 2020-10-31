@@ -16,6 +16,10 @@ _G.BuildUnit = {}
 local Unit = _G.BuildUnit
 _G.BuildSystem = {}
 local System = _G.BuildSystem
+_G.BuildReceiver = {}
+local Receiver = _G.BuildReceiver
+_G.BuildScreen = {}
+local Screen = _G.BuildScreen
 
 function Unit.Start()
     Horizon.Event.Start()
@@ -45,4 +49,16 @@ end
 
 function System.Flush()
     Horizon.Event.PreFlush() Horizon.Event.Flush() Horizon.Event.PostFlush()
+end
+
+function Unit.Tick(timer)
+end
+
+function Receiver.Received(channel, message, slot)
+end
+
+function Screen.MouseDown(x, y, slot)
+end
+
+function Screen.MouseUp(x, y, slot)
 end
