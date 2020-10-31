@@ -13,7 +13,7 @@ MouseSteeringModule = (function()
         FlipX = false,
         FlipY = false,
         Sensitivity = 1,
-        Deadzone = 0.5,
+        Deadzone = 0.1,
         Clamp = 50
     }
 
