@@ -10,7 +10,8 @@ ManeuverFlightMode = (function()
     this.Tags = "control,thrust,steering,input"
 
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
-    this.Config.Throttle = 0.2
+    this.Config.Throttle = 1
+    this.Config.ThrottleStep = 0.1
     this.Config.TurnSpeed = 2
     this.Direction = vec3(0,0,0)
     this.Rotation = vec3(0,0,0)
@@ -61,9 +62,9 @@ ManeuverFlightMode = (function()
         event = string.lower(event)
         local direction = string.match(event, '%.([^%.]*)$')
         if direction == "up" then
-            this.Config.Throttle = math.min(1,this.Config.Throttle+0.1)
+            this.Config.Throttle = math.min(1,this.Config.Throttle+this.Config.ThrottleStep)
         else
-            this.Config.Throttle = math.max(0,this.Config.Throttle-0.1)
+            this.Config.Throttle = math.max(0,this.Config.Throttle-this.Config.ThrottleStep)
         end
     end
 
