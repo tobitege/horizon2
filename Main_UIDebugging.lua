@@ -10,7 +10,7 @@
 --@require HUDVersion
 
 --@class MainUIDebug
---@outFilename Standard.json
+--@outFilename UIDebug.json
 
 _G.BuildUnit = {}
 local Unit = _G.BuildUnit

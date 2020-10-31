@@ -34,7 +34,7 @@ HUDArtificialHorizon = (function()
 
     local roll, rollXform = createHUD(this.Config.RollSize)
 
-    roll.Style = roll.Style .. "-webkit-mask-image:-webkit-linear-gradient(bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 60%)"
+    roll.Style = "-webkit-mask-image:-webkit-linear-gradient(bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 60%)"
     roll.Content = rollSVG
 
     local rollText = UIPanel(rollXform.x * 0.5, rollXform.y, 4,4)
@@ -54,7 +54,7 @@ HUDArtificialHorizon = (function()
     roll.AddChild(rollText)
 
     local horizon = createHUD(this.Config.RollSize)
-    horizon.Style = horizon.Style .. [[-webkit-mask-image:-webkit-radial-gradient(rgba(0,0,0,1) 50%, rgba(0,0,0,0) 65%)]]
+    horizon.Style = [[-webkit-mask-image:-webkit-radial-gradient(rgba(0,0,0,1) 50%, rgba(0,0,0,0) 65%)]]
     horizon.Content = horizonSVG
 
     local pitch, pitchXform = createHUD(this.Config.PitchSize)
@@ -62,7 +62,7 @@ HUDArtificialHorizon = (function()
         pitch = (pitch % 360) / 360
         return -25 + (math.abs(pitch) * 50)
     end
-    pitch.Style = pitch.Style..[[-webkit-mask-image: -webkit-radial-gradient(rgba(0,0,0,1) 25%, rgba(0,0,0,0) 40%)]]
+    pitch.Style = [[-webkit-mask-image: -webkit-radial-gradient(rgba(0,0,0,1) 25%, rgba(0,0,0,0) 40%)]]
     pitch.Content = [[
         <panel style="position:fixed;width:$(Width)vw;height:$(Height)vh;transform: scale(2.5) rotate($(-Memory.Ship.Roll)deg) translateY($(Transform(-Memory.Ship.Pitch))%)">
         ]].. pitchSVG ..[[
