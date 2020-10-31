@@ -62,9 +62,9 @@ ManeuverFlightMode = (function()
         event = string.lower(event)
         local direction = string.match(event, '%.([^%.]*)$')
         if direction == "up" then
-            this.Config.Throttle = math.min(1,this.Config.Throttle+0.1)
+            this.Config.Throttle = math.min(1,this.Config.Throttle+this.Config.ThrottleStep)
         else
-            this.Config.Throttle = math.max(0,this.Config.Throttle-0.1)
+            this.Config.Throttle = math.max(0,this.Config.Throttle-this.Config.ThrottleStep)
         end
     end
 
