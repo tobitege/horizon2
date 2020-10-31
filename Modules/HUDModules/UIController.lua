@@ -4,10 +4,13 @@
 --@require UI
 
 UIController = (function()
-    local this = HorizonModule("UI Controller", "UI Display Driver", "PostUpdate", true, 5)
+    local this = HorizonModule("UI Controller", "UI Display Driver", "Start", true, 5)
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
     this.Displays = {}
     Horizon.HUD = Horizon.HUD or this
+
+    Horizon.Controller.setTimer("UI", 0.0025)
+
     this.Update = function(deltaTime)
         for _,v in ipairs(this.Displays) do
             v.Update()
