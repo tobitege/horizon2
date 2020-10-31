@@ -55,6 +55,7 @@ function Unit.Tick(timer)
 end
 
 function Receiver.Received(channel, message, slot)
+    Horizon.Emit("Comms.Message."..channel, channel, message)
 end
 
 function Screen.MouseDown(x, y, slot)
