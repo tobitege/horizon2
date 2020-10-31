@@ -1,3 +1,5 @@
+--@class GravityFollow
+
 GravityFollow = (function() 
     local this = HorizonModule("Gravity Follow", "Forces ship to follow gravity down, effectively locking ship pitch to the horizon", "Flush", false)
     this.Tags = "thrust,stability"

@@ -1,3 +1,5 @@
+--@class SpeedLimiter
+
 SpeedLimiter = (function() 
     local this = HorizonModule("Speed Limiter", "Prevents total velocity from exceeding the defined speed limit (UNTESTED)", "Flush", false)
 

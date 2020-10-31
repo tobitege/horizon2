@@ -1,4 +1,6 @@
-MouseModule = (function() 
+--@class MouseModule
+
+MouseModule = (function()
     local this = HorizonModule("Mouse Module", "Converts mouse scroll wheel actions into horizon events", "PreFlush", true, 0)
     this.Tags = "system,mouse"
 

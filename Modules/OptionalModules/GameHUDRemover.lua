@@ -1,3 +1,5 @@
+--@class GameHUDRemover
+
 GameHUDRemover = (function()
     local this = HorizonModule("Stock HUD remover", "Removes the stock game HUD", "Start", true, 0)
 
