@@ -14,7 +14,8 @@ CruiseControlModule = (function()
         local ship = Horizon.Memory.Static.Ship
         local dship = Horizon.Memory.Dynamic.Ship
         
-        dship.Thrust = dship.Thrust + (world.Forward * ship.MaxKinematics.Forward) / ship.Mass
+        dship.Thrust = dship.Thrust + (world.Forward * (ship.MaxKinematics.Forward / ship.Mass))
+        dship.MoveDirection = vec3(0,1,0)
     end
     
     Horizon.Emit.Subscribe("CruiseControl", function() this.ToggleEnabled() end)
