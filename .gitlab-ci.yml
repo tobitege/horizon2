@@ -1,28 +1,40 @@
 stages:
  - build
+ - test
+  
+Horizon2:Build-Dev:
+  rules:
+   - if: '$CI_COMMIT_BRANCH != "master"'
+  image: registry.internal.st/dual-universe/dubuild:latest
+  stage: build
+  variables:
+   GIT_SUBMODULE_STRATEGY: recursive
+  script:
+   - dotnet /app/DUBuild.dll build -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/output -e $CI_PROJECT_DIR/UnitTests -w false -m "$CI_PROJECT_DIR/Main_*.lua"
+  artifacts:
+     paths:
+       - $CI_PROJECT_DIR/output/*.json
+ 
+Horizon2:Build-Prod:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+  image: registry.internal.st/dual-universe/dubuild:latest
+  stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+    - dotnet /app/DUBuild.dll build -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/output -e $CI_PROJECT_DIR/UnitTests -m "$CI_PROJECT_DIR/Main_*.lua"
+  artifacts:
+      paths:
+        - $CI_PROJECT_DIR/output/*.json
 
-build-dev:
- rules:
-  - if: '$CI_COMMIT_BRANCH != "master"'
- image: registry.internal.st/dual-universe/dubuild:latest
- stage: build
- variables:
-  GIT_SUBMODULE_STRATEGY: recursive
- script:
-  - dotnet /app/DUBuild.dll build -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/output -w false -m "$CI_PROJECT_DIR/Main_*.lua"
- artifacts:
-    paths:
-      - $CI_PROJECT_DIR/output/*.json
-
-build-prod:
- rules:
-  - if: '$CI_COMMIT_BRANCH == "master"'
- image: registry.internal.st/dual-universe/dubuild:latest
- stage: build
- variables:
-  GIT_SUBMODULE_STRATEGY: recursive
- script:
-  - dotnet /app/DUBuild.dll build -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/output -m "$CI_PROJECT_DIR/Main_*.lua"
- artifacts:
-    paths:
-      - $CI_PROJECT_DIR/output/*.json
+Horizon2:Test:
+  image: registry.internal.st/dual-universe/dunit:latest
+  stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+    - dotnet /app/DUnit.dll test -s "$CI_PROJECT_DIR/output/*.json" -t "$CI_PROJECT_DIR/UnitTests" -l "$CI_PROJECT_DIR/testresults"
+  artifacts:
+    reports:
+      junit: $CI_PROJECT_DIR/testresults/*.xml
