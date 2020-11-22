@@ -13,12 +13,18 @@ ARMarker = function(pos, name)
     return this
 end
 
+gameFOV = 70 --export: Game FOV
+resolutionX = 1920 --export: X resolution
+resolutionY = 1080 --export: Y resolution
+
+aspect = tonumber(resolutionY) / tonumber(resolutionX)
+VerticalFOV = 2 * math.atan(math.tan(tonumber(gameFOV * 0.0174532925199) / 2) * aspect) * constants.rad2deg
+
 HUDMarkers = (function()
     local this = HorizonModule("HUD Markers", "AR HUD Markers","PreUpdate", true, 0)
     local vec2 = require("cpml/vec2")
     this.Tags = "hud,navigation"
     this.Config = {
-        FOV = 43,
         MarkerSize = 2.5,
         Markers = {
             ARMarker(vec3(17442773.479904,22652026.603902,1929.3300964928), "Test Marker"),
@@ -50,7 +56,7 @@ HUDMarkers = (function()
                     ref.Marker.Position,
                     static.World.Forward,
                     static.World.Up,
-                    this.Config.FOV)
+                    VerticalFOV, aspect)
             local dist = (ref.Marker.Position - static.World.Position + eyePos):len()
             if screenPos.z < 0 or (ref.Marker.MaxDistance ~= nil and dist > ref.Marker.MaxDistance) then
                 ref.Content = ""
