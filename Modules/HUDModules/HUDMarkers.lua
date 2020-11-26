@@ -2,6 +2,7 @@
 --@require Utils3D
 --@require UI
 --@require UnitConversion
+--@require PlanetaryUtils
 
 ARMarker = function(pos, name, distance)
     local this = {}
