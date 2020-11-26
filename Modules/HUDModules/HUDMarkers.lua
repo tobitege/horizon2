@@ -3,12 +3,12 @@
 --@require UI
 --@require UnitConversion
 
-ARMarker = function(pos, name)
+ARMarker = function(pos, name, distance)
     local this = {}
     this.Position = pos
     this.Name = name
     this.Icon = nil
-    this.MaxDistance = 10000
+    this.MaxDistance = distance
     this.ShowDistance = true
     return this
 end
@@ -18,7 +18,7 @@ resolutionX = 1920 --export: X resolution
 resolutionY = 1080 --export: Y resolution
 
 aspect = tonumber(resolutionY) / tonumber(resolutionX)
-VerticalFOV = 2 * math.atan(math.tan(tonumber(gameFOV * 0.0174532925199) / 2) * aspect) * constants.rad2deg
+VerticalFOV = 2 * math.atan(math.tan(tonumber(gameFOV * constants.deg2rad) / 2) * aspect) * constants.rad2deg
 VerticalFOV = utils.round(VerticalFOV, 1)
 
 HUDMarkers = (function()
@@ -28,9 +28,9 @@ HUDMarkers = (function()
     this.Config = {
         MarkerSize = 2.5,
         Markers = {
-            ARMarker(vec3(17442773.479904,22652026.603902,1929.3300964928), "Test Marker"),
-            ARMarker(vec3(17442775.434868,22652028.313883,1927.7876691544), "Madis Base"),
-            ARMarker(vec3(17438322.598583,22648116.831735,-3113.1790178152), "Centcom's Factory")
+            ARMarker(vec3(17442773.479904,22652026.603902,1929.3300964928), "Test Marker",20),
+            ARMarker(vec3(17442775.434868,22652028.313883,1927.7876691544), "Madis Base",100000),
+            ARMarker(vec3(17438322.598583,22648116.831735,-3113.1790178152), "Centcom's Factory",10000)
         }
     }
 
@@ -102,7 +102,7 @@ HUDMarkers = (function()
 
     this.Add = function(mark)
         for k,v in pairs(this.Config.Markers) do
-            if v.Name == mark.Name and (v.Position - mark.Position):len() <= 0.000001 then return v end
+            if v.Name == mark.Name and (v.Position - mark.Position):len() <= constants.epsilon then return v end
         end
         table.insert(this.Config.Markers, mark)
         local marker = makeMarker(mark)
