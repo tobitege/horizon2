@@ -4,13 +4,14 @@
 --@require UnitConversion
 --@require PlanetaryUtils
 
-ARMarker = function(pos, name, distance)
+ARMarker = function(pos, name, distance, alwaysVisible)
     local this = {}
     this.Position = pos
     this.Name = name
     this.Icon = nil
     this.MaxDistance = distance
     this.ShowDistance = true
+    this.AlwaysVisible = alwaysVisible or false
     return this
 end
 
@@ -22,16 +23,17 @@ aspect = tonumber(resolutionY) / tonumber(resolutionX)
 VerticalFOV = 2 * math.atan(math.tan(tonumber(gameFOV * constants.deg2rad) / 2) * aspect) * constants.rad2deg
 VerticalFOV = utils.round(VerticalFOV, 1)
 
-HUDMarkers = (function()
-    local this = HorizonModule("HUD Markers", "AR HUD Markers","PreUpdate", true, 0)
+HUDMarkers =
+    (function()
+    local this = HorizonModule("HUD Markers", "AR HUD Markers", "PreUpdate", true, 0)
     local vec2 = require("cpml/vec2")
     this.Tags = "hud,navigation"
     this.Config = {
-        MarkerSize = 2.5,
+        MarkerSize = 2.75,
         Markers = {
-            ARMarker(vec3(17442773.479904,22652026.603902,1929.3300964928), "Test Marker",20),
-            ARMarker(vec3(17442775.434868,22652028.313883,1927.7876691544), "Madis Base",100000),
-            ARMarker(vec3(17438322.598583,22648116.831735,-3113.1790178152), "Centcom's Factory",10000)
+            ARMarker(vec3(17442773.479904, 22652026.603902, 1929.3300964928), "Test Marker", 20),
+            ARMarker(vec3(17442775.434868, 22652028.313883, 1927.7876691544), "Madis Base", 100000, true),
+            ARMarker(vec3(17438322.598583, 22648116.831735, -3113.1790178152), "Centcom's Factory", 10000, true)
         }
     }
 
@@ -40,29 +42,48 @@ HUDMarkers = (function()
     local defaultMarker = [[<svg viewBox="0 0 198 198"><path fill="#fff" d="M99 .35L197.65 99 99 197.65.35 99 99 .35M99 0L0 99l99 99 99-99L99 0z"/><path fill="none" stroke="#f2f2f2" stroke-miterlimit="10" d="M109 99H89M99 89v20"/><path fill="#fff" d="M188 89L99 10.31 10 89 99 0l89 89zM10 109l89 78.69L188 109l-89 89-89-89z" opacity=".8"/></svg>]]
 
     local xform = hud.TransformSize(this.Config.MarkerSize)
-    local chairPos = vec3(Horizon.Core.getElementPositionById(Horizon.Controller.getId()))
-        - vec3(16,15.75,16) 
-        + vec3(-0.125,-1.075,0.225)
-        
+    local chairPos =
+        vec3(Horizon.Core.getElementPositionById(Horizon.Controller.getId())) - vec3(16, 15.75, 16) +
+        vec3(-0.125, -1.075, 0.225)
+
     local function makeMarker(arm)
-        local marker = UIPanel(0,0,xform.x,xform.y)
+        local marker = UIPanel(0, 0, xform.x, xform.y)
         marker.Anchor = UIAnchor.Middle
         marker.Content = arm.Icon or defaultMarker
         marker.Original = arm.Icon or defaultMarker
         marker.Marker = arm
         marker.ShowMarker = true
+        marker.Style = "filter:drop-shadow(0 0 0.075vmax #000)"
         marker.OnUpdate = function(ref)
             local eyePos = Utils3d.localToRelative(chairPos, static.World.Up, static.World.Right, static.World.Forward)
-            local screenPos = Utils3d.worldToScreen(
-                    static.World.Position + eyePos,
-                    ref.Marker.Position,
-                    static.World.Forward,
-                    static.World.Up,
-                    VerticalFOV, resolutionX / resolutionY)
+            local screenPos =
+                Utils3d.worldToScreen(
+                static.World.Position + eyePos,
+                ref.Marker.Position,
+                static.World.Forward,
+                static.World.Up,
+                VerticalFOV,
+                resolutionX / resolutionY
+            )
             local dist = (ref.Marker.Position - static.World.Position + eyePos):len()
+
+            if arm.AlwaysVisible then
+                screenPos.x = utils.clamp(screenPos.x, this.Config.MarkerSize * 0.25, 100 - this.Config.MarkerSize * 0.25)
+                screenPos.y = utils.clamp(screenPos.y, this.Config.MarkerSize * 0.25, 100 - this.Config.MarkerSize * 0.25)
+            end
+
             if screenPos.z < 0 or (ref.Marker.MaxDistance ~= nil and dist > ref.Marker.MaxDistance) then
-                ref.Content = ""
-                ref.ShowMarker = false
+                if arm.AlwaysVisible then
+                    screenPos.y = 100 - screenPos.y
+                    if screenPos.x <= 50 then
+                        screenPos.x = 100 - this.Config.MarkerSize * 0.25
+                    else
+                        screenPos.x = this.Config.MarkerSize * 0.25
+                    end
+                else
+                    ref.Content = ""
+                    ref.ShowMarker = false
+                end
             else
                 ref.Content = ref.Original
                 ref.ShowMarker = true
@@ -71,12 +92,14 @@ HUDMarkers = (function()
             ref.Position = vec2(screenPos.x, 100 - screenPos.y)
             ref.IsDirty = true
         end
-        if arm.Click then marker.OnClick = arm.Click end
+        if arm.Click then
+            marker.OnClick = arm.Click
+        end
 
         if arm.Name then
-            local text = UIPanel(xform.x * 0.5, xform.y, xform.x * 2, 2)
+            local text = UIPanel(xform.x * 0.5, xform.y, xform.x * 2.5, 2.1)
             text.Anchor = UIAnchor.TopCenter
-            text.Style = [[font-size: 0.75vh;text-align:center;-webkit-text-stroke-width: 2px;-webkit-text-stroke-color: #000000bb;text-shadow: 0 0 0.5vh #000000ff;]]
+            text.Style = [[color:#fff;font-size: 0.8vmin;text-align:center;text-shadow: 0 0 0.1vmax black, 0.1vmax 0.1vmax 0.1vmax black;]]
             text.OnUpdate = function(ref)
                 local dist = (ref.Parent.Marker.Position - static.World.Position):len()
                 if ref.Parent.ShowMarker then
@@ -102,8 +125,10 @@ HUDMarkers = (function()
     end
 
     this.Add = function(mark)
-        for k,v in pairs(this.Config.Markers) do
-            if v.Name == mark.Name and (v.Position - mark.Position):len() <= constants.epsilon then return v end
+        for k, v in pairs(this.Config.Markers) do
+            if v.Name == mark.Name and (v.Position - mark.Position):len() <= constants.epsilon then
+                return v
+            end
         end
         table.insert(this.Config.Markers, mark)
         local marker = makeMarker(mark)

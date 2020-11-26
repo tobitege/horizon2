@@ -18,6 +18,7 @@ CSS =
       /* 0faea9 */
       --primary: #ae0f12;
       --secondary: #fff;
+      --accent: #0faea9;
       --bg: #55555577;
       --bg2: #44444444;
       --border: 0.05em solid var(--secondary);
