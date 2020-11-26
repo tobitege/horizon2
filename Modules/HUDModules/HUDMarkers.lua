@@ -9,15 +9,23 @@ ARMarker = function(pos, name)
     this.Name = name
     this.Icon = nil
     this.MaxDistance = 10000
+    this.ShowDistance = true
     return this
 end
+
+gameFOV = 70 --export: Game FOV
+resolutionX = 1920 --export: X resolution
+resolutionY = 1080 --export: Y resolution
+
+aspect = tonumber(resolutionY) / tonumber(resolutionX)
+VerticalFOV = 2 * math.atan(math.tan(tonumber(gameFOV * 0.0174532925199) / 2) * aspect) * constants.rad2deg
+VerticalFOV = utils.round(VerticalFOV, 1)
 
 HUDMarkers = (function()
     local this = HorizonModule("HUD Markers", "AR HUD Markers","PreUpdate", true, 0)
     local vec2 = require("cpml/vec2")
     this.Tags = "hud,navigation"
     this.Config = {
-        FOV = 43,
         MarkerSize = 2.5,
         Markers = {
             ARMarker(vec3(17442773.479904,22652026.603902,1929.3300964928), "Test Marker"),
@@ -49,9 +57,9 @@ HUDMarkers = (function()
                     ref.Marker.Position,
                     static.World.Forward,
                     static.World.Up,
-                    this.Config.FOV)
+                    VerticalFOV, resolutionX / resolutionY)
             local dist = (ref.Marker.Position - static.World.Position + eyePos):len()
-            if screenPos.z < 0 or dist > ref.Marker.MaxDistance then
+            if screenPos.z < 0 or (ref.Marker.MaxDistance ~= nil and dist > ref.Marker.MaxDistance) then
                 ref.Content = ""
                 ref.ShowMarker = false
             else
@@ -63,19 +71,27 @@ HUDMarkers = (function()
             ref.IsDirty = true
         end
         if arm.Click then marker.OnClick = arm.Click end
-        local text = UIPanel(xform.x * 0.5, xform.y, xform.x * 2, 2)
-        text.Anchor = UIAnchor.TopCenter
-        text.Style = text.Style .. [[font-size: 0.75vh;text-align:center;-webkit-text-stroke-width: 2px;-webkit-text-stroke-color: #000000bb;text-shadow: 0 0 0.5vh #000000ff;]]
-        text.OnUpdate = function(ref)
-            local dist = (ref.Parent.Marker.Position - static.World.Position):len()
-            if ref.Parent.ShowMarker then
-                ref.Content = ref.Parent.Marker.Name .. "<br/>" .. tostring(unitconverter.VariableDistance(dist))
-            else
-                ref.Content = ""
+
+        if arm.Name then
+            local text = UIPanel(xform.x * 0.5, xform.y, xform.x * 2, 2)
+            text.Anchor = UIAnchor.TopCenter
+            text.Style = [[font-size: 0.75vh;text-align:center;-webkit-text-stroke-width: 2px;-webkit-text-stroke-color: #000000bb;text-shadow: 0 0 0.5vh #000000ff;]]
+            text.OnUpdate = function(ref)
+                local dist = (ref.Parent.Marker.Position - static.World.Position):len()
+                if ref.Parent.ShowMarker then
+                    local distString = ""
+                    if ref.Parent.Marker.ShowDistance then
+                        distString = "<br/>" .. tostring(unitconverter.VariableDistance(dist))
+                    end
+                    ref.Content = ref.Parent.Marker.Name .. distString
+                else
+                    ref.Content = ""
+                end
             end
+            text.AlwaysDirty = true
+            marker.AddChild(text)
         end
-        text.AlwaysDirty = true
-        marker.AddChild(text)
+
         return marker
     end
 
@@ -86,7 +102,7 @@ HUDMarkers = (function()
 
     this.Add = function(mark)
         for k,v in pairs(this.Config.Markers) do
-            if v.Name == mark.Name then return v end
+            if v.Name == mark.Name and (v.Position - mark.Position):len() <= 0.000001 then return v end
         end
         table.insert(this.Config.Markers, mark)
         local marker = makeMarker(mark)
