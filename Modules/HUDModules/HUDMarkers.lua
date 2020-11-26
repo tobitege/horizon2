@@ -19,6 +19,7 @@ resolutionY = 1080 --export: Y resolution
 
 aspect = tonumber(resolutionY) / tonumber(resolutionX)
 VerticalFOV = 2 * math.atan(math.tan(tonumber(gameFOV * 0.0174532925199) / 2) * aspect) * constants.rad2deg
+VerticalFOV = utils.round(VerticalFOV, 1)
 
 HUDMarkers = (function()
     local this = HorizonModule("HUD Markers", "AR HUD Markers","PreUpdate", true, 0)
@@ -56,7 +57,7 @@ HUDMarkers = (function()
                     ref.Marker.Position,
                     static.World.Forward,
                     static.World.Up,
-                    VerticalFOV, aspect)
+                    VerticalFOV, resolutionX / resolutionY)
             local dist = (ref.Marker.Position - static.World.Position + eyePos):len()
             if screenPos.z < 0 or (ref.Marker.MaxDistance ~= nil and dist > ref.Marker.MaxDistance) then
                 ref.Content = ""
