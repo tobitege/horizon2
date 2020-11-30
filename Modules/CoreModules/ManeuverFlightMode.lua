@@ -7,7 +7,7 @@
 
 ManeuverFlightMode = (function() 
     local this = HorizonModule("Maneuver Flight Mode", "Flight mode that allows 6DOF movement", "Flush", true)
-    this.Tags = "control,thrust,steering,input"
+    this.Tags = "control,thrust,steering,input,flightmode"
 
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
     this.Config.Throttle = 1
@@ -59,6 +59,7 @@ ManeuverFlightMode = (function()
     end
 
     local function handleThrottle(event, keyDown)
+        if not this.Enabled then return end
         event = string.lower(event)
         local direction = string.match(event, '%.([^%.]*)$')
         if direction == "up" then
@@ -100,6 +101,12 @@ ManeuverFlightMode = (function()
 
         ship.MoveDirection = this.Direction
     end
+
+    Horizon.Emit.Subscribe("FlightMode.Switch", this.Disable)
+    Horizon.Emit.Subscribe("ManeuverFlightMode", function() 
+        Horizon.Emit("FlightMode.Switch")
+        this.Enable()
+    end)
 
     return this
 end)()

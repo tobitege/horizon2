@@ -5,37 +5,32 @@
 --@require ReadingsModule
 
 AltitudeHoldModule = (function() 
-    local this = HorizonModule("Altitude Hold", "When enabled a consistent altitude is maintained", "PostFlush", false)
+    local this = HorizonModule("Altitude Hold", "When enabled a consistent altitude is maintained", "PostFlush", false, 4)
     this.Tags = "thrust,altitude"
+    this.Config.HoldAltitude = 5000
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
-    
-    this.Config.HoldAltitude = 100
-    this.Config.MaxDelta = 0.5
-    this.Config.MaxVelocity = 1
-
-    local function sign(value)
-        if value >= 0 then return 1 else return -1 end
-    end
 
     function this.Update(eventType, deltaTime)
         local world = Horizon.Memory.Static.World
         local ship = Horizon.Memory.Static.Ship
         local dship = Horizon.Memory.Dynamic.Ship
 
-        local altitudeDelta = ship.Altitude:len() - this.Config.HoldAltitude
-
-        if math.abs(altitudeDelta) > this.Config.MaxDelta then
-            local deltaThrust = sign(altitudeDelta) * world.Gravity
-            dship.Thrust = dship.Thrust + deltaThrust
-        end
-
+        local currVertical = world.Vertical:dot(world.Velocity + world.Acceleration)
+        local altitudeDelta = (ship.Altitude - currVertical) - this.Config.HoldAltitude
+        local verticalThrust = world.Vertical:dot(dship.Thrust)
+        local target = (world.Vertical * (altitudeDelta * 100))
+        dship.Thrust = dship.Thrust + target
+        system.print(tostring(verticalThrust))
     end
 
     function this.Enable()
         local ship = Horizon.Memory.Static.Ship
-        this.Config.HoldAltitude = ship.Altitude
+        -- this.Config.HoldAltitude = ship.Altitude
+        this.Config.HoldAltitude = 1000
         this.Enabled = true
     end
+
+    Horizon.Emit.Subscribe("AltitudeHold", this.ToggleEnabled)
 
     return this
 end)()
