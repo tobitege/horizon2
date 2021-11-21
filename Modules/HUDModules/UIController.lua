@@ -9,7 +9,8 @@ UIController = (function()
     this.Displays = {}
     Horizon.HUD = Horizon.HUD or this
 
-    Horizon.Controller.setTimer("UI", 0.0025)
+    -- 30FPS
+    Horizon.Controller.setTimer("UI", 1/30)
 
     this.Update = function(deltaTime)
         for _,v in ipairs(this.Displays) do
@@ -35,6 +36,7 @@ UIController = (function()
         end
     end
 
+    Horizon.Event.Update.Add(this.Update)
     Horizon.Event.Click.Add(handleClick)
     return this
 end)()

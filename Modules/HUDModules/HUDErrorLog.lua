@@ -11,10 +11,12 @@ HUDErrorLog =
     this.Tags = "system,hud,log"
     this.Config = {
         Position = vec2(50, 1.8),
-        Width = 30
+        Width = 30,
+        LogSize = 10
     }
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
 
+    local lastError = nil
     local hud = Horizon.GetModule("UI Controller").Displays[1]
     local rollXform = hud.TransformSize(1)
 
@@ -58,7 +60,10 @@ HUDErrorLog =
 
     this.Update = function(event, dt, error)
         system.print(error)
-        createWidget(error)
+        if error ~= lastError then
+            createWidget(error)
+            lastError = error
+        end
         base.IsDirty = true
     end
 

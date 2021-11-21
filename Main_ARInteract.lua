@@ -1,4 +1,3 @@
---@require LoggingModule
 --@require ThrustControlModule
 --@require ManeuverFlightMode
 --@require RotationDampeningModule
@@ -11,8 +10,9 @@
 --@require HUDArtificialHorizon
 --@require HUDSimpleStats
 --@require HUDVersion
+--@require HUDErrorLog
 --@require ARInteract
---@require HUDOrbitalMarkers
+--@require ARScene
 
 --@class ARMain
 --@outFilename AR-Standard.json
@@ -21,10 +21,6 @@ _G.BuildUnit = {}
 local Unit = _G.BuildUnit
 _G.BuildSystem = {}
 local System = _G.BuildSystem
-_G.BuildReceiver = {}
-local Receiver = _G.BuildReceiver
-_G.BuildScreen = {}
-local Screen = _G.BuildScreen
 
 function Unit.Start()
     Horizon.Event.Start()

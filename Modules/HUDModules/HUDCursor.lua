@@ -12,27 +12,28 @@ HUDCursor = (function()
 
     local size = hud.TransformSize(1)
 
-    local cursor = UIPanel(50,50,size.x,size.y)
-    cursor.Content = cursorSVG
-    cursor.AlwaysDirty = true
-    cursor.OnUpdate = function(ref)
+    this.Cursor = UIPanel(50,50,size.x,size.y)
+    this.Cursor.Content = cursorSVG
+    this.Cursor.AlwaysDirty = true
+    this.Cursor.Zindex = 1000
+    this.Cursor.OnUpdate = function(ref)
         ref.Position = hud.MousePos
     end
-    cursor.IsClickable = false
-    cursor.Enabled = false
+    this.Cursor.IsClickable = false
+    this.Cursor.Enabled = false
 
-    hud.AddWidget(cursor)
+    hud.AddWidget(this.Cursor)
 
     Horizon.Emit.Subscribe("HUD.Click", function()
         local pos = nil
-        if not cursor.Enabled then
+        if not this.Cursor.Enabled then
             pos = vec2(50, 50)
         end
         hud.Click(pos)
     end)
 
     Horizon.Emit.Subscribe("HUD.Cursor.Toggle", function()
-        cursor.Enabled = not cursor.Enabled 
+        this.Cursor.Enabled = not this.Cursor.Enabled 
     end)
 
     return this
