@@ -19,7 +19,9 @@ ARObject = function(position, rotation, scale)
     this.IsVisible = false
     this.Up = vec3(0,0,1)
     this.Forward = vec3(0,1,0)
-    this.Right = this.Up:cross(this.Forward)
+    this.Right = vec3(1,0,0)
+    this.Quaternion = quat(0,0,0,1)
+    --this.Quaternion = quat.unit
 
     this.AddChild = function(child)
         if child.Parent ~= nil then
@@ -34,7 +36,7 @@ ARObject = function(position, rotation, scale)
 
     this.GetScreenPosition = function(camera)
         local transform = this.GetModel() * {this.Position.x, this.Position.y, this.Position.z, 1}
-        local tmp = vec3(transform[1], transform[2], transform[3])
+        --local tmp = vec3(transform[1], transform[2], transform[3])
         --system.print(tostring(tmp))
         local pos = camera.TransformToViewport(camera.GetMatrix() * transform)
         pos.y = camera.ViewportSize.y-pos.y
@@ -42,32 +44,100 @@ ARObject = function(position, rotation, scale)
         return pos
     end
 
-    local _RotCache = {
-        x = {
-            Last = 0,
-            Mat = mat4()
-        },
-        y = {
-            Last = 0,
-            Mat = mat4()
-        },
-        z = {
-            Last = 0,
-            Mat = mat4()
-        },
-        Last = mat4()
-    }
-    -- TODO: Readd optimizations
-    this.GetModel = function()
-        local pos = this.Position
-        local mat = mat4()
-        local t = mat4():translate(pos)
-        local r = mat4():rotate(quat.rotate(this.Rotation.x, this.Right) * quat.rotate(this.Rotation.y, this.Forward) * quat.rotate(this.Rotation.z, this.Up))
-        local s = mat4():scale(this.Scale)
-        if this.Parent then
-            return t * r * s * this.Parent.GetModel()
+    local EulerToQuat = function()
+        local cy = math.cos(this.Rotation.z * constants.deg2rad * 0.5);
+        local sy = math.sin(this.Rotation.z * constants.deg2rad * 0.5);
+        local cp = math.cos(this.Rotation.y * constants.deg2rad * 0.5);
+        local sp = math.sin(this.Rotation.y * constants.deg2rad * 0.5);
+        local cr = math.cos(this.Rotation.x * constants.deg2rad * 0.5);
+        local sr = math.sin(this.Rotation.x * constants.deg2rad * 0.5);
+    
+        local w = cr * cp * cy + sr * sp * sy;
+        local x = sr * cp * cy - cr * sp * sy;
+        local y = cr * sp * cy + sr * cp * sy;
+        local z = cr * cp * sy - sr * sp * cy;
+    
+        return quat(x,y,z,w);
+    end
+
+    this.LookAt = function(destination)
+        local forwardVector = (-destination):normalize();
+
+        local dot = vec3(0,1,0):dot(forwardVector)
+
+        if math.abs(dot - (-1.0)) < 0.000001 then
+            return quat(0, 0, 1, 3.1415926535897932)
         end
-        return t * r * s
+        if math.abs(dot - (1.0)) < 0.000001 then
+            return quat.unit;
+        end
+
+        local rotAngle = math.acos(dot);
+        local rotAxis = vec3(0,1,0):cross(forwardVector):normalize()
+        this.Quaternion = quat.rotate(rotAngle, rotAxis) * this.Quaternion
+    end
+
+    this.RotateAround = function(axis, angle)
+        this.Quaternion = quat.rotate(angle * constants.deg2rad, axis) * this.Quaternion
+    end
+
+    local mat = mat4()
+    local _XformCache = {
+        T = {
+            Last = this.Position:clone(),
+            Mat = mat
+        },
+        R = {
+            Last = this.Rotation:clone(),
+            Mat = mat
+        },
+        S = {
+            Last = this.Scale:clone(),
+            Mat = mat
+        },
+        Total = nil
+    }
+    this.GetModel = function()
+        local isDirty = false
+        if _XformCache.Total == nil then
+            isDirty = true
+        end
+
+        local t = _XformCache.T.Mat
+        if (this.Position - _XformCache.T.Last):len2() ~= 0 then
+            t = mat:translate(this.Position)
+            _XformCache.T.Mat = t
+            _XformCache.T.Last = this.Position:clone()
+            isDirty = true
+        end
+
+        -- TODO: rotations bork af
+        local r = _XformCache.R.Mat
+        --if (this.Rotation - _XformCache.R.Last):len2() ~= 0 then
+            --r = mat:rotate(this.Rotation.x * constants.deg2rad, this.Right):rotate(this.Rotation.y * constants.deg2rad, this.Forward):rotate(this.Rotation.z * constants.deg2rad, this.Up)
+            r = mat:rotate(this.Quaternion)
+            
+            _XformCache.R.Mat = r
+            _XformCache.R.Last = this.Rotation:clone()
+            isDirty = true
+        --end
+
+        local s = _XformCache.S.Mat
+        if (this.Scale - _XformCache.S.Last):len2() ~= 0 then
+            s = mat:scale(this.Scale)
+            _XformCache.S.Mat = s
+            _XformCache.S.Last = this.Scale:clone()
+            isDirty = true
+        end
+
+        if isDirty then
+            local out = t * r * s
+            if this.Parent then
+                out = out * this.Parent.GetModel()
+            end
+            _XformCache.Total = out
+        end
+        return _XformCache.Total
     end
 
     this.Update = function(deltaTime)
@@ -217,7 +287,7 @@ ARPolygon = function(...)
             local c = this.Children[i].GetScreenPosition(camera)
             this._PolyBuffer = this._PolyBuffer .. c.x..","..c.y.." "
         end
-        return baseRender(camera, deltaTime)
+        return Templater.Fill(this.Content, this)
     end
 
     return this
@@ -308,19 +378,23 @@ ARScene = (function()
 
     local poly = ARPolygon(
         ARVertex(),
-        ARVertex(-static.World.Vertical),
-        ARVertex(-static.World.Vertical + (-rightAxis * 0.5)),
-        ARVertex((-static.World.Vertical * 2.5) + (rightAxis * 0.5)),
-        ARVertex(-static.World.Vertical + (rightAxis * 1.5)),
-        ARVertex(-static.World.Vertical + rightAxis),
-        ARVertex(rightAxis)
+        ARVertex(vec3(0,0,1)),
+        ARVertex(vec3(0,0,1) + (-vec3(1,0,0) * 0.5)),
+        ARVertex((vec3(0,0,1) * 2.5) + (vec3(1,0,0) * 0.5)),
+        ARVertex(vec3(0,0,1) + (vec3(1,0,0) * 1.5)),
+        ARVertex(vec3(0,0,1) + vec3(1,0,0)),
+        ARVertex(vec3(1,0,0))
     )
-    poly.Position = -rightAxis * 0.5
+    poly.Position = vec3(-0.5,0,0)
+    poly.RotateAround(vec3(0,0,1), 90)
+    poly.Scale = poly.Scale * rightAxis:len()
     poly.Style = "opacity:0.5"
-    poly.Up = rightAxis:normalize():cross(forwardAxis:normalize())
-
+    --poly.Quaternion = poly.Quaternion * quat.from_direction(forwardAxis:normalize(), -static.World.Vertical)
+    poly.LookAt(rightAxis:normalize())
     poly.Update = function(deltaTime)
-        poly.Rotation.z = (poly.Rotation.z + deltaTime) % 360
+        poly.RotateAround(static.World.Vertical, deltaTime * 90)
+        --poly.Rotation.z = (poly.Rotation.z + (deltaTime * 90)) % 360
+        --poly.Scale.z = (poly.Scale.z + (deltaTime * 2)) % 3
         if poly.Contains(this.GetMousePosition()) then
             poly.Color = "green"
         else
@@ -329,7 +403,7 @@ ARScene = (function()
     end
     local grp = ARGroup(poly)
     grp.Position = startPos + (rightAxis * 0.5)
-    this.AddObject(grp)
+    --this.AddObject(grp)
 
     this.ObjectFromS3D = function(string)
         local function split(s, delimiter)
@@ -342,11 +416,12 @@ ARScene = (function()
         local group = ARGroup()
         local verts = split(string, ",")
         -- TODO: Group into quads
-        for i = 1, #verts, 3 do
+        for i = 1, #verts, 6 do
             local v1 = vec3(split(verts[i], " "))
-            local v2 = vec3(split(verts[i+1], " "))
-            local v3 = vec3(split(verts[i+2], " "))
-            local polygon = ARPolygon(ARObject(v1),ARObject(v2),ARObject(v3))
+            local v2 = vec3(split(verts[i+2], " "))
+            local v3 = vec3(split(verts[i+5], " "))
+            local v4 = vec3(split(verts[i+4], " "))
+            local polygon = ARPolygon(ARVertex(v1),ARVertex(v2),ARVertex(v3),ARVertex(v4))
             polygon.Style = "opacity:0.3"
             group.AddChild(polygon)
         end
@@ -354,9 +429,10 @@ ARScene = (function()
     end
 
     local testMesh = [[0.5 0 0.5,0.5 0 0,0.5 0.9 0.5,0.5 0.9 0.5,0.5 0 0,0.5 0.9 0,0.75 0 0.5,0.5 0 0.5,0.75 0.9 0.5,0.75 0.9 0.5,0.5 0 0.5,0.5 0.9 0.5,0.25 0 0.85,0.75 0 0.5,0.25 0.9 0.85,0.25 0.9 0.85,0.75 0 0.5,0.75 0.9 0.5,-0.25 0 0.5,0.25 0 0.85,-0.25 0.9 0.5,-0.25 0.9 0.5,0.25 0 0.85,0.25 0.9 0.85,0 0 0.5,-0.25 0 0.5,0 0.9 0.5,0 0.9 0.5,-0.25 0 0.5,-0.25 0.9 0.5,0 0 0,0 0 0.5,0 0.9 0,0 0.9 0,0 0 0.5,0 0.9 0.5,0.5 0 0,0 0 0,0.5 0.9 0,0.5 0.9 0,0 0 0,0 0.9 0,0.5 0.9 0,0 0.9 0,0.5 0.9 0.5,0.5 0.9 0.5,0 0.9 0,0 0.9 0.5,0.5 0.9 0.5,0 0.9 0.5,0.25 0.9 0.85,0.25 0.9 0.85,0 0.9 0.5,-0.25 0.9 0.5,0.25 0.9 0.85,0.75 0.9 0.5,0.5 0.9 0.5,0 0 0,0.5 0 0,0 0 0.5,0 0 0.5,0.5 0 0,0.5 0 0.5,0 0 0.5,0.5 0 0.5,0.25 0 0.85,0.25 0 0.85,0.5 0 0.5,0.75 0 0.5,0.25 0 0.85,-0.25 0 0.5,0 0 0.5]]
-    local herk = this.ObjectFromS3D(testMesh)
+    local mesh = this.ObjectFromS3D(testMesh)
+    local herk = ARGroup(mesh)
     herk.Position = startPos
-    --this.AddObject(herk)
+    this.AddObject(herk)
 
     this.Update = function(event, dt)
         local deltaTime = system.getTime() - lastTime
