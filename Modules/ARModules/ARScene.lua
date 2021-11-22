@@ -4,6 +4,7 @@
 
 local mat4 = require("cpml/mat4")
 local vec2 = require("cpml/vec2")
+local quat = require("cpml/quat")
 
 ARObject = function(position, rotation, scale) 
     local this = {}
@@ -31,31 +32,11 @@ ARObject = function(position, rotation, scale)
         table.insert(this.Children, child)
     end
 
-    this.GetAbsolutePosition = function(camera)
-        local pos = this.Position
-        if this.Parent ~= nil then
-            --if this.Parent.Rotation:len() > 0 then
-                local xform = this.Parent.GetRotationMatrix() * {this.Position.x, this.Position.y, this.Position.z, 1}
-                pos = vec3(xform[1], xform[2], xform[3])
-            --end
-            pos = pos + this.Parent.GetAbsolutePosition(camera)
-        end
-        return pos
-    end
-
-    this.GetRotation = function()
-        local rot = this.Rotation
-        if this.Parent ~= nil then
-            rot = rot + this.Parent.GetRotation()
-        end
-        rot.x = rot.x % 360
-        rot.y = rot.y % 360
-        rot.z = rot.z % 360
-        return rot
-    end
-
     this.GetScreenPosition = function(camera)
-        local pos = camera.WorldToScreen(this.GetAbsolutePosition(camera))
+        local transform = this.GetModel() * {this.Position.x, this.Position.y, this.Position.z, 1}
+        local tmp = vec3(transform[1], transform[2], transform[3])
+        --system.print(tostring(tmp))
+        local pos = camera.TransformToViewport(camera.GetMatrix() * transform)
         pos.y = camera.ViewportSize.y-pos.y
         this.ScreenPos = pos
         return pos
@@ -76,41 +57,23 @@ ARObject = function(position, rotation, scale)
         },
         Last = mat4()
     }
-    this.GetRotationMatrix = function()
-        --system.print("Calculating rotation for "..tostring(this.Rotation).." with "..#this.Children.." children")
+    -- TODO: Readd optimizations
+    this.GetModel = function()
+        local pos = this.Position
         local mat = mat4()
-        local isDirty = false
-        local rotation = this.Rotation
-        --mat = mat:rotate(...)
-        if rotation.x ~= _RotCache.x.Last then
-            _RotCache.x.Last = rotation.x
-            x = mat:rotate(rotation.x, this.Right)
-            isDirty = true
-        else
-            x = _RotCache.x.Mat
+        local t = mat4():translate(pos)
+        local r = mat4():rotate(quat.rotate(this.Rotation.x, this.Right) * quat.rotate(this.Rotation.y, this.Forward) * quat.rotate(this.Rotation.z, this.Up))
+        local s = mat4():scale(this.Scale)
+        if this.Parent then
+            return t * r * s * this.Parent.GetModel()
         end
-        if rotation.y ~= _RotCache.y.Last then
-            _RotCache.y.Last = rotation.y
-            y = mat:rotate(rotation.y, this.Forward)
-            isDirty = true
-        else
-            y = _RotCache.y.Mat
-        end
-        if rotation.z ~= _RotCache.z.Last then
-            z = mat:rotate(rotation.z, this.Up)
-            _RotCache.z.Last = rotation.z
-            isDirty = true
-        else
-            z = _RotCache.z.Mat
-        end
-        if isDirty then
-            _RotCache.Last = x * y * z
-        end
-        if this.Parent then _RotCache.Last = _RotCache.Last * this.Parent.GetRotationMatrix() end
-        return _RotCache.Last
+        return t * r * s
     end
 
     this.Update = function(deltaTime)
+        for i=1,#this.Children do
+            this.Children[i].Update(deltaTime)
+        end
     end
 
     this.Contains = function(point)
@@ -132,6 +95,21 @@ ARObject = function(position, rotation, scale)
             buffer = buffer .. Templater.Fill(this.Content, this)
         end
         return buffer
+    end
+
+    return this
+end
+
+ARVertex = function(position, rotation, scale)
+    local this = ARObject(position, rotation, scale)
+
+    local mat = mat4()
+    this.GetModel = function()
+        --local t = mat4():translate(this.Position)
+        if this.Parent then
+            return mat * this.Parent.GetModel()
+        end
+        return mat
     end
 
     return this
@@ -239,7 +217,7 @@ ARPolygon = function(...)
             local c = this.Children[i].GetScreenPosition(camera)
             this._PolyBuffer = this._PolyBuffer .. c.x..","..c.y.." "
         end
-        return Templater.Fill(this.Content, this)
+        return baseRender(camera, deltaTime)
     end
 
     return this
@@ -329,28 +307,29 @@ ARScene = (function()
     end
 
     local poly = ARPolygon(
-        ARObject(),
-        ARObject(-static.World.Vertical),
-        ARObject(-static.World.Vertical + (-rightAxis * 0.5)),
-        ARObject((-static.World.Vertical * 2.5) + (rightAxis * 0.5)),
-        ARObject(-static.World.Vertical + (rightAxis * 1.5)),
-        ARObject(-static.World.Vertical + rightAxis),
-        ARObject(rightAxis)
+        ARVertex(),
+        ARVertex(-static.World.Vertical),
+        ARVertex(-static.World.Vertical + (-rightAxis * 0.5)),
+        ARVertex((-static.World.Vertical * 2.5) + (rightAxis * 0.5)),
+        ARVertex(-static.World.Vertical + (rightAxis * 1.5)),
+        ARVertex(-static.World.Vertical + rightAxis),
+        ARVertex(rightAxis)
     )
-    poly.Position = startPos
+    poly.Position = -rightAxis * 0.5
     poly.Style = "opacity:0.5"
-    poly.Forward = forwardAxis:normalize()
-    poly.Right = rightAxis:normalize()
-    poly.Up = poly.Forward:cross(poly.Right)
+    poly.Up = rightAxis:normalize():cross(forwardAxis:normalize())
+
     poly.Update = function(deltaTime)
-        poly.Rotation.z = poly.Rotation.z + deltaTime
+        poly.Rotation.z = (poly.Rotation.z + deltaTime) % 360
         if poly.Contains(this.GetMousePosition()) then
             poly.Color = "green"
         else
             poly.Color = "red"
         end
     end
-    this.AddObject(poly)
+    local grp = ARGroup(poly)
+    grp.Position = startPos + (rightAxis * 0.5)
+    this.AddObject(grp)
 
     this.ObjectFromS3D = function(string)
         local function split(s, delimiter)
