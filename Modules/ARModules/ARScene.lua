@@ -11,6 +11,7 @@ ARObject = function(position, rotation, scale)
     this.Position = position or vec3(0, 0, 0)
     this.Rotation = rotation or vec3(0, 0, 0)
     this.Scale = scale or vec3(1, 1, 1)
+    this.Name = ""
     this.Parent = nil
     this.Children = {}
     this.Content = ""
@@ -81,6 +82,29 @@ ARObject = function(position, rotation, scale)
         this.Quaternion = quat.rotate(angle * constants.deg2rad, axis) * this.Quaternion
     end
 
+    local function from_transform(t, rot, scale)
+        local angle, axis = rot:to_axis_angle()
+        local l = axis:len()
+        if l == 0 then
+            return mat4({
+                scale.x, 0, 0, 0,
+                0, scale.y, 0, 0,
+                0, 0, scale.z, 0,
+                t.x, t.y, t.z, 1
+            })
+        end
+        local x, y, z = axis.x / l, axis.y / l, axis.z / l
+        local c = math.cos(angle)
+        local s = math.sin(angle)
+        local m = {
+            (x*x*(1-c)+c)*scale.x, (y*x*(1-c)+z*s)*scale.x, (x*z*(1-c)-y*s)*scale.x, 0,
+            (x*y*(1-c)-z*s)*scale.y, (y*y*(1-c)+c)*scale.y, (y*z*(1-c)+x*s)*scale.y, 0,
+            (x*z*(1-c)+y*s)*scale.z, (y*z*(1-c)-x*s)*scale.z, (z*z*(1-c)+c)*scale.z, 0,
+            t.x, t.y, t.z, 1
+        }
+        return mat4(m)
+    end
+
     local mat = mat4()
     local _XformCache = {
         T = {
@@ -98,6 +122,26 @@ ARObject = function(position, rotation, scale)
         Total = nil
     }
     this.GetModel = function()
+        system.print("Pass "..renderCount .. " obj: "..this.Name)
+        if 
+            this.Position.x == 0 and this.Position.y == 0 and this.Position.z == 0 and
+            this.Scale.x == 1 and this.Scale.y == 1 and this.Scale.z == 1 and
+            this.Quaternion.x == 0 and this.Quaternion.y == 0 and this.Quaternion.z == 0 and this.Quaternion.w == 1
+            then
+                if this.Parent then
+                    return this.Parent.GetModel()
+                end
+                return mat
+        end
+        
+        renderCount = renderCount + 1
+        local xf = from_transform(this.Position, this.Quaternion, this.Scale)
+        if this.Parent then
+            xf = xf * this.Parent.GetModel()
+        end
+        return xf 
+        
+        --[[
         local isDirty = false
         if _XformCache.Total == nil then
             isDirty = true
@@ -138,6 +182,7 @@ ARObject = function(position, rotation, scale)
             _XformCache.Total = out
         end
         return _XformCache.Total
+        ]]
     end
 
     this.Update = function(deltaTime)
@@ -175,9 +220,9 @@ ARVertex = function(position, rotation, scale)
 
     local mat = mat4()
     this.GetModel = function()
-        --local t = mat4():translate(this.Position)
+        system.print("Pass "..renderCount .. " obj: "..this.Name)
         if this.Parent then
-            return mat * this.Parent.GetModel()
+            return this.Parent.GetModel()
         end
         return mat
     end
@@ -414,27 +459,41 @@ ARScene = (function()
             return result;
         end
         local group = ARGroup()
+        group.Name = "Mesh"
         local verts = split(string, ",")
         -- TODO: Group into quads
-        for i = 1, #verts, 6 do
+        for i = 1, #verts, 3 do
+            local v1 = ARVertex(vec3(split(verts[i], " ")))
+            v1.Name = "Vertex "..i
+            local v2 = ARVertex(vec3(split(verts[i+1], " ")))
+            v2.Name = "Vertex "..i+1
+            local v3 = ARVertex(vec3(split(verts[i+2], " ")))
+            v3.Name = "Vertex "..i+2
+            --[[
             local v1 = vec3(split(verts[i], " "))
             local v2 = vec3(split(verts[i+2], " "))
             local v3 = vec3(split(verts[i+5], " "))
             local v4 = vec3(split(verts[i+4], " "))
-            local polygon = ARPolygon(ARVertex(v1),ARVertex(v2),ARVertex(v3),ARVertex(v4))
+            ]]
+            local polygon = ARPolygon(v1,v2,v3)
+            polygon.Name = "Poly "..(i//3)+1
+
             polygon.Style = "opacity:0.3"
             group.AddChild(polygon)
         end
         return group
     end
 
-    local testMesh = [[0.5 0 0.5,0.5 0 0,0.5 0.9 0.5,0.5 0.9 0.5,0.5 0 0,0.5 0.9 0,0.75 0 0.5,0.5 0 0.5,0.75 0.9 0.5,0.75 0.9 0.5,0.5 0 0.5,0.5 0.9 0.5,0.25 0 0.85,0.75 0 0.5,0.25 0.9 0.85,0.25 0.9 0.85,0.75 0 0.5,0.75 0.9 0.5,-0.25 0 0.5,0.25 0 0.85,-0.25 0.9 0.5,-0.25 0.9 0.5,0.25 0 0.85,0.25 0.9 0.85,0 0 0.5,-0.25 0 0.5,0 0.9 0.5,0 0.9 0.5,-0.25 0 0.5,-0.25 0.9 0.5,0 0 0,0 0 0.5,0 0.9 0,0 0.9 0,0 0 0.5,0 0.9 0.5,0.5 0 0,0 0 0,0.5 0.9 0,0.5 0.9 0,0 0 0,0 0.9 0,0.5 0.9 0,0 0.9 0,0.5 0.9 0.5,0.5 0.9 0.5,0 0.9 0,0 0.9 0.5,0.5 0.9 0.5,0 0.9 0.5,0.25 0.9 0.85,0.25 0.9 0.85,0 0.9 0.5,-0.25 0.9 0.5,0.25 0.9 0.85,0.75 0.9 0.5,0.5 0.9 0.5,0 0 0,0.5 0 0,0 0 0.5,0 0 0.5,0.5 0 0,0.5 0 0.5,0 0 0.5,0.5 0 0.5,0.25 0 0.85,0.25 0 0.85,0.5 0 0.5,0.75 0 0.5,0.25 0 0.85,-0.25 0 0.5,0 0 0.5]]
+    local testMesh = [[0 0 1,0.89 0 0.45,0.28 0.85 0.45,0 0 1,0.28 0.85 0.45,-0.72 0.53 0.45,0 0 1,-0.72 0.53 0.45,-0.72 -0.53 0.45,0 0 1,-0.72 -0.53 0.45,0.28 -0.85 0.45,0 0 1,0.28 -0.85 0.45,0.89 0 0.45,0.89 0 0.45,0.72 -0.53 -0.45,0.72 0.53 -0.45,0.28 0.85 0.45,0.72 0.53 -0.45,-0.28 0.85 -0.45,-0.72 0.53 0.45,-0.28 0.85 -0.45,-0.89 0 -0.45,-0.72 -0.53 0.45,-0.89 0 -0.45,-0.28 -0.85 -0.45,0.28 -0.85 0.45,-0.28 -0.85 -0.45,0.72 -0.53 -0.45,0.72 0.53 -0.45,0.28 0.85 0.45,0.89 0 0.45,-0.28 0.85 -0.45,-0.72 0.53 0.45,0.28 0.85 0.45,-0.89 0 -0.45,-0.72 -0.53 0.45,-0.72 0.53 0.45,-0.28 -0.85 -0.45,0.28 -0.85 0.45,-0.72 -0.53 0.45,0.72 -0.53 -0.45,0.89 0 0.45,0.28 -0.85 0.45,0 0 -1,-0.28 0.85 -0.45,0.72 0.53 -0.45,0 0 -1,-0.89 0 -0.45,-0.28 0.85 -0.45,0 0 -1,-0.28 -0.85 -0.45,-0.89 0 -0.45,0 0 -1,0.72 -0.53 -0.45,-0.28 -0.85 -0.45,0 0 -1,0.72 0.53 -0.45,0.72 -0.53 -0.45]]
     local mesh = this.ObjectFromS3D(testMesh)
     local herk = ARGroup(mesh)
+    herk.Name = "Mesh Wrapper"
     herk.Position = startPos
+    --herk.LookAt(rightAxis:normalize())
     this.AddObject(herk)
 
     this.Update = function(event, dt)
+        renderCount = 1
         local deltaTime = system.getTime() - lastTime
         -- TODO: Actually set it to player position based on interact
         -- TODO: Manage interactivity through lib
