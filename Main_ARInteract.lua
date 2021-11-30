@@ -11,7 +11,7 @@
 --@require HUDSimpleStats
 --@require HUDVersion
 --@require HUDErrorLog
---@require ARInteract
+
 --@require ARScene
 
 --@class ARMain
