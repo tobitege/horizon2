@@ -13,7 +13,7 @@ Horizon2:Build-Dev:
    - dotnet /app/DUBuild.dll build -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/output -e $CI_PROJECT_DIR/UnitTests -w false -m "$CI_PROJECT_DIR/Main_*.lua"
   artifacts:
      paths:
-       - $CI_PROJECT_DIR/bin/*.json
+       - $CI_PROJECT_DIR/output/*.json
  
 Horizon2:Build-Prod:
   rules:
