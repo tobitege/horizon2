@@ -1,5 +1,9 @@
 $ErrorActionPreference = "Stop"
 
+# Create build,test dir
+New-Item -Path ./bin/ -ItemType Directory -Force
+New-Item -Path ./testresults/ -ItemType Directory -Force
+
 # Clean build,test dir
 Remove-Item ./bin/*.*
 Remove-Item ./testresults/*.*
