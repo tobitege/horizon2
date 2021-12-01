@@ -5,10 +5,10 @@ Remove-Item ./bin/*.*
 Remove-Item ./testresults/*.*
 
 # Build
-./DUBuild/DUBuild.exe build -nm -e ./DUBuild,./DUnit,./UnitTests,./Modules/SpecialisedModules -s ./ -m ./Main*.lua -o ./bin/;
+./DUBuild/DUBuild.exe build -nm -e ./DUBuild,./DUnit,./Tests,./Modules/SpecialisedModules -s ./ -m ./Main*.lua -o ./bin/;
 get-content ./bin/Standard.json | set-clipboard;
 write-host "`nLoaded to clipboard.`n";
 write-host "Running tests...";
 
 # Test
-./DUnit/DUnit.exe test -s ./bin/*.json -t ./UnitTests -l ./testresults
+./DUnit/DUnit.exe test -s ./bin/*.json -t ./Tests -l ./testresults
