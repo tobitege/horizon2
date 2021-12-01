@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"lua.targetVersion": "5.3",
+		"triggerTaskOnSave.tasks": {
+			"BuildConfig": [
+				"*.lua",
+				"Modules/*.lua",
+				"Libs/*.lua",
+				"Core/*.lua"
+			]
+		}
+	}
+}
