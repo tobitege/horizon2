@@ -3,3 +3,7 @@
 /.vscode/launch.json
 Output
 /Modules/pl
+/bin
+/testresults
+/DUBuild/*
+/DUnit/*
