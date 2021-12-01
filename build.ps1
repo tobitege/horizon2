@@ -8,8 +8,8 @@ New-Item -Path ./DUBuild/ -ItemType Directory -Force > $null
 New-Item -Path ./DUnit/ -ItemType Directory -Force > $null
 
 # Create build,test dir
-New-Item -Path ./bin/ -ItemType Directory -Force
-New-Item -Path ./testresults/ -ItemType Directory -Force
+New-Item -Path ./bin/ -ItemType Directory -Force > $null
+New-Item -Path ./testresults/ -ItemType Directory -Force > $null
 
 # Clean build,test dir
 Remove-Item ./bin/*.*
