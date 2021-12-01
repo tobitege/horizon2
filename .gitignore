@@ -5,3 +5,4 @@ Output
 /testresults
 /DUBuild/*
 /DUnit/*
+/error.log
