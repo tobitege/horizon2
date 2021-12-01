@@ -34,7 +34,7 @@ Horizon2:Test:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   script:
-    - dotnet /app/DUnit.dll test -s "$CI_PROJECT_DIR/output/*.json" -t "$CI_PROJECT_DIR/UnitTests" -l "$CI_PROJECT_DIR/testresults"
+    - dotnet /app/DUnit.dll test -s "$CI_PROJECT_DIR/output/*.json" -t "$CI_PROJECT_DIR/Tests" -l "$CI_PROJECT_DIR/testresults"
   artifacts:
     reports:
       junit: $CI_PROJECT_DIR/testresults/*.xml
