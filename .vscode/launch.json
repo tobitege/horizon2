@@ -8,19 +8,7 @@
             "type": "lua",
             "request": "launch",
             "name": "Launch",
-            "program": "${workspaceFolder}/Main_CommsTest.lua"
-        }
-    ],
-    "tasks": [
-        {
-            "label": "Build Config",
-            "type": "shell",
-            "command": "..\\DUBuild\\DUBuild.exe build -s ..\\ -m ..\\Main_CommsTest.lua -o ..\\bin\\",
-            "problemMatcher": [],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+            "program": "${workspaceFolder}/${file}"
         }
     ]
 }
