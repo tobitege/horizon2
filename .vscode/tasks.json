@@ -7,7 +7,7 @@
             "label": "BuildConfig",
             "type": "shell",
             "windows": {
-                "command": "./build.ps1"
+                "command": "./Scripts/build.ps1"
             },
             "problemMatcher": [],
             "group": "build"
