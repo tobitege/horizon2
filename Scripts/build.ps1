@@ -51,10 +51,11 @@ $Host.UI.RawUI.ForegroundColor = "Red"
 Remove-Item ./testresults/*.*
 dotnet ./DUnit/DUnit.dll test -s ./bin/*.json -t ./Tests -l ./testresults | Tee-Object -FilePath ./error.log | Select-String -CaseSensitive "ERROR"
 if($?) {
+    $Host.UI.RawUI.ForegroundColor = $DefaultColor
     Remove-Item -Force ./error.log
     write-host -ForegroundColor Green "Tests finished OK";
 }
 else {
+    $Host.UI.RawUI.ForegroundColor = $DefaultColor
     write-host -ForegroundColor Red "ERROR! Tests failed. Test log written to 'error.log'";
 }
-$Host.UI.RawUI.ForegroundColor = $DefaultColor
