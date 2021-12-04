@@ -14,10 +14,8 @@ return (function()
         })
 
         -- Act
-        local enabled = data.Select("Enabled").ToArray()
-
-        system.print(data.Select("Enabled").Count())
-        data.Select("Enabled").Dump()
+        local enabled = data.Select("IsEnabled").ToArray()
+        local disabled = data.Select(function(v, k) return v.IsEnabled end)
 
         -- Assert
         assert(
@@ -26,6 +24,17 @@ return (function()
             enabled[3] == false and
             enabled[4] == false
             , "Select() should return the property of each element when predicate is a string.")
+
+        assert(
+            enabled[1] == true and 
+            enabled[2] == true and 
+            enabled[3] == false and
+            enabled[4] == false
+            , "Select() should return the property of each element when predicate is a function.")
+    end
+
+    function this.TestWhere()
+
     end
 
     function this.TestAll()
@@ -37,10 +46,14 @@ return (function()
 
         -- Act
         local containsElements = data.All()
+        local allGreaterThanZero = data.All(function (v,k) return v>0 end)
+        local allLessThanZero = data.All(function (v,k) return v<0 end)
         
 
         -- Assert
         assert(containsElements == true, "All() should return true for a non-empty collection.")
+        assert(allGreaterThanZero == true, "Should be true for array of greater than 0 values.")
+        assert(allLessThanZero == false, "Should be false for array of greater than 0 values.")
     end
 
     return this

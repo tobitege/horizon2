@@ -3,7 +3,9 @@ $DefaultColor = $Host.UI.RawUI.ForegroundColor
 
 # The file to copy to clipboard after building:
 $FileToCopy = "UtilsTests.json"
-$SwallowTestOutput = $false
+
+# Whether to show the output of DUnit
+$SwallowTestOutput = $true
 
 # Ensure DUBuild and DUnit directories exist
 New-Item -Path ./DUBuild/ -ItemType Directory -Force > $null
