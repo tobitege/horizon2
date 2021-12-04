@@ -2,7 +2,8 @@ $ErrorActionPreference = "Stop"
 $DefaultColor = $Host.UI.RawUI.ForegroundColor
 
 # The file to copy to clipboard after building:
-$FileToCopy = "Standard.json"
+$FileToCopy = "UtilsTests.json"
+$SwallowTestOutput = $false
 
 # Ensure DUBuild and DUnit directories exist
 New-Item -Path ./DUBuild/ -ItemType Directory -Force > $null
@@ -49,13 +50,17 @@ if (Test-Path ./error.log) {
 write-host -ForegroundColor Blue "Running tests...";
 $Host.UI.RawUI.ForegroundColor = "Red"
 Remove-Item ./testresults/*.*
-dotnet ./DUnit/DUnit.dll test -s ./bin/*.json -t ./Tests -l ./testresults | Tee-Object -FilePath ./error.log | Select-String -CaseSensitive "ERROR"
-if($?) {
-    $Host.UI.RawUI.ForegroundColor = $DefaultColor
-    Remove-Item -Force ./error.log
-    write-host -ForegroundColor Green "Tests finished OK";
+if ($SwallowTestOutput -eq $true) {
+    ($testRetn = dotnet ./DUnit/DUnit.dll test -s ./bin/*.json -t ./Tests -l ./testresults) | Tee-Object -FilePath ./error.log | Select-String -CaseSensitive "ERROR"
 }
 else {
-    $Host.UI.RawUI.ForegroundColor = $DefaultColor
-    write-host -ForegroundColor Red "ERROR! Tests failed. Test log written to 'error.log'";
+    ($testRetn = dotnet ./DUnit/DUnit.dll test -s ./bin/*.json -t ./Tests -l ./testresults) | Tee-Object -FilePath ./error.log
+}
+$Host.UI.RawUI.ForegroundColor = $DefaultColor
+if(($testRetn | Select-String -CaseSensitive "ERROR") -eq $null) {
+    Remove-Item -Force ./error.log
+    write-host -ForegroundColor Green "Tests ran successfully.";
+}
+else {
+    write-host -ForegroundColor Red "`nERROR! Tests failed. Test log written to 'error.log'";
 }
