@@ -2,7 +2,9 @@
 --@require HorizonCore
 --@require HorizonModule
 
+---@class ReadingsModule:HorizonModule Module for collecting readings about the construct and environment.
 ReadingsModule = (function()
+    ---@class ReadingsModule:HorizonModule Module for collecting readings about the construct and environment.
     local this = HorizonModule("Ship Readings", "Gathers ship and environment data and makes it available to other modules", "PreFlush", true)
     this.Tags = "system,readings"
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
@@ -13,11 +15,12 @@ ReadingsModule = (function()
     local controller = Horizon.Controller
 
     function this.Update()
-        local World = {}
+        ---World space readings.
+        ---@type table
+        local World = Horizon.Memory.Static.World
         local Ship = {}
         local Local = {}
 
-        -- World Linear
         World.Position = vec3(core.getConstructWorldPos())
         World.Velocity = vec3(core.getWorldVelocity())
         World.Acceleration = vec3(core.getWorldAcceleration())
