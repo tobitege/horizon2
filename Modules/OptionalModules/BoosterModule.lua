@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 --@class BoosterModule
 
 BoosterModule = (function() 

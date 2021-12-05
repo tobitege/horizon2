@@ -15,6 +15,7 @@ HUDErrorLog =
     }
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
 
+    ---@diagnostic disable-next-line: undefined-field
     local hud = Horizon.GetModule("UI Controller").Displays[1]
     local rollXform = hud.TransformSize(1)
 

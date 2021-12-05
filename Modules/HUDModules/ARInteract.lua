@@ -2,7 +2,7 @@
 --@require HUDMarkers
 --@require HUDCursor
 
-ARInteract = (function() 
+ARInteract = (function()
     local this = HorizonModule("AR Interact", "Allows interaction between elements using emitters and receivers", "PostUpdate", true)
     this.Tags = "hud,comms,navigation"
     this.Config = {
@@ -19,24 +19,29 @@ ARInteract = (function()
     local markers = Horizon.GetModule("HUD Markers")
 
     local startTime = system.getTime() + this.Config.Interval
-    
+
     this.Update = function(event, deltaTime)
         if startTime - system.getTime() <= 0 then
             emitter.send("ST_Wideband", "ping")
             startTime = system.getTime() + this.Config.Interval
         end
     end
-    
+
     local handlePong = function(evt, channel, message)
         if message == "ping" then return end -- ignore pongs for now
         if starts(message, "pong") then
+            ---@class ARIData
+            ---@field Position vec3 Interact point position
+            ---@field Icon string SVG icon
+            ---@field Channel string Communication channel used?
             local data = string.sub(message, 8)
             if data then
                 data = json.decode(data)
                 local marker = ARMarker(data.Position, data.Channel)
                 marker.MaxDistance = 200
-                marker.Icon = Icon
+                marker.Icon = data.Icon
 
+                ---@diagnostic disable-next-line: undefined-field
                 local inst = markers.Add(marker)
                 inst.OnClick = function(ref)
                     emitter.send(data.Channel, "toggle")

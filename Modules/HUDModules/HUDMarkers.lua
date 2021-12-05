@@ -37,6 +37,7 @@ HUDMarkers =
         }
     }
 
+    ---@diagnostic disable-next-line: undefined-field
     local hud = Horizon.GetModule("UI Controller").Displays[1]
     local static = Horizon.Memory.Static
     local defaultMarker = [[<svg viewBox="0 0 198 198"><path fill="#fff" d="M99 .35L197.65 99 99 197.65.35 99 99 .35M99 0L0 99l99 99 99-99L99 0z"/><path fill="none" stroke="#f2f2f2" stroke-miterlimit="10" d="M109 99H89M99 89v20"/><path fill="#fff" d="M188 89L99 10.31 10 89 99 0l89 89zM10 109l89 78.69L188 109l-89 89-89-89z" opacity=".8"/></svg>]]

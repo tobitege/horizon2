@@ -1,4 +1,5 @@
---@require utility-library/StateMachine.lua
+---@diagnostic disable: undefined-global
+--@require StateMachine
 Floors = {697.5, 811.25, 1066.7, 9000, 29966.3, 30000}
 SelectedAltitude = Floors[1]
 
@@ -8,7 +9,7 @@ StateMachine = (function()
     this.Update = function()
         local state = this.Current
         if state then
-            if state.Condition() then 
+            if state.Condition() then
                 state.End()
                 if state.Next ~= nil then
                     system.print("State change: " .. state.Next.Name)
@@ -41,7 +42,7 @@ SafeDeviation = 0.175
 OvershootDistance = 0.25
 FinalDistance = 0.05
 
-function computeDistanceAndTime(initial, final, restMass, thrust, t50, brakeThrust)
+local function computeDistanceAndTime(initial, final, restMass, thrust, t50, brakeThrust)
     local C       = 30000000/3600
     local C2      = C*C
     local ITERATIONS = 100 -- iterations over engine "warm-up" period
@@ -121,6 +122,7 @@ local function getDeviation()
 end
 
 local function moveToTarget(dampen,modifier)
+    ---@diagnostic disable-next-line: undefined-field
     local maxBrake = require('dkjson').decode(unit.getData()).maxBrake
     local ship = Horizon.Memory.Dynamic.Ship
     local world = Horizon.Memory.Static.World
@@ -130,8 +132,7 @@ local function moveToTarget(dampen,modifier)
     local sign = 1
 	local maxF = stats.MaxKinematics.Up
     if distance < 0 then sign = -1 maxF = stats.MaxKinematics.Down end
-    
-     --local dist, time = computeDistanceAndTime(math.abs(world.VerticalVelocity), 0, stats.Mass, math.abs(maxF - (world.AirFriction:len() * stats.Mass)), 4, maxBrake)
+    --local dist, time = computeDistanceAndTime(math.abs(world.VerticalVelocity), 0, stats.Mass, math.abs(maxF - (world.AirFriction:len() * stats.Mass)), 4, maxBrake)
 	local dist, time = computeDistanceAndTime(math.abs(world.VerticalVelocity), 0, stats.Mass, math.abs(ship.Thrust:len() + distance), 0, maxBrake)
 	if (math.abs(world.VerticalVelocity) < 333 and world.AtmosphericDensity > 0.001) or world.AtmosphericDensity < 0.001 then
         ship.Thrust = ship.Thrust + (world.Up * (distance - (world.VerticalVelocity * dampen) + (-sign * dist)) * modifier)

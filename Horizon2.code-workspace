@@ -20,7 +20,42 @@
 			"library",
 			"traceback",
 			"plutils",
-			"vec3"
+			"vec3",
+			"fluant",
+			"_NQ_execute_method",
+			"DUSystem",
+			"core"
+		],
+		"Lua.color.mode": "SemanticEnhanced",
+		"Lua.diagnostics.ignoredFiles": "Enable",
+		"Lua.diagnostics.libraryFiles": "Enable",
+		"Lua.workspace.library": [
+			"Libs/SlotDetector/*.*",
+			"Libs/Data/*.*",
+			"Libs/Utils/*.*",
+			"DU/*.*"
+		],
+		"Lua.workspace.preloadFileSize": 200,
+		"Lua.workspace.maxPreload": 10000,
+		"Lua.diagnostics.neededFileStatus": {
+			"unknown-diag-code": "Any",
+			"undefined-global": "Any",
+			"undefined-field": "Any"
+		},
+		"Lua.diagnostics.severity": {
+			"undefined-global": "Warning"
+		},
+		"Lua.hint.setType": true,
+		"Lua.hover.previewFields": 10,
+		"Lua.IntelliSense.traceBeSetted": true,
+		"Lua.IntelliSense.traceFieldInject": true,
+		"Lua.IntelliSense.traceReturn": true,
+		"Lua.IntelliSense.traceLocalSet": true,
+		"Lua.runtime.builtin": {
+			"math": "enable"
+		},
+		"Lua.workspace.ignoreSubmodules": false,
+		"Lua.workspace.ignoreDir": [
 		]
 	}
 }

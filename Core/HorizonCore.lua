@@ -180,6 +180,7 @@ function EventEmitter()
 end
 
 --@require SlotDetector
+---@diagnostic disable-next-line: undefined-global
 local slots = SlotDetector.DetectSlotsInNamespace(_G)
 
 ---@class Horizon The Horizon Core

@@ -5,6 +5,7 @@ HUDCursor = (function()
     local this = HorizonModule("HUD Cursor", "Allows HUD interaction", "Start", true)
     this.Tags = "hud"
 
+    ---@diagnostic disable-next-line: undefined-field
     local hud = Horizon.GetModule("UI Controller").Displays[1]
     local vec2 = require("cpml/vec2")
 

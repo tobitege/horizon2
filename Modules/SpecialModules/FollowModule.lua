@@ -41,6 +41,7 @@ OwnerFollowModule = (function()
         local ship = Horizon.Memory.Static.Ship
         local dship = Horizon.Memory.Dynamic.Ship
 
+        ---@diagnostic disable-next-line: undefined-field
         brakingForce = brakingForce or require('dkjson').decode(Horizon.Controller.getData()).maxBrake * 0.5
         braking = braking or Horizon.GetModule("Velocity Braking")
         altHold = altHold or Horizon.GetModule("Altitude Hold")

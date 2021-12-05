@@ -25,6 +25,7 @@ HUDOrbitalMarkers = (function()
         markerBase.MaxDistance = nil
         markerBase.ShowDistance = false
         markerBase.Icon = icon or nil
+        ---@diagnostic disable-next-line: undefined-field
         local mark = markers.Add(markerBase)
         mark.AlwaysDirty = true
         local update = mark.OnUpdate
