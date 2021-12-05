@@ -2,16 +2,15 @@ return (function()
     local this = {}
 
     function this.OneTimeSetup()
-        
     end
+
     function this.Setup()
-        
     end
+
     function this.Cleanup()
-        
     end
+
     function this.OneTimeCleanup()
-        
     end
 
     function this.HorizonModuleInGlobal()
@@ -23,7 +22,6 @@ return (function()
     function this.HorizonDelegateInGlobal()
         fluant(_G.HorizonDelegate).ShouldNotBeNil()
     end
-
 
     return this
 end)()

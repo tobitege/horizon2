@@ -5,13 +5,13 @@ return (function()
         this.slots = SlotDetector.DetectSlotsInNamespace(_G)
     end
     function this.Setup()
-        
     end
+
     function this.Cleanup()
-        
+
     end
+
     function this.OneTimeCleanup()
-        
     end
 
     function this.SlotDetectorDetectsCore()

@@ -7,8 +7,7 @@ MouseSteeringModule = (function()
     this.Tags = "steering,control"
 
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
-    
-    -- Config
+
     this.Config = {
         FlipX = false,
         FlipY = false,

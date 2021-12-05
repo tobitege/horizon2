@@ -21,7 +21,7 @@ ManeuverFlightMode = (function()
     --This is used to inform other modules of the users current movement intent
     if not ship.MoveDirection then ship.MoveDirection = vec3(0,0,0) end
 
-    local movement = { 
+    local movement = {
         direction = {
             forward = vec3(0 , 1 , 0),
             backward = vec3(0, -1, 0),
