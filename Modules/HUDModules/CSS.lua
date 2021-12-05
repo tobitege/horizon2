@@ -213,4 +213,4 @@ CSS =
     }
 ]]
 
-Horizon.GetModule("UI Controller").Add(UICore(SystemDisplay,CSS))
+UIController.Add(UICore(SystemDisplay,CSS))

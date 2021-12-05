@@ -55,8 +55,8 @@ ARInteract = (function()
             end
         end
     end
-    
+
     Horizon.Emit.Subscribe("Comms.Message.ST_Wideband", handlePong)
-    
+
     return this
 end)()

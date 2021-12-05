@@ -1,6 +1,8 @@
 --@class HorizonCore
 --@require SlotDetector
 
+---@alias vec3 table
+
 ---@class HorizonDelegate Horizon event delegate.
 ---@param eventType string Dual Universe event type.
 function HorizonDelegate(eventType)
