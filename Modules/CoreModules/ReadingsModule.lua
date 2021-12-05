@@ -17,7 +17,7 @@ ReadingsModule = (function()
     function this.Update()
         ---World space readings.
         ---@type table
-        local World = Horizon.Memory.Static.World
+        local World = {}
         local Ship = {}
         local Local = {}
 
