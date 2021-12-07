@@ -30,7 +30,7 @@ if (-not(Test-Path -Path ./DUBuild/DUBuild.dll -PathType Leaf)) {
 write-host -ForegroundColor Blue "Building...";
 $Host.UI.RawUI.ForegroundColor = "Red"
 Remove-Item ./bin/*.*
-dotnet ./DUBuild/DUBuild.dll build -nm -e ./DUBuild,./DUnit,./Tests,./Modules/SpecialisedModules,./DU -s ./ -m ./Main*.lua -o ./bin/ | Select-String -CaseSensitive "ERROR"
+dotnet ./DUBuild/DUBuild.dll build -nm -e ./DUBuild,./DUnit,./Tests,./Modules/SpecialisedModules,./DU,./Mocks -s ./ -m ./Main*.lua -o ./bin/ | Select-String -CaseSensitive "ERROR"
 if($?) {
     write-host -ForegroundColor Green "Build successful.`n";
     (get-content -Encoding UTF8 ./bin/$FileToCopy) `

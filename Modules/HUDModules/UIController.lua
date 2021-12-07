@@ -10,6 +10,7 @@ UIController = (function()
     Horizon.HUD = Horizon.HUD or this
 
     Horizon.Controller.setTimer("UI", 0.0025)
+    system.showHelper(0)
 
     this.Update = function(deltaTime)
         for _,v in ipairs(this.Displays) do

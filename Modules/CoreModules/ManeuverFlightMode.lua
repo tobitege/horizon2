@@ -104,8 +104,8 @@ ManeuverFlightMode = (function()
     end
 
     Horizon.Emit.Subscribe("FlightMode.Switch", this.Disable)
-    Horizon.Emit.Subscribe("ManeuverFlightMode", function() 
-        Horizon.Emit("FlightMode.Switch")
+    Horizon.Emit.Subscribe("ManeuverFlightMode", function()
+        Horizon.Emit.Call("FlightMode.Switch", this.Name)
         this.Enable()
     end)
 
