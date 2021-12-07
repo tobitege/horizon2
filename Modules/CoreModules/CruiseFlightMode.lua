@@ -41,6 +41,10 @@ CruiseFlightMode = (function()
         staticShip = Horizon.Memory.Static.Ship
         ship = Horizon.Memory.Dynamic.Ship
 
+        -- cannot rotate 2 directions at same time
+        -- add strafing
+        -- check zoom out
+
         rotationAxis = {
             rollleft = -world.Forward,
             rollright = world.Forward,
