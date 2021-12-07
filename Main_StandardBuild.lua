@@ -1,14 +1,25 @@
+--@require HorizonCore
+--@require HorizonModule
+
 --@require LoggingModule
+
 --@require ThrustControlModule
 --@require ManeuverFlightMode
+--@require CruiseFlightMode
+
 --@require RotationDampeningModule
 --@require BrakingModule
+
 --@require CruiseControlModule
 --@require GravityCounterModule
---@require InertialDampeningModule
---@require MouseSteeringModule
 --@require GravityFollow
+--@require InertialDampeningModule
+
+--@require MouseSteeringModule
+--@require MouseModule
+
 --@require HUDArtificialHorizon
+--@require HUDCursor
 --@require HUDSimpleStats
 --@require HUDVersion
 

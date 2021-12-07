@@ -1,6 +1,8 @@
 -- { event, isToggle }
-Config = {
-    antigravity = nil, --Default bind Alt-G
+---@type table<string, KeybindEvent[]>
+Keybinds = {
+    --Default bind Alt-G
+    antigravity = nil,
 
     forward = { {"Move.Direction.Forward"} },
     backward = { {"Move.Direction.Backward"} },
@@ -12,10 +14,14 @@ Config = {
     right = { {"Move.Rotation.RollRight"}  },
     brake = { {"Brake"} },
 
-    booster = { {"Booster"} }, --Default bind B
+    --Default bind B
+    booster = { {"Booster"} },
     gear = { {"LandingGear", true} },
-    groundaltitudeup = nil, -- Alt-Space
-    groupaltitudedown = nil, -- Alt-C
+
+    -- Alt-Space
+    groundaltitudeup = nil,
+    -- Alt-C
+    groupaltitudedown = nil,
     lalt = { { "MouseSteering" } },
     light = nil,
     lshift = { {"HUD.Cursor.Toggle"}, {"MouseSteering.ToggleAndLock"} },
@@ -43,7 +49,7 @@ Config = {
 --@require HorizonCore
 --@require HorizonModule
 
-KeybindsModule = (function() 
+KeybindsModule = (function()
     local this = HorizonModule("Keybinds Module", "Takes keyboard input and forwards it to the configured modules", "PreFlush", true, 1)
     this.Tags = "system,control"
 
@@ -67,7 +73,7 @@ KeybindsModule = (function()
                     local eventName = command[1]
                     local keyDownOnly = command[2]
                     if (not keyDownOnly) or (isKeyDown and keyDownOnly) then
-                        Horizon.Emit(eventName, isKeyDown)
+                        Horizon.Emit.Call(eventName, isKeyDown)
                     end
                 end
             elseif type(event) == "function" then
@@ -76,15 +82,14 @@ KeybindsModule = (function()
         end
     end
 
-    function this.Update(eventType, deltaTime, arg)
-        
+    function this.Update(eventType, deltaTime, keyName)
         if eventType == "keydown" or eventType == "keyup" then
             local isKeyDown = eventType == "keydown"
-            callBind(arg, isKeyDown)
+            callBind(keyName, isKeyDown)
         end
 
         if eventType == "mousewheel" then
-            if arg > 0 then
+            if keyName > 0 then
                 callBind("mousewheelup", true)
             else
                 callBind("mousewheeldown", true)
@@ -95,4 +100,4 @@ KeybindsModule = (function()
 
     return this
 end)()
-KeybindsModule.LoadConfig(Config)
+KeybindsModule.LoadConfig(Keybinds)
