@@ -27,8 +27,8 @@ CruiseFlightMode = (function()
     ---Initialise the control scheme.
     local function Init()
         local loc = Horizon.Memory.Static.Local
-        ---Set velocity to the current velocity
-        this.Config.Speed = math.abs(loc.Velocity.y)
+        ---Set velocity to the current velocity to nearest 100
+        this.Config.Speed = math.abs(math.floor(loc.Velocity.y/1000)*1000)
     end
 
     ---notes:
@@ -98,9 +98,6 @@ CruiseFlightMode = (function()
     end
 
     local function proxyMousewheel(evt, dT, amount)
-        system.print(evt)
-        system.print(dT)
-        system.print(amount)
         local direction = "up"
         if amount < 0 then direction = "down" end
         local n = math.abs(amount)
