@@ -279,6 +279,8 @@ Horizon = (function (slotContainer)
         MouseMove = HorizonDelegate("mousemove"),
         ---Delegate for the Dual Universe "stop" event.
         Stop = HorizonDelegate("stop"),
+        ---Delegate for the Dual Universe timer "tick" event.
+        Tick = HorizonDelegate("tick"),
         Error = HorizonDelegate("error"),
         MouseWheel = HorizonDelegate("mousewheel"),
         Click = HorizonDelegate("click")

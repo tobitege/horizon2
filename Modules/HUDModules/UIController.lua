@@ -9,12 +9,13 @@ UIController = (function()
     this.Displays = {}
     Horizon.HUD = Horizon.HUD or this
 
-    Horizon.Controller.setTimer("UI", 0.0025)
+    Horizon.Controller.setTimer("UI", 1/30)
     system.showHelper(0)
 
-    this.Update = function(deltaTime)
-        for _,v in ipairs(this.Displays) do
-            v.Update()
+    this.Update = function(evt, dT, timer)
+        if evt == "tick" and timer ~= "UI" then return end
+        for i=1,#this.Displays do
+            this.Displays[i].Update()
         end
     end
 
@@ -36,6 +37,7 @@ UIController = (function()
         end
     end
 
+    Horizon.Event.Tick.Add(this.Update)
     Horizon.Event.Click.Add(handleClick)
     return this
 end)()
