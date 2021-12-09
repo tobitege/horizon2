@@ -76,25 +76,10 @@ ManeuverFlightMode = (function()
         local world = Horizon.Memory.Static.World
         local stats = Horizon.Memory.Static.Ship
 
-        local thrustToApply = vec3(0,0,0)
-
-        if (this.Direction.z > 0) then
-            thrustToApply = thrustToApply + (world.Up * stats.MaxKinematics.Up)
-        elseif this.Direction.z < 0 then
-            thrustToApply = thrustToApply + (-world.Up * stats.MaxKinematics.Down)
-        end
-
-        if this.Direction.y > 0 then
-            thrustToApply = thrustToApply + (world.Forward * stats.MaxKinematics.Forward)
-        elseif this.Direction.y < 0 then
-            thrustToApply = thrustToApply + (-world.Forward * stats.MaxKinematics.Backward)
-        end
-
-        if this.Direction.x > 0 then
-            thrustToApply = thrustToApply + (world.Right * stats.MaxKinematics.Right)
-        elseif this.Direction.x < 0 then
-            thrustToApply = thrustToApply + (-world.Right * stats.MaxKinematics.Left)
-        end
+        local thrustToApply = LerpConverter()
+            .FromAxis(world.Right, world.Forward, world.Up)
+            .MultiplyKinematics(stats.MaxKinematics)
+            .Transform(this.Direction)
 
         ship.Thrust = ship.Thrust + ((thrustToApply * this.Config.Throttle) / stats.Mass)
         ship.Rotation = ship.Rotation + ((world.Forward * this.Rotation.y) * this.Config.TurnSpeed)
