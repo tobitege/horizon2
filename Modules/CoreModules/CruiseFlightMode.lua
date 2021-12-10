@@ -2,7 +2,7 @@
 --@require ThrustControlModule
 --@require KeybindsModule
 --@require ReadingsModule
---@require Vec6
+--@require LerpConverter
 
 CruiseFlightMode =
     (function()
@@ -58,7 +58,7 @@ CruiseFlightMode =
 
     local function stepFromSpeed(speed)
         speed = math.abs(speed)
-        return math.ceil(math.sqrt(round10(speed)/3.1422))
+        return math.floor(math.sqrt(round10(speed)/3.1422))
     end
 
     ---Initialise the control scheme.
