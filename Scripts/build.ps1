@@ -12,9 +12,17 @@ New-Item -Path ./DUnit/ -ItemType Directory -Force > $null
 New-Item -Path ./bin/ -ItemType Directory -Force > $null
 New-Item -Path ./testresults/ -ItemType Directory -Force > $null
 
+# Ensure submodules are init
+if (-not(Test-Path -Path ./Libs/Utils)) {
+    git submodule update --init --recursive
+}
+
 # Ensure that DUBuild is present
 if (-not(Test-Path -Path ./DUBuild/DUBuild.dll -PathType Leaf)) {
-    write-host -ForegroundColor Red "`ERROR! DUBuild is not present. Exising...";
+    write-host -ForegroundColor Red "`ERROR! DUBuild is not present.";
+    write-host -ForegroundColor Yellow "Opening repo to download..."
+    Start-Process "https://git.internal.st/dual-universe/dubuild/-/jobs/artifacts/master/download?job=Build+Artifacts"
+    Start-Process ".\DUBuild"
     exit
 }
 
@@ -37,10 +45,12 @@ else {
 
 # Ensure that DUnit is present
 if (-not(Test-Path -Path ./DUnit/DUnit.dll -PathType Leaf)) {
-    write-host -ForegroundColor Red "`ERROR! DUnit is not present. Exising...";
+    write-host -ForegroundColor Red "`ERROR! DUnit is not present.";
+    write-host -ForegroundColor Yellow "Opening repo to download..."
+    Start-Process "https://git.internal.st/dual-universe/dunit/-/jobs/artifacts/master/download?job=Build+Artifacts"
+    Start-Process ".\DUnit"
     exit
 }
-
 
 # Test
 if (Test-Path ./error.log) {
@@ -53,9 +63,9 @@ dotnet ./DUnit/DUnit.dll test -s ./bin/*.json -t ./Tests -l ./testresults | Tee-
 if($?) {
     $Host.UI.RawUI.ForegroundColor = $DefaultColor
     Remove-Item -Force ./error.log
-    write-host -ForegroundColor Green "Tests finished OK";
+    write-host -ForegroundColor Green "Tests finished successfully.";
 }
 else {
-    $Host.UI.RawUI.ForegroundColor = $DefaultColor
     write-host -ForegroundColor Red "ERROR! Tests failed. Test log written to 'error.log'";
+    $Host.UI.RawUI.ForegroundColor = $DefaultColor
 }
