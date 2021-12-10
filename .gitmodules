@@ -6,3 +6,7 @@
 	path = Libs/Data
 	url = https://gitlab+deploy-token-4:hJUQXMsLYzAyAmmRfy_o@git.internal.st/dual-universe/datalib.git
 	ignore = dirty
+[submodule "Libs/Utils"]
+	path = Libs/Utils
+	url = https://gitlab+deploy-token-5:YiUnrbT628Q2rNNaJXWd@git.internal.st/dual-universe/utility-library.git
+	branch = master
