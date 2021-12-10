@@ -9,9 +9,13 @@ CruiseFlightMode =
     local this = HorizonModule("Cruise Flight Mode", "Cruise flight mode for constant speed", "Flush", false)
     this.Tags = "control,thrust,steering,input,flightmode"
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
-    this.Config.Speed = 0
-    this.Config.SpeedStep = 50 / 3.6
-    this.Config.TurnSpeed = 3
+    this.Config.SpeedStep = 0
+    ---The target movement speed in m/s
+    this.Config.TargetSpeed = 0
+    --this.Config.SpeedStep = 50 / 3.6
+    this.Config.TurnSpeed = 5
+
+    ---When no input and 0 speed direction needs to be 0,0,0
 
     ---Maximum theoretical speed
     local maxSpeed = 556
@@ -43,11 +47,28 @@ CruiseFlightMode =
         down = vec3(0, 0, -1)
     }
 
+    local function round10(val)
+        return tonumber(string.format("%2.1f", math.ceil(val/10))*10)
+    end
+
+    local function calculateStep(step)
+        if step <= 0 then return 0 end
+        return round10((step*3.1422)^2)
+    end
+
+    local function stepFromSpeed(speed)
+        speed = math.abs(speed)
+        return math.ceil(math.sqrt(round10(speed)/3.1422))
+    end
+
     ---Initialise the control scheme.
     local function Init()
         local loc = Horizon.Memory.Static.Local
-        ---Set velocity to the current velocity to nearest 100
-        this.Config.Speed = math.abs(math.floor(loc.Velocity.y / 1000) * 1000)
+        translation = vec3(0, 0, 0)
+        rotation = vec3(0, 0, 0)
+        ship.Rotation = vec3(0, 0, 0)
+        this.Config.SpeedStep = stepFromSpeed(loc.Velocity.y)
+        this.Config.TargetSpeed = calculateStep(this.Config.SpeedStep) / 3.6
     end
 
     ---notes:
@@ -63,11 +84,15 @@ CruiseFlightMode =
         rotationVec = LerpConverter().FromAxis(world.Right, world.Forward, world.Up)
 
         local dot = world.Forward:dot(world.AirFriction)
-        local modifiedVelocity = (this.Config.Speed - dot)
+        local modifiedVelocity = this.Config.TargetSpeed - dot
         local desired = world.Forward * modifiedVelocity
         local delta = (desired - (world.Velocity - world.Acceleration))
         ship.Thrust = ship.Thrust + delta + (translationVec.Transform(translation) / staticShip.Mass)
-        ship.MoveDirection = vec3(0, 1, 0) + translation
+        if translation:len() == 0 and delta:len() < 1 then
+            ship.MoveDirection = vec3(0,0,0)
+        else
+            ship.MoveDirection = vec3(0, 1, 0) + translation
+        end
         ship.Rotation = ship.Rotation + (rotationVec.Transform(rotation) * this.Config.TurnSpeed)
     end
 
@@ -78,14 +103,14 @@ CruiseFlightMode =
         event = string.lower(event)
         local direction = string.match(event, "%.([^%.]*)$")
         if direction == "up" then
-            this.Config.Speed = this.Config.Speed + this.Config.SpeedStep
+            this.Config.SpeedStep = this.Config.SpeedStep + 1
         elseif direction == "down" then
-            this.Config.Speed = math.max(0, this.Config.Speed - this.Config.SpeedStep)
+            this.Config.SpeedStep = math.max(0, this.Config.SpeedStep - 1)
         end
-        system.print("Curr target speed: " .. (this.Config.Speed * 3.6) .. " km/h")
+        this.Config.TargetSpeed = calculateStep(this.Config.SpeedStep) / 3.6
     end
 
-    local function handleVertical(event, keyDown)
+    local function handleInputs(event, keyDown)
         if not this.Enabled then
             return
         end
@@ -130,7 +155,7 @@ CruiseFlightMode =
             translation = vec3(0,0,0)
         end
     )
-    Horizon.Emit.Subscribe("Move.*", handleVertical)
+    Horizon.Emit.Subscribe("Move.*", handleInputs)
     Horizon.Emit.Subscribe("Throttle.*", handleThrottle)
     Horizon.Event.MouseWheel.Add(proxyMousewheel)
     Horizon.Emit.Subscribe("FlightMode.Switch", this.Disable)
