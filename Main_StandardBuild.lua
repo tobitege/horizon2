@@ -22,6 +22,9 @@
 --@require HUDCursor
 --@require HUDSimpleStats
 --@require HUDVersion
+--@require HUDCruiseFlight
+
+--@timer UI
 
 --@class Main
 --@outFilename Standard.json
@@ -63,10 +66,11 @@ function System.Flush()
 end
 
 function Unit.Tick(timer)
+    Horizon.Event.Tick(timer)
 end
 
 function Receiver.Received(channel, message, slot)
-    Horizon.Emit("Comms.Message."..channel, channel, message)
+    Horizon.Emit.Call("Comms.Message."..channel, channel, message)
 end
 
 function Screen.MouseDown(x, y, slot)
