@@ -43,6 +43,7 @@ DockingRequest = (function()
 
     ---@param comm Communication
     local function handleMessage(comm, type, payload)
+        system.print("!!! Incoming ["..type.."] "..payload)
         if type == "DOCKR" then
             if payload then
                 --notify captain prolly, wait for accept
@@ -85,14 +86,21 @@ DockingRequest = (function()
         radar = selectRadar()
         local id = radar.getTargetId()
         if id ~= 0 and not connection then
+            system.print("######################################################")
             local name = radar.getConstructName(id)
             connection = Client.Connect(tostring(id), "STEM")
             connection.Debug = true
             connection.Name = name
-            connection.OnMessage = function(type, payload) handleMessage(connection, type, payload) end
+            connection.OnMessage = function(type, payload)
+                system.print("Got message ["..type.."] "..payload)
+                handleMessage(connection, type, payload)
+            end
             connection.OnHandshake = function()
                 system.print("Connected to "..name..".")
-                connection.Send("DOCKR", Horizon.Memory.Static.Ship.Id)
+                connection.Send("MSG", "Burst comms test 1")
+                connection.Send("MSG", "Burst comms test 2")
+                connection.Send("MSG", "Burst comms test 3")
+                connection.Send("MSG", "Burst comms test 4")
             end
             connection.OnClose = function(reason)
                 system.print("Disconnected from "..name..": "..reason)
