@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-field
 return (function()
     local this = {}
 
@@ -12,6 +13,14 @@ return (function()
         assert(parsed[10] == "this\"")
         assert(parsed[11] == "\"is")
         assert(parsed[12] == "the end")
+    end
+
+    function this.ShouldCaptureBreaks()
+        local str = [[horizon mod ls | grep mouse]]
+        local parsed = str:parseCommand()
+        for i = 1,#parsed do
+            system.print(parsed[i])
+        end
     end
 
     return this
