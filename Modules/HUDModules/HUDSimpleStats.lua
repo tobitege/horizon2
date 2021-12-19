@@ -187,7 +187,11 @@ HUDSimpleStats = (function()
         fn.buildSettingsButton()
     end
 
-    fn.buildWidgets()
+    function this.Init()
+        fn.buildWidgets()
+    end
+
+    this.Init()
 
     return this
 end)()

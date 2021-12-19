@@ -23,6 +23,7 @@
 --@require HUDSimpleStats
 --@require HUDVersion
 --@require HUDFuelIndicators
+--@require SerializationModule
 
 --@class Main
 --@outFilename Standard.json

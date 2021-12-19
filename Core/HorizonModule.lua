@@ -43,6 +43,12 @@ HorizonModule = function (name, description, defaultEventName, defaultEnable, pr
     ---@param deltaTime number The time elapsed since last call.
     function this.Update(eventType, deltaTime) end
 
+    ---Perform initialization of the module. Note that this method may be called more than once.
+    ---@return boolean Success Whether the module initiated successfully.
+    function this.Init()
+        return true
+    end
+
     ---Enables the module.
     function this.Enable() this.Enabled = true end
 
