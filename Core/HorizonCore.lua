@@ -210,6 +210,7 @@ Horizon = (function (slotContainer)
 
     ---The currently loaded Horizon modules.
     ---@see HorizonModule
+    ---@type table<string, HorizonModule>
     this.Modules = {}
     this.HUD = nil
 
@@ -300,12 +301,9 @@ Horizon = (function (slotContainer)
         this.Memory.Shared = databank
     end
 
-    ---Registers a HorizonModule into the system.
-    ---@param module HorizonModule
     function this.RegisterModule(module)
         if types.type(module) ~= "HorizonModule" then return end
         this.Modules[module.Name] = module
-        --table.insert(this.Modules, module)
         module.Register()
     end
 
