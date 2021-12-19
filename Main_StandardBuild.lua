@@ -14,6 +14,7 @@
 --@require GravityCounterModule
 --@require GravityFollow
 --@require InertialDampeningModule
+--@require AltitudeHoldModule
 
 --@require MouseSteeringModule
 --@require MouseModule
