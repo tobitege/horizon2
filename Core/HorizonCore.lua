@@ -272,6 +272,9 @@ Horizon = (function (slotContainer)
         MouseMove = HorizonDelegate("mousemove"),
         ---Delegate for the Dual Universe "stop" event.
         Stop = HorizonDelegate("stop"),
+        Tick = HorizonDelegate("tick"),
+        ---Lua chat input event.
+        Input = HorizonDelegate("input"),
         Error = HorizonDelegate("error"),
         MouseWheel = HorizonDelegate("mousewheel"),
         Click = HorizonDelegate("click")

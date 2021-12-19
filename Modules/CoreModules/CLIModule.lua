@@ -100,6 +100,7 @@ CLI = (function()
                         for j=i,#commands do
                             local c = commands[j]
                             if c.op ~= cmdArr.op and c.op ~= nil then break end
+                            ---todo: null check
                             cmdList[#cmdList+1] = c
                         end
                         if #cmdList > 0 then
@@ -107,6 +108,7 @@ CLI = (function()
                             skip = #cmdList-1
                         end
                     else
+                        ---todo: pcall
                         this.Run(cmdArr)
                     end
                 else
@@ -116,11 +118,7 @@ CLI = (function()
         end
 
         ---todo: load bins from databanks
-        ---todo: pipelines
-        ---todo: proper HorizonCommand implementation with helpers for handling args
         ---todo: refactor alla this shit
-
-        --this.Run(string)
     end
 
     return this
@@ -195,6 +193,7 @@ function CLI.Commands.grep(args)
     local pArgs =
         CommandParser(args)
         .AddFlag("IgnoreCase", {"-i","--ignore-case"}, "ignore case distinctions")
+        .AddFlag("LineCount", {"-c","--count"}, "print only a count of selected lines per INPUT")
         .AddFlag("Help", {"--help"}, "display this help text and exit")
 
     if #args < 2 or pArgs.Args.Help then
@@ -211,13 +210,18 @@ function CLI.Commands.grep(args)
     for s in input:gmatch("[^\n]+") do
         if pArgs.Args.IgnoreCase then
             if s:lower():find(pattern:lower()) then
-                system.print(s)
+                table.insert(out, s)
             end
         else
             if s:find(pattern) then
-                system.print(s)
+                table.insert(out, s)
             end
         end
+    end
+    if pArgs.Args.LineCount then
+        system.print(#out)
+    else
+        for i=1,#out do system.print(out[i]) end
     end
     return true
 end
