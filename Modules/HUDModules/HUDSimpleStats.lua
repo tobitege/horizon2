@@ -92,7 +92,7 @@ HUDSimpleStats = (function()
         ["G-Force"] = {
             [[⇩ $(Number) g]],
             function (ref)
-                ref.Number = utils.round(Horizon.Memory.Static.World.G / 9.80666,0.01)
+                ref.Number = utils.round(Horizon.Memory.Static.World.G / 9.8910,0.01)
             end
         }
     }
