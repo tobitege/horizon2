@@ -122,6 +122,7 @@ CSS =
         background-color: var(--primary);
         width: 33%;
         left: 33%;
+        transform: translateX(33%);
         bottom: 0.05em;
         box-shadow: var(--glow);
         max-height: calc(100% - 0.05em);
