@@ -50,9 +50,10 @@ HUDSimpleStats = (function()
     local function createDisplay(content, onUpdate)
         local lastPos = Linq(base.Children).Max(getOffset) or 0
         if lastPos ~= 0 then lastPos = lastPos + base.Padding end
-        local widget = UIPanel(lastPos,0,5.5,xformSize.y)
+        local widget = UILabel(lastPos,0,5.5,xformSize.y)
         widget.AlwaysDirty = true
-        widget.Content = [[<uilabel style="width: 100%;height:100%">]]..content..[[</uilabel>]]
+        widget.Zindex = widget.Zindex + 10
+        widget.Content = content
         widget.OnUpdate = onUpdate
         base.AddChild(widget)
     end
