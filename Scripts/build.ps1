@@ -33,7 +33,11 @@ Remove-Item ./bin/*.*
 dotnet ./DUBuild/DUBuild.dll build -nm -e ./DUBuild,./DUnit,./Tests,./Modules/SpecialisedModules,./DU -s ./ -m ./Main*.lua -o ./bin/ | Select-String -CaseSensitive "ERROR"
 if($?) {
     write-host -ForegroundColor Green "Build successful.`n";
-    get-content -Encoding UTF8 ./bin/$FileToCopy | set-clipboard;
+    (get-content -Encoding UTF8 ./bin/$FileToCopy) `
+    -replace '%CI_COMMIT_TAG%','local' `
+    -replace '%CI_COMMIT_BRANCH%',(git rev-parse --abbrev-ref HEAD) `
+    -replace '%CI_COMMIT_SHORT_SHA%',(git rev-parse --short HEAD) | set-clipboard;
+
     write-host -ForegroundColor Yellow "JSON loaded to clipboard.`n"
     $Host.UI.RawUI.ForegroundColor = $DefaultColor
 }

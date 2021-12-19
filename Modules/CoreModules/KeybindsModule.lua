@@ -40,11 +40,12 @@ Config = {
 }
 
 --@class KeybindsModule
+
 --@require HorizonCore
 --@require HorizonModule
 
 KeybindsModule = (function() 
-    local this = HorizonModule("Keybinds Module", "Takes keyboard input and forwards it to the configured modules", "PreFlush", true, 1)
+    local this = HorizonModule("Keybinds Module", "Takes keyboard input and forwards it to the configured modules", "Start", true, 1)
     this.Tags = "system,control"
 
     Horizon.Event.KeyUp.Add(this)
@@ -67,7 +68,7 @@ KeybindsModule = (function()
                     local eventName = command[1]
                     local keyDownOnly = command[2]
                     if (not keyDownOnly) or (isKeyDown and keyDownOnly) then
-                        Horizon.Emit(eventName, isKeyDown)
+                        Horizon.Emit.Call(eventName, isKeyDown)
                     end
                 end
             elseif type(event) == "function" then
@@ -77,7 +78,6 @@ KeybindsModule = (function()
     end
 
     function this.Update(eventType, deltaTime, arg)
-        
         if eventType == "keydown" or eventType == "keyup" then
             local isKeyDown = eventType == "keydown"
             callBind(arg, isKeyDown)
