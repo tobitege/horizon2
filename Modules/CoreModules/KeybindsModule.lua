@@ -19,9 +19,10 @@ Keybinds = {
     gear = { {"LandingGear", true} },
 
     -- Alt-Space
-    groundaltitudeup = nil,
+    groundaltitudeup = { {"AltitudeUp", true} },
     -- Alt-C
-    groupaltitudedown = nil,
+    groundaltitudedown = { {"AltitudeDown", true} },
+
     lalt = { { "MouseSteering" } },
     light = nil,
     lshift = { {"HUD.Cursor.Toggle"}, {"MouseSteering.ToggleAndLock"} },
@@ -33,7 +34,7 @@ Keybinds = {
     option6 = { {"ManeuverFlightMode"} },
     option7 = nil,
     option8 = nil,
-    option9 = nil,
+    option9 = { {"AltitudeHold", true} },
     speeddown = { {"Throttle.Up", true} },
     speedup = { {"Throttle.Down", true} },
     stopengines = { {"HUD.Click", true} },
