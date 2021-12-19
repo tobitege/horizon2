@@ -1,4 +1,5 @@
 --@class ManeuverFlightMode
+
 --@require HorizonCore
 --@require HorizonModule
 --@require ThrustControlModule

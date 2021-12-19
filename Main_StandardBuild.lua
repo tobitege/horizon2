@@ -11,6 +11,7 @@
 --@require HUDArtificialHorizon
 --@require HUDSimpleStats
 --@require HUDVersion
+--@require HUDFuelIndicators
 
 --@class Main
 --@outFilename Standard.json
@@ -51,11 +52,16 @@ function System.Flush()
     Horizon.Event.PreFlush() Horizon.Event.Flush() Horizon.Event.PostFlush()
 end
 
+function System.InputText(action)
+    Horizon.Event.Input(action)
+end
+
 function Unit.Tick(timer)
+    Horizon.Event.Tick(timer)
 end
 
 function Receiver.Received(channel, message, slot)
-    Horizon.Emit("Comms.Message."..channel, channel, message)
+    Horizon.Emit.Call("Comms.Message."..channel, channel, message)
 end
 
 function Screen.MouseDown(x, y, slot)

@@ -1,14 +1,15 @@
 --@class RotationDampeningModule
+
 --@require HorizonCore
 --@require HorizonModule
 --@require ThrustControlModule
 --@require ReadingsModule
 
-RotationDampeningModule = (function() 
+RotationDampeningModule = (function()
     local this = HorizonModule("Rotation Dampening", "Slows rotation over time, preventing unintended spin", "PostFlush", true)
     this.Tags = "stability,rotation"
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
-    
+
     function this.Update(eventType, deltaTime)
         local staticWorld = Horizon.Memory.Static.World
         local dynamicShip = Horizon.Memory.Dynamic.Ship
