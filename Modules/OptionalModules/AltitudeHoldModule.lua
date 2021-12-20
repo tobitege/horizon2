@@ -25,7 +25,7 @@ AltitudeHoldModule = (function()
 
     function this.Enable()
         local ship = Horizon.Memory.Static.Ship
-        this.Config.TargetAltitude = ship.Altitude + 1
+        this.Config.TargetAltitude = ship.Altitude
         this.Enabled = true
     end
 

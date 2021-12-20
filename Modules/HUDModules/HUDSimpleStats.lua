@@ -84,15 +84,15 @@ HUDSimpleStats = (function()
             end
         },
         ["Atmospheric Density"] = {
-            [[☁ $(Number) %]],
+            [[☁ $(Number.Major)<sup>$(Number.Minor)</sup> %]],
             function (ref)
-                ref.Number = utils.round(Horizon.Memory.Static.World.AtmosphericDensity*100,0.1)
+                ref.Number = splitNumber(Horizon.Memory.Static.World.AtmosphericDensity*100)
             end
         },
         ["G-Force"] = {
-            [[⇩ $(Number) g]],
+            [[⇩ $(Number.Major)<sup>$(Number.Minor)</sup> g]],
             function (ref)
-                ref.Number = utils.round(Horizon.Memory.Static.World.G / 9.8910,0.01)
+                ref.Number = splitNumber(Horizon.Memory.Static.World.G / 9.8910)
             end
         }
     }

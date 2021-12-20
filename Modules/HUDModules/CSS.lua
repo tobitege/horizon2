@@ -184,6 +184,7 @@ CSS =
         font-size: 1.25em;
         padding: 0.2vmax;
         background: var(--bg);
+        font-family: 'Adam','Play';
     }
     uiheading::before {
         content: "";
