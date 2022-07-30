@@ -56,6 +56,11 @@
 		},
 		"Lua.workspace.ignoreSubmodules": false,
 		"Lua.workspace.ignoreDir": [
-		]
+		],
+		"window.title": "${dirty}${activeEditorShort}${separator}${separator}Horizon 2",
+		"editor.minimap.enabled": true
+	},
+	"extensions": {
+		"recommendations": ["sumneko.lua", "actboy168.lua-debug", "equinusocio.vsc-material-theme-icons", "vscode-icons-team.vscode-icons", "trixnz.vscode-lua", "ms-vscode.powershell", "redhat.vscode-yaml"]
 	}
 }
