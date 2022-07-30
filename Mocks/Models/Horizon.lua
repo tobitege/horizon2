@@ -49,3 +49,10 @@ local keybindEvent = {
     "EventName",
     true
 }
+
+---@class QuickConfigFactory
+---@param parent UIObject Parent element of the widget.
+---@param hud DisplayAdapter HUD Display adapter being used.
+---@param module HorizonModule The target module.
+function QuickConfigFactory(parent, hud, module)
+end

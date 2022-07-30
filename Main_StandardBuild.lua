@@ -12,7 +12,7 @@
 
 --@require CruiseControlModule
 --@require GravityCounterModule
---@require GravityFollow
+--@require GravityFollowModule
 --@require InertialDampeningModule
 --@require AltitudeHoldModule
 
@@ -24,6 +24,8 @@
 --@require HUDSimpleStats
 --@require HUDVersion
 --@require HUDFuelIndicators
+--@require HUDQuickConfig
+
 --@require SerializationModule
 
 --@class Main

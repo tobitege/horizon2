@@ -15,7 +15,7 @@ Keybinds = {
     brake = { {"Brake"} },
 
     --Default bind B
-    booster = { {"Booster"} },
+    booster = { {"Booster"}, {"QuickConfig", true} },
     gear = { {"LandingGear", true} },
 
     -- Alt-Space

@@ -59,6 +59,21 @@ CSS =
       letter-spacing: 0.05vw;
       text-transform: uppercase;
     }
+    uicheckbox {
+        position: absolute;
+        border: 1px solid var(--primary);
+        background-color: #00000033;
+    }
+    uicheckbox.checked::after {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        right: 3px;
+        bottom: 3px;
+        background: var(--primary);
+        box-shadow: var(--glow);
+        content: "";
+    }
     panel.row {
       flex-direction: row;
     }
@@ -101,6 +116,9 @@ CSS =
     }
     .rel {
       position: relative;
+    }
+    .selected {
+        background-color: #ae0f1266;
     }
     uiprogress {
         height: 0.5vw;
@@ -212,6 +230,13 @@ CSS =
         background: var(--bg);
         border-left: var(--border);
         border-right: var(--border);
+    }
+    .red {
+        color: var(--primary);
+    }
+    strong {
+        font-weight: bold;
+        font-family: 'Play';
     }
 ]]
 

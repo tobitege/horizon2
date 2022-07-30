@@ -1,12 +1,22 @@
---@class GravityFollow
+--@class GravityFollowModule
 
-GravityFollow = (function() 
+GravityFollowModule = (function() 
     local this = HorizonModule("Gravity Follow", "Forces ship to follow gravity down, effectively locking ship pitch to the horizon", "Flush", false)
     this.Tags = "thrust,stability"
+    this.Keybind = "GravityFollow"
     this.Config = {
         AdjustSpeed = 6
     }
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
+    this.QuickConfig = {
+        Enabled = true,
+        WidgetFactory = function(parent, hud, module)
+            local template = HUDQuickConfig.Templates.Toggle(parent, hud, module)
+            return template
+        end,
+        Order = 4,
+        Category = "Stability Assists"
+    }
 
     local function transformPitch(pitch)
         pitch = pitch % 180
@@ -33,7 +43,7 @@ GravityFollow = (function()
         ship.Rotation = ship.Rotation + (world.Up:cross(-world.Vertical) - offsetVec)
     end
 
-    Horizon.Emit.Subscribe("GravityFollow", function() this.ToggleEnabled() end)
+    Horizon.Emit.Subscribe(this.Keybind, this.ToggleEnabled)
 
     return this
 end)()

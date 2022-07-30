@@ -8,7 +8,7 @@ MouseModule = (function()
         local mouseWheel = system.getMouseWheel()
 
         if mouseWheel ~= 0 then
-            Horizon.Event.MouseWheel(mouseWheel)
+            Horizon.Event.MouseWheel.Call(mouseWheel)
         end
 
     end

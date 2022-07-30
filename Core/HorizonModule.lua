@@ -20,6 +20,10 @@ HorizonModule = function (name, description, defaultEventName, defaultEnable, pr
     ---@type string
     this.Tags = ""
 
+    ---The main keybind event name for controlling the module.
+    ---@type string|nil
+    this.Keybind = nil
+
     ---Array of the module's dependencies.
     ---@type table
     this.Dependencies = {}
@@ -36,7 +40,19 @@ HorizonModule = function (name, description, defaultEventName, defaultEnable, pr
 
     ---The confuguration of the module.
     ---@type table
-    this.Config = {}
+    this.Config = {
+    }
+
+    this.QuickConfig = {
+        Enabled = false,
+        Order = 1,
+        WidgetFactory = nil,
+        Locked = false,
+        FullConfig = false,
+        Label = nil,
+        Category = "Default",
+        ShowKeybind = true
+    }
 
     ---Method which is called when the event it is registered to is raised.
     ---@param eventType? string The name of the event which initiated the method call.
@@ -64,6 +80,17 @@ HorizonModule = function (name, description, defaultEventName, defaultEnable, pr
         if defaultEventName then
             Horizon.Event[defaultEventName].Add(this)
         end
+    end
+
+    ---Checks whether the module has the specified tag.
+    ---@param tag string The tag to search for.
+    function this.HasTag(tag)
+        for s in this.Tags:gmatch("[^,]+") do
+            if s:lower() == tag:lower() then
+                return true
+            end
+        end
+        return false
     end
 
     ---Unregisters this module from HorizonCore

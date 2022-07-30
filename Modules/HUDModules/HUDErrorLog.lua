@@ -57,7 +57,7 @@ HUDErrorLog =
         base.AddChild(w)
     end
 
-    this.Update = function(event, dt, error)
+    this.Update = function(event, dt, error, stackTrace)
         system.print(error)
         createWidget(error)
         base.IsDirty = true

@@ -10,6 +10,7 @@ CruiseFlightMode = (function()
     this.Config.Speed = 0
     this.Config.SpeedStep = 100 / 3.6
     this.Config.TurnSpeed = 2
+    this.Keybind = "CruiseFlightMode"
 
     ---Maximum theoretical speed
     local maxSpeed = 556
@@ -97,21 +98,8 @@ CruiseFlightMode = (function()
         end
     end
 
-    local function proxyMousewheel(evt, dT, amount)
-        system.print(evt)
-        system.print(dT)
-        system.print(amount)
-        local direction = "up"
-        if amount < 0 then direction = "down" end
-        local n = math.abs(amount)
-        for i=1,n do
-            handleThrottle("Throttle."..direction)
-        end
-    end
-
     Horizon.Emit.Subscribe("Move.*", handleVertical)
     Horizon.Emit.Subscribe("Throttle.*", handleThrottle)
-    Horizon.Event.MouseWheel.Add(proxyMousewheel)
     Horizon.Emit.Subscribe("FlightMode.Switch", this.Disable)
     Horizon.Emit.Subscribe("CruiseFlightMode", function()
         Init()

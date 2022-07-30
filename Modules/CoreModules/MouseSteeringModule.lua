@@ -5,8 +5,11 @@
 MouseSteeringModule = (function() 
     local this = HorizonModule("Mouse Steering", "Locks the mouse and redirects input to ship rotation", "Flush", true)
     this.Tags = "steering,control"
+    this.Keybind = "MouseSteering"
 
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
+    this.Config.QuickConfig = 3
+    this.Config.QuickConfigType = "toggle"
 
     this.Config = {
         FlipX = false,
@@ -51,7 +54,7 @@ MouseSteeringModule = (function()
         system.lockView(0)
     end
 
-    Horizon.Emit.Subscribe("MouseSteering", function() this.ToggleEnabled() end)
+    Horizon.Emit.Subscribe(this.Keybind, this.ToggleEnabled)
     Horizon.Emit.Subscribe("MouseSteering.ToggleAndLock", function() this.ToggleEnabled() system.lockView(1) end)
 
     system.lockView(1)

@@ -4,23 +4,31 @@
 --@require ThrustControlModule
 --@require KeybindsModule
 
-CruiseControlModule = (function() 
+CruiseControlModule = (function()
     local this = HorizonModule("Cruise Control", "When enabled forward thrust is constantly applied", "PostFlush", false)
     this.Tags = "thrust,breaking"
+    this.Keybind = "CruiseControl"
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
-    
+    this.QuickConfig = {
+        Enabled = true,
+        WidgetFactory = function(parent, hud, module)
+            local template = HUDQuickConfig.Templates.Toggle(parent, hud, module)
+            return template
+        end
+    }
+
     function this.Update(eventType, deltaTime)
         local world = Horizon.Memory.Static.World
         local ship = Horizon.Memory.Static.Ship
         local dship = Horizon.Memory.Dynamic.Ship
-        
+
         dship.Thrust = dship.Thrust + (world.Forward * (ship.MaxKinematics.Forward / ship.Mass))
         dship.MoveDirection = vec3(0,1,0)
     end
-    
-    Horizon.Emit.Subscribe("CruiseControl", function() this.ToggleEnabled() end)
+
+    Horizon.Emit.Subscribe(this.Keybind, this.ToggleEnabled)
     Horizon.Emit.Subscribe("Move.Direction.*", function() this.Disable() end)
     Horizon.Emit.Subscribe("Brake", function() this.Disable() end)
-    
+
     return this
 end)()

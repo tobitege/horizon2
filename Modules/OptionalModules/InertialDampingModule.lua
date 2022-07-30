@@ -10,6 +10,16 @@ InertialDampeningModule = (function()
     local this = HorizonModule("Inertial Dampening", "Slows velocity in any direction that the user is not applying thrust to 0, ie soft braking", "PostFlush", true)
     this.Tags = "stability,thrust"
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
+    this.Keybind = "InertialDamping"
+    this.QuickConfig = {
+        Enabled = true,
+        WidgetFactory = function(parent, hud, module)
+            local template = HUDQuickConfig.Templates.Toggle(parent, hud, module)
+            return template
+        end,
+        Order = 2,
+        Category = "Stability Assists"
+    }
 
     function this.Update(eventType, deltaTime)
         local staticWorld = Horizon.Memory.Static.World
@@ -31,7 +41,7 @@ InertialDampeningModule = (function()
         dynamicShip.Thrust = dynamicShip.Thrust - delta
     end
 
-    Horizon.Emit.Subscribe("InertialDamping", function() this.ToggleEnabled() end)
+    Horizon.Emit.Subscribe(this.Keybind, this.ToggleEnabled)
 
     return this
 end)()

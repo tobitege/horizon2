@@ -14,6 +14,44 @@ ManeuverFlightMode = (function()
     this.Config.Throttle = 1
     this.Config.ThrottleStep = 0.1
     this.Config.TurnSpeed = 2
+    this.Keybind = "ManeuverFlightMode"
+
+    local function handleThrottle(event, keyDown)
+        if not this.Enabled then return end
+        event = string.lower(event)
+        local direction = string.match(event, '%.([^%.]*)$')
+        if direction == "up" then
+            this.Config.Throttle = math.min(1,this.Config.Throttle+this.Config.ThrottleStep)
+        else
+            this.Config.Throttle = math.max(0,this.Config.Throttle-this.Config.ThrottleStep)
+        end
+    end
+
+    local function proxyMousewheel(evt, dT, amount)
+        local direction = "up"
+        if amount < 0 then direction = "down" end
+        local n = math.abs(amount)
+        for i=1,n do
+            handleThrottle("Throttle."..direction)
+        end
+    end
+
+    this.QuickConfig = {
+        Enabled = true,
+        WidgetFactory = function(parent, hud, module)
+            local template = HUDQuickConfig.Templates.Scrollable(parent, hud, module, "Throttle", function(ref)
+                ref.Content = (this.Config.Throttle * 100).."%"
+            end)
+            function template.OnScroll(amount)
+                proxyMousewheel(nil, nil, amount)
+            end
+            return template
+        end,
+        Label = "Throttle",
+        Order = -1,
+        ShowKeybind = false
+    }
+
     this.Direction = vec3(0,0,0)
     this.Rotation = vec3(0,0,0)
 
@@ -56,17 +94,6 @@ ManeuverFlightMode = (function()
         else
             this.Direction = vec3(0,0,0)
             this.Rotation = vec3(0,0,0)
-        end
-    end
-
-    local function handleThrottle(event, keyDown)
-        if not this.Enabled then return end
-        event = string.lower(event)
-        local direction = string.match(event, '%.([^%.]*)$')
-        if direction == "up" then
-            this.Config.Throttle = math.min(1,this.Config.Throttle+this.Config.ThrottleStep)
-        else
-            this.Config.Throttle = math.max(0,this.Config.Throttle-this.Config.ThrottleStep)
         end
     end
 

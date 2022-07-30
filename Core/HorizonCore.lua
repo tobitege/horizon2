@@ -57,10 +57,7 @@ function HorizonDelegate(eventType)
         local deltaTime = system.getArkTime() - lastTime
         for currentPriority = 0, 5 do
             for i = 1, #this.Callbacks do
-                if
-                    type(this.Callbacks[i]) == "function" or
-                        this.Callbacks[i].Enabled and this.Callbacks[i].Priority == currentPriority
-                 then
+                if type(this.Callbacks[i]) == "function" or this.Callbacks[i].Enabled and this.Callbacks[i].Priority == currentPriority then
                     local block = false
                     for k, v in pairs(anonymous) do
                         if v == this.Callbacks[i] then
@@ -68,13 +65,13 @@ function HorizonDelegate(eventType)
                         end
                     end
                     if not block then
-                        local success, err = pcall(this.Callbacks[i], eventType, deltaTime, ...)
+                        local name = tostring(this.Callbacks[i])
+                        if type(this.Callbacks[i]) == "HorizonModule" then
+                            name = this.Callbacks[i].Name or "Unknown"
+                        end
+                        local retn = Horizon.SafeCall(name.."@"..eventType, this.Callbacks[i], eventType, deltaTime, ...)
                         if type(this.Callbacks[i]) == "function" then
                             table.insert(anonymous, this.Callbacks[i])
-                        end
-                        if not success then
-                            local errorMessage = (this.Callbacks[i].Name or "Unknown").."@"..eventType..": "..err
-                            Horizon.Event.Error.Call(errorMessage)
                         end
                     end
                 end
@@ -170,18 +167,13 @@ function EventEmitter()
             local match = string.match(event, "^"..filter.."$")
             if match then
                 for _,cb in ipairs(evt) do
-                    local success, err = pcall(cb, event, ...)
-                    if not success then
-                        local errorMessage = (tostring(cb) or "Unknown").."@"..event..": "..err
-                        Horizon.Event.Error.Call(errorMessage)
-                    end
+                    Horizon.SafeCall((tostring(cb) or "Unknown")..":"..event, cb, event, ...)
                 end
             end
         end
     end
 
     setmetatable(this, { __call = function(ref, ...) this.Call(...) end })
-
     return this
 end
 
@@ -323,8 +315,77 @@ Horizon = (function (slotContainer)
 
     ---Returns a HorizonModule with the given name.
     ---@param name string The name of the module to return.
+    ---@return HorizonModule
     function this.GetModule(name)
         return this.Modules[name]
+    end
+
+    ---Returns an array of HorizonModule with the matching tag.
+    ---@param tag string The tag to look for.
+    ---@return HorizonModule[]
+    function this.GetModulesByTag(tag)
+        local out = {}
+        for k,v in pairs(Horizon.Modules) do
+            for s in v.Tags:gmatch("[^,]+") do
+                if s:lower() == tag:lower() then
+                    out[#out+1] = v
+                end
+            end
+        end
+        return out
+    end
+
+    function this.SafeCall(source, fn, ...)
+        local function convertDUError(str)
+            local function regexEscape(unsafe)
+                return unsafe:gsub("[%(%)%.%%%+%-%*%?%[%^%$%]]", "%%%1")
+            end
+            local stderr = str:match("STDERROR")
+            if stderr then
+                local slot = str:match("S(%-?%d+)")
+                local sFilter = str:match("F(%-?%d+)")
+                local line = str:match(":(%d+):")
+                local message = str:match("%d+: (.*)")
+                if slot then
+                    slot = tonumber(slot)
+                    if slot == -1 then
+                        sFilter = tonumber(sFilter)
+                        ---@diagnostic disable-next-line: undefined-field
+                        local moduleName = _G._ModuleIndex[sFilter]
+                        if moduleName then
+                            local target = regexEscape(str:match("%[string \"%-%- |[^%]]+\"%]:%d+"))
+                            --- Not sure why, but it's off by one
+                            local repl = string.format("%s:%d", moduleName, tonumber(line)-1)
+                            str = str:gsub(target, repl)
+                        end
+                    else
+                        local target = regexEscape(str:match("%[string \"%-%- |[^%]]+\"%]:%d+"))
+                        local repl = string.format("<ext>Slot%d:Filter%d:%d", tonumber(slot), tonumber(sFilter), tonumber(line))
+                        str = str:gsub(target, repl)
+                    end
+                end
+            end
+            return str
+        end
+        local trace = function()end
+        --- Workaround for DUnit bitching about no debug
+        if debug and debug.traceback then
+            trace = debug.traceback
+        end
+        local success, err, retn = xpcall(fn, trace, ...)
+        if not success then
+            local stack = {}
+            for s in err:gmatch("[^\r\n]+") do
+                stack[#stack+1] = convertDUError(s)
+            end
+            if #stack > 1 then
+                table.remove(stack,2)
+            end
+            local errorMessage = (tostring(source) or "Unknown")..": "..convertDUError(stack[1])
+            table.remove(stack,1)
+            Horizon.Event.Error.Call(errorMessage, stack)
+        end
+        return retn
     end
 
     setmetatable(this, {

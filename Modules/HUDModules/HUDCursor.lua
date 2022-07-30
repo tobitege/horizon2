@@ -1,7 +1,7 @@
 --@class HUDCursor
 --@require UI
 
-HUDCursor = (function() 
+HUDCursor = (function()
     local this = HorizonModule("HUD Cursor", "Allows HUD interaction", "Start", true)
     this.Tags = "hud"
 
@@ -26,11 +26,12 @@ HUDCursor = (function()
     hud.AddWidget(cursor)
 
     Horizon.Emit.Subscribe("HUD.Click", function()
-        local pos = nil
+        local pos = hud.MousePos
         if not cursor.Enabled then
             pos = vec2(50, 50)
         end
         hud.Click(pos)
+        Horizon.Emit.Call("HUD.Click.Position", pos)
     end)
 
     Horizon.Emit.Subscribe("HUD.Cursor.Toggle", function()
