@@ -23,7 +23,7 @@ HUDFuelIndicators =
     ---@diagnostic disable-next-line: undefined-field
     local hud = Horizon.GetModule("UI Controller").Displays[1]
     local tankIds = {
-        Atmos = {},
+        Atmo = {},
         Space = {},
         Rocket = {}
     }
@@ -32,14 +32,13 @@ HUDFuelIndicators =
         local elementIds = Horizon.Core.getElementIdList()
         for i=1,#elementIds do
             local idType = Horizon.Core.getElementClassById(elementIds[i])
-            idType = idType:lower():gsub(" fuelcontainer","")
+            idType = idType:lower():gsub("fuelcontainer","")
             idType = idType:gsub("^%l", string.upper)
-            system.print(idType)
             if tankIds[idType] then
                 local eid = elementIds[i]
                 local name = Horizon.Core.getElementNameById(eid)
                 local tankType = idType
-                if tankType == "Atmospheric" then tankType = "Atmosphere" end
+                if tankType == "Atmo" then tankType = "Atmosphere" end
                 for k,v in pairs(FuelTanks[tankType]) do
                     for size in string.gmatch(name, "[^%s]+") do
                         if v.Class == size:upper() then
@@ -97,8 +96,8 @@ HUDFuelIndicators =
 
         local currOffset = 0
 
-        if #tankIds.Atmospheric > 0 then
-            local atmo = createTypeContainer("Atmo", tankIds.Atmospheric, "#3283a8", bar)
+        if #tankIds.Atmo > 0 then
+            local atmo = createTypeContainer("ATMO", tankIds.Atmo, "#3283a8", bar)
             currOffset = currOffset + atmo.Width + bar.Padding
         end
 

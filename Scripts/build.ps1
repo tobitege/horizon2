@@ -40,6 +40,7 @@ if($?) {
 
     write-host -ForegroundColor Yellow "JSON loaded to clipboard.`n"
     $Host.UI.RawUI.ForegroundColor = $DefaultColor
+    [System.Console]::Beep(100,50);
 }
 else {
     write-host -ForegroundColor Red "ERROR! Build failed. Exiting...";

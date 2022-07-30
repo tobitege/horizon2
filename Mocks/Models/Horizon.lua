@@ -1,3 +1,5 @@
+---@meta
+
 ---@class StaticMemory
 local staticMock = {
     ---@class WorldMemory World space readings.

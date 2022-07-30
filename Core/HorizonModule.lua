@@ -39,8 +39,8 @@ HorizonModule = function (name, description, defaultEventName, defaultEnable, pr
     this.Config = {}
 
     ---Method which is called when the event it is registered to is raised.
-    ---@param eventType string The name of the event which initiated the method call.
-    ---@param deltaTime number The time elapsed since last call.
+    ---@param eventType? string The name of the event which initiated the method call.
+    ---@param deltaTime? number|nil The time elapsed since last call.
     function this.Update(eventType, deltaTime) end
 
     ---Perform initialization of the module. Note that this method may be called more than once.
