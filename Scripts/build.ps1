@@ -13,7 +13,7 @@ New-Item -Path ./bin/ -ItemType Directory -Force > $null
 New-Item -Path ./testresults/ -ItemType Directory -Force > $null
 
 # Ensure submodules are init
-if (-not(Test-Path -Path ./Libs/Utils)) {
+if (-not(Test-Path -Path ./Libs/Utils/*)) {
     git submodule update --init --recursive --remote
 }
 
