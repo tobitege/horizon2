@@ -15,7 +15,7 @@ HUDArtificialHorizon = (function()
     }
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
 
-    Horizon.Controller.hide()
+    Horizon.Controller.hideWidget()
     ---@diagnostic disable-next-line: undefined-field
     local hud = Horizon.GetModule("UI Controller").Displays[1]
 

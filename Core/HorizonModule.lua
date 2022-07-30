@@ -6,7 +6,7 @@
 ---@param description string The description of the module.
 ---@param defaultEventName string The name of default event which this module will update on.
 ---@param defaultEnable boolean Whether the module should be enabled by default.
----@param priority number The priority of the module in the system queue.
+---@param priority? number The priority of the module in the system queue.
 HorizonModule = function (name, description, defaultEventName, defaultEnable, priority)
     ---@class HorizonModule Creates a new Horizon Module instance.
     local this = {}

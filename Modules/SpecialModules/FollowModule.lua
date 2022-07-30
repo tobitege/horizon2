@@ -59,11 +59,11 @@ OwnerFollowModule = (function()
         local playerDistance = playerRelativePosition:len()
 
         if lastMasterMove == nil or (lastMasterLocation - playerRelativePosition):len() > this.Config.IdleThreshold then
-            lastMasterMove = system.getTime()
+            lastMasterMove = system.getArkTime()
             lastMasterLocation = playerRelativePosition
         end
 
-        if lastMasterMove < system.getTime()-30 and this.Config.IdleShutdown then
+        if lastMasterMove < system.getArkTime()-30 and this.Config.IdleShutdown then
             braking.Enable()
             altHold.Config.HoldAltitude = 0
             return

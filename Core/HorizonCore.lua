@@ -14,7 +14,7 @@ function HorizonDelegate(eventType)
     ---@type table
     this.Callbacks = {}
 
-    local lastTime = system.getTime()
+    local lastTime = system.getArkTime()
 
     ---Adds a callback to be executed when the delegate is invoked.
     ---@param f HorizonModule|function The callback to add.
@@ -54,7 +54,7 @@ function HorizonDelegate(eventType)
     ---@param ... any The parameters to pass onto the callbacks.
     function this.Call(...)
         local anonymous = {}
-        local deltaTime = system.getTime() - lastTime
+        local deltaTime = system.getArkTime() - lastTime
         for currentPriority = 0, 5 do
             for i = 1, #this.Callbacks do
                 if
@@ -80,7 +80,7 @@ function HorizonDelegate(eventType)
                 end
             end
         end
-        lastTime = system.getTime()
+        lastTime = system.getArkTime()
     end
 
     ---The number of callbacks attached to this delegate.
@@ -201,8 +201,13 @@ Horizon = (function (slotContainer)
     ---@type table
     this.Core = slotContainer.Core
 
+    ---The construct DU object
+    ---@type table
+    ---@diagnostic disable-next-line: undefined-field
+    this.Construct = _G.DUConstruct
+
     ---The construct's controller element. e.g. programming board, remote control, seat, etc.
-    ---@type table  
+    ---@type table
     this.Controller = slotContainer.Unit
 
     ---The linked slots of the controller.

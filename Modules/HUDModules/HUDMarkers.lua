@@ -44,7 +44,7 @@ HUDMarkers =
 
     local xform = hud.TransformSize(this.Config.MarkerSize)
     local chairPos =
-        vec3(Horizon.Core.getElementPositionById(Horizon.Controller.getId())) - vec3(16, 15.75, 16) +
+        vec3(Horizon.Core.getElementPositionById(Horizon.Controller.getLocalId())) - vec3(16, 15.75, 16) +
         vec3(-0.125, -1.075, 0.225)
 
     local function makeMarker(arm)

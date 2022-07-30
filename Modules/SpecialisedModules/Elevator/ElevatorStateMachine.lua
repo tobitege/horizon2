@@ -194,7 +194,7 @@ function()
     if distance >= FinalDistance * 1000 then
         DockToFloor.Next = FinalizeAltitude
         return true
-    elseif system.getTime() - DockToFloor.StartTime > 6 then
+    elseif system.getArkTime() - DockToFloor.StartTime > 6 then
         local dist = telemeter.getDistance()
         if dist > 0 and dist <= 5 then
             DockToFloor.Next = Disengage
@@ -209,7 +209,7 @@ function()
     moveToTarget(10,1)
 end)
 DockToFloor.Start = function() 
-    DockToFloor.StartTime = system.getTime()
+    DockToFloor.StartTime = system.getArkTime()
 end
 
 Disengage = State("Disengage Controls")
