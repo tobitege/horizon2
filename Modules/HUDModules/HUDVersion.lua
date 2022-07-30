@@ -10,8 +10,8 @@ HUDVersion = (function()
 
     ---@diagnostic disable-next-line: undefined-field
     local hud = Horizon.GetModule("UI Controller").Displays[1]
-    local Version = UILabel(100, 100, 12, 1.1)
-    Version.Anchor = UIAnchor.BottomRight
+    local Version = UILabel(100, 0, 12, 1.1)
+    Version.Anchor = UIAnchor.TopRight
     Version.Content = "Horizon " .. Horizon.Version
     Version.Style = "font-size: 0.75vh"
     hud.AddWidget(Version)
