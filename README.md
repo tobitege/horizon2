@@ -22,11 +22,11 @@ If you do not already have VSCode installed, you can [download it here](https://
 #### Setup
 
 To be able to build Horizon2 correctly, you need to clone the Horizon-2 from the git (https://git.internal.st/dual-universe/horizon-2) this will save a copy on your local drive. Once you have done this, you need to clone the following libaries from the git into their respective directories within the Horizon-2 clone on your local drive.
-- [DUBuild] (https://git.internal.st/dual-universe/dubuild) ../horizon-2/DUBuild
-- [DUnit] (https://git.internal.st/dual-universe/dunit) ../horizon-2/DUnit
-- [DataLib] (https://git.internal.st/dual-universe/datalib) ../horizon-2/Libs/Data
-- [SlotDetector] (https://git.internal.st/dual-universe/slotdetector) ../horizon-2/Libs/SlotDetector
-- [UtilityLibrary] (https://git.internal.st/dual-universe/utility-library) ../horizon-2/Libs/Utils
+- [DUBuild](https://github.com/Otixa/dubuild) ../horizon-2/DUBuild
+- [DUnit](https://github.com/Otixa/dunit) ../horizon-2/DUnit
+- [DataLib](https://github.com/Otixa/du-data-lib) ../horizon-2/Libs/Data
+- [SlotDetector](https://github.com/Otixa/du-slot-detector) ../horizon-2/Libs/SlotDetector
+- [UtilityLibrary](https://github.com/Otixa/du-utils) ../horizon-2/Libs/Utils
 
 #### Extensions
 
