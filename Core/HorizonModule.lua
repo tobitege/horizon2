@@ -9,7 +9,7 @@ HorizonModule = function (name, description, defaultEventName, defaultEnable, pr
     this.Tags = ""
     this.Dependencies = {}
     this.Enabled = false
-    
+
     if priority == nil then
         this.Priority = 1
     else
@@ -37,7 +37,7 @@ HorizonModule = function (name, description, defaultEventName, defaultEnable, pr
             Horizon.Event[defaultEventName].Remove(this)
         end
     end
-    
+
     Horizon.RegisterModule(this)
     return this
 end

@@ -1,13 +1,13 @@
 --@class GravityFollow
 
-GravityFollow = (function() 
+GravityFollow = (function()
     local this = HorizonModule("Gravity Follow", "Forces ship to follow gravity down, effectively locking ship pitch to the horizon", "Flush", false)
     this.Tags = "thrust,stability"
     this.Config = {
         AdjustSpeed = 5
     }
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
-    
+
     function this.Update(eventType, deltaTime)
         local world = Horizon.Memory.Static.World
         local ship = Horizon.Memory.Dynamic.Ship
@@ -28,7 +28,7 @@ GravityFollow = (function()
 
         ship.Rotation = ship.Rotation + (world.Up:cross(-world.Vertical) * scale)
     end
-    
+
     Horizon.Emit.Subscribe("GravityFollow", function() this.ToggleEnabled() end)
 
     return this

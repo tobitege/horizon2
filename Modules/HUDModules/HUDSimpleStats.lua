@@ -13,7 +13,7 @@ HUDSimpleStats = (function()
         Position = vec2(40.75, 94),
     }
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
-    
+
     local hud = Horizon.GetModule("UI Controller").Displays[1]
 
     local base = UIPanel(this.Config.Position.x, this.Config.Position.y, 18.5, 3.8)
@@ -58,7 +58,6 @@ HUDSimpleStats = (function()
     end
     vV.Content = [[<uilabel style="width: 100%;height:100%">↕ $(Number.Major)<sup>$(Number.Minor)</sup> km/h</uilabel>]]
     base.AddChild(vV)
-
 
     hud.AddWidget(base)
 

@@ -20,32 +20,32 @@ local Unit = _G.BuildUnit
 _G.BuildSystem = {}
 local System = _G.BuildSystem
 
-function Unit.Start()
+function Unit.onStart()
     Horizon.Event.Start()
 end
 
-function Unit.Stop()
+function Unit.onStop()
     Horizon.Event.Stop()
 end
 
-function Unit.Tick(timer)
+function Unit.onTimer(timer)
 end
 
-function System.ActionStart(action)
+function System.onActionStart(action)
     Horizon.Event.KeyDown(action)
 end
 
-function System.ActionStop(action)
+function System.onActionStop(action)
     Horizon.Event.KeyUp(action)
 end
 
-function System.ActionLoop(action)
+function System.onActionLoop(action)
 end
 
-function System.Update()
+function System.onUpdate()
     Horizon.Event.PreUpdate() Horizon.Event.Update() Horizon.Event.PostUpdate()
 end
 
-function System.Flush()
+function System.onFlush()
     Horizon.Event.PreFlush() Horizon.Event.Flush() Horizon.Event.PostFlush()
 end

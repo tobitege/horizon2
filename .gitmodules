@@ -1,9 +1,9 @@
 [submodule "Libs/Utils"]
 	path = Libs/Utils
-	url = https://gitlab+deploy-token-5:YiUnrbT628Q2rNNaJXWd@git.internal.st/dual-universe/utility-library.git
+	url = https://github.com/Otixa/du-utils
 [submodule "Libs/SlotDetector"]
 	path = Libs/SlotDetector
-	url = https://gitlab+deploy-token-3:Ea-sMHUtxk89jn5DzrWx@git.internal.st/dual-universe/slotdetector.git
+	url = https://github.com/Otixa/du-slot-detector
 [submodule "Libs/Data"]
 	path = Libs/Data
-	url = https://gitlab+deploy-token-4:hJUQXMsLYzAyAmmRfy_o@git.internal.st/dual-universe/datalib.git
+	url = https://github.com/Otixa/du-data-lib

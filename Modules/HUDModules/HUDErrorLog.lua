@@ -23,10 +23,9 @@ HUDErrorLog =
     base.Padding = 0.5
     base.Zindex = -1
     base.OnUpdate = function(ref)
+        ref.Class = ""
         if #ref.Children > 0 then
             ref.Class = "filled"
-        else
-            ref.Class = ""
         end
     end
     hud.AddWidget(base)

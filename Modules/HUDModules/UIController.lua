@@ -36,5 +36,8 @@ UIController = (function()
     end
 
     Horizon.Event.Click.Add(handleClick)
+
+	system.print('UIController loaded')
+
     return this
 end)()
