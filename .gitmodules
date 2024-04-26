@@ -1,9 +1,9 @@
 [submodule "Libs/Utils"]
 	path = Libs/Utils
-	url = https://github.com/Otixa/du-utils.git
+	url = https://github.com/Otixa/du-utils
 [submodule "Libs/SlotDetector"]
 	path = Libs/SlotDetector
-	url = https://github.com/Otixa/du-slot-detector.git
+	url = https://github.com/Otixa/du-slot-detector
 [submodule "Libs/Data"]
 	path = Libs/Data
-	url = https://github.com/Otixa/du-data-lib.git
+	url = https://github.com/Otixa/du-data-lib
