@@ -5,7 +5,7 @@ function HorizonDelegate(eventType)
     local typeof = types.type
     local this = {}
     this.Delegates = {}
-    local lastTime = system.getTime()
+    local lastTime = system.getArkTime()
 
     function this.Add(f)
         if typeof(f) ~= "HorizonModule" and type(f) ~= "function" then
@@ -37,7 +37,7 @@ function HorizonDelegate(eventType)
 
     function this.Call(...)
         local anonymous = {}
-        local deltaTime = system.getTime() - lastTime
+        local deltaTime = system.getArkTime() - lastTime
         for currentPriority = 0, 5 do
             for i = 1, #this.Delegates do
                 if
@@ -63,7 +63,7 @@ function HorizonDelegate(eventType)
                 end
             end
         end
-        lastTime = system.getTime()
+        lastTime = system.getArkTime()
     end
 
     function this.Count()
@@ -193,7 +193,6 @@ Horizon = (function (slotContainer)
         Click = HorizonDelegate("click")
     }
     this.Version = "%CI_COMMIT_TAG% %CI_COMMIT_BRANCH% %CI_COMMIT_SHORT_SHA% %GIT_FILE_LAST_COMMIT%"
-
 
     this.Emit = EventEmitter()
 

@@ -1,7 +1,7 @@
 --@class HUDCursor
 --@require UI
 
-HUDCursor = (function() 
+HUDCursor = (function()
     local this = HorizonModule("HUD Cursor", "Allows HUD interaction", "Start", true)
     this.Tags = "hud"
 
@@ -32,7 +32,7 @@ HUDCursor = (function()
     end)
 
     Horizon.Emit.Subscribe("HUD.Cursor.Toggle", function()
-        cursor.Enabled = not cursor.Enabled 
+        cursor.Enabled = not cursor.Enabled
     end)
 
     return this

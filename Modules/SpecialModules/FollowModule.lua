@@ -9,7 +9,7 @@
 --@require AltitudeHoldModule
 --@require RotationDampeningModule
 
-OwnerFollowModule = (function() 
+OwnerFollowModule = (function()
     local this = HorizonModule("Owner Follow", "When enabled the construct will follow the player", "PostFlush", true)
     this.Tags = "autopilot"
     this.Config.FollowDistance = 10
@@ -20,7 +20,7 @@ OwnerFollowModule = (function()
     this.Config.HoverHeight = 4
     this.Config.MaxYawDeviation = 0.09 --In Radians
     this.Config.Version = "%GIT_FILE_LAST_COMMIT%"
-    
+
     local rad2deg = 57.295779513
 
     local altHold = nil
@@ -58,11 +58,11 @@ OwnerFollowModule = (function()
         local playerDistance = playerRelativePosition:len()
 
         if lastMasterMove == nil or (lastMasterLocation - playerRelativePosition):len() > this.Config.IdleThreshold then
-            lastMasterMove = system.getTime()
+            lastMasterMove = system.getArkTime()
             lastMasterLocation = playerRelativePosition
         end
 
-        if lastMasterMove < system.getTime()-30 and this.Config.IdleShutdown then
+        if lastMasterMove < system.getArkTime()-30 and this.Config.IdleShutdown then
             braking.Enable()
             altHold.Config.HoldAltitude = 0
             return

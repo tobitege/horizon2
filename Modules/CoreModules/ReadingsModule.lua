@@ -18,40 +18,40 @@ ReadingsModule = (function()
         local Local = {}
 
         -- World Linear
-        World.Position = vec3(core.getConstructWorldPos())
-        World.Velocity = vec3(core.getWorldVelocity())
-        World.Acceleration = vec3(core.getWorldAcceleration())
-        World.Up = vec3(core.getConstructWorldOrientationUp())
-        World.Right = vec3(core.getConstructWorldOrientationRight())
-        World.Forward = vec3(core.getConstructWorldOrientationForward())
+        World.Position = vec3(construct.getWorldPosition())
+        World.Velocity = vec3(construct.getWorldVelocity())
+        World.Acceleration = vec3(construct.getWorldAcceleration())
+        World.Up = vec3(construct.getWorldOrientationUp())
+        World.Right = vec3(construct.getWorldOrientationRight())
+        World.Forward = vec3(construct.getWorldOrientationForward())
         World.Gravity = vec3(core.getWorldGravity())
         World.Vertical = vec3(core.getWorldVertical())
-        World.AirFriction = vec3(core.getWorldAirFrictionAcceleration())
+        World.AirFriction = vec3(construct.getWorldAirFrictionAcceleration())
         World.AtmosphericDensity = controller.getAtmosphereDensity()
 
         World.VerticalVelocity = World.Velocity:dot(-World.Gravity:normalize())
 
         -- World Angular
-        World.AngularVelocity = vec3(core.getWorldAngularVelocity())
-        World.AngularAcceleration = vec3(core.getWorldAngularAcceleration())
-        World.AngularAirFriction = vec3(core.getWorldAirFrictionAngularAcceleration())
+        World.AngularVelocity = vec3(construct.getWorldAngularVelocity())
+        World.AngularAcceleration = vec3(construct.getWorldAngularAcceleration())
+        World.AngularAirFriction = vec3(construct.getWorldAirFrictionAngularAcceleration())
 
         -- Ship
         Ship.Altitude = core.getAltitude()
-        Ship.Id = core.getConstructId()
-        Ship.Mass = core.getConstructMass()
-        Ship.CrossSection = core.getConstructCrossSection()
+        Ship.Id = construct.getId()
+        Ship.Mass = construct.getTotalMass()
+        Ship.CrossSection = construct.getCrossSection()
 
-        
-        local tkForward = core.getMaxKinematicsParametersAlongAxis("all", {vec3(0, 1, 0):unpack()})
-        local tkUp = core.getMaxKinematicsParametersAlongAxis("all", {vec3(0, 0, 1):unpack()})
-        local tkRight = core.getMaxKinematicsParametersAlongAxis("all", {vec3(1, 0, 0):unpack()})
-        
+
+        local tkForward = construct.getMaxThrustAlongAxis("all", {vec3(0, 1, 0):unpack()})
+        local tkUp = construct.getMaxThrustAlongAxis("all", {vec3(0, 0, 1):unpack()})
+        local tkRight = construct.getMaxThrustAlongAxis("all", {vec3(1, 0, 0):unpack()})
+
         local tkOffset = 0
         if World.AtmosphericDensity < 0.1 then
             tkOffset = 2
         end
-        
+
         local virtualGravityEngine =
             vec3(
             library.systemResolution3(
@@ -78,8 +78,8 @@ ReadingsModule = (function()
         Ship.Roll = 180 - (math.atan(localGrav.x, localGrav.z) * constants.rad2deg)
 
         -- Local
-        Local.Velocity = vec3(core.getVelocity())
-        Local.Acceleration = vec3(core.getAcceleration())
+        Local.Velocity = vec3(construct.getVelocity())
+        Local.Acceleration = vec3(construct.getAcceleration())
 
         rawset(memory, "World", World)
         rawset(memory, "Ship", Ship)

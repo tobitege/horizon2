@@ -2,7 +2,7 @@
 --@require HUDMarkers
 --@require HUDCursor
 
-ARInteract = (function() 
+ARInteract = (function()
     local this = HorizonModule("AR Interact", "Allows interaction between elements using emitters and receivers", "PostUpdate", true)
     this.Tags = "hud,comms,navigation"
     this.Config = {
@@ -18,15 +18,15 @@ ARInteract = (function()
 
     local markers = Horizon.GetModule("HUD Markers")
 
-    local startTime = system.getTime() + this.Config.Interval
-    
+    local startTime = system.getArkTime() + this.Config.Interval
+
     this.Update = function(event, deltaTime)
-        if startTime - system.getTime() <= 0 then
+        if startTime - system.getArkTime() <= 0 then
             emitter.send("ST_Wideband", "ping")
-            startTime = system.getTime() + this.Config.Interval
+            startTime = system.getArkTime() + this.Config.Interval
         end
     end
-    
+
     local handlePong = function(evt, channel, message)
         if message == "ping" then return end -- ignore pongs for now
         if starts(message, "pong") then
@@ -55,8 +55,8 @@ ARInteract = (function()
             end
         end
     end
-    
+
     Horizon.Emit.Subscribe("Comms.Message.ST_Wideband", handlePong)
-    
+
     return this
 end)()
