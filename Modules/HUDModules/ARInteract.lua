@@ -35,7 +35,7 @@ ARInteract = (function()
                 data = json.decode(data)
                 local marker = ARMarker(data.Position, data.Channel)
                 marker.MaxDistance = 200
-                marker.Icon = Icon
+                marker.Icon = data.Icon
 
                 local inst = markers.Add(marker)
                 inst.OnClick = function(ref)

@@ -44,23 +44,41 @@ If you are uncertain about the correct way to implement something, you should al
 
 ### Visual Studio Code
 
-If you do not already have VSCode installed, you can [download it here](https://code.visualstudio.com/download). Once downloaded, install it and either open the folder (or if it exists the `Horizon2.code-workspace` workspace file) with VSCode.
+If you do not already have VSCode installed, you can [download it here](https://code.visualstudio.com/download).  
+Once downloaded, install it and either open the folder (or if it exists the `Horizon2.code-workspace` workspace file) with VSCode.
 
-#### Setup
+### Setup
 
 To be able to build Horizon2 correctly, you need to clone the Horizon2 repository from the [Horizon2 repository](https://github.com/Otixa/horizon2/) with below command in a terminal window:  
 `git clone --recursive https://github.com/Otixa/horizon2/`
 
-This will create in the current folder a new "Horizon2" subfolder, including the repository and all its referenced sub-modules on your local drive.  
-Afterwards check, whether any of the following folders have content. If not, you need to clone the following libaries separately from their git into their respective directories within the Horizon2 folder onto your local drive:
+This will clone the main repository along with all its sub-repositories.
 
-- [DUBuild](https://github.com/Otixa/dubuild) ../horizon2/DUBuild
-- [DUnit](https://github.com/Otixa/dunit) ../horizon2/DUnit
-- [DataLib](https://github.com/Otixa/du-data-lib) ../horizon2/Libs/Data
-- [SlotDetector](https://github.com/Otixa/du-slot-detector) ../horizon2/Libs/SlotDetector
-- [UtilityLibrary](https://github.com/Otixa/du-utils) ../horizon2/Libs/Utils
+If you have already cloned the main repository without the sub-repositories, you can fetch them later using the following commands (adapt the "cd" command accordingly):
 
-#### Extensions
+`cd horizon2
+git submodule init
+git submodule update --recursive`
+
+The git submodule init command initializes the sub-repository configuration, and the git submodule update --recursive command fetches and checks out the sub-repositories, that will show up in the "Libs" subfolder:
+
+* [DataLib](https://github.com/Otixa/du-data-lib) ../horizon2/Libs/Data  
+* [SlotDetector](https://github.com/Otixa/du-slot-detector) ../horizon2/Libs/SlotDetector  
+* [UtilityLibrary](https://github.com/Otixa/du-utils) ../horizon2/Libs/Utils  
+
+There are 2 special repositories, that need to be cloned separately:
+
+* [DUBuild](https://github.com/Otixa/dubuild) ../horizon2/DUBuild  
+This is the main tool to "package" all LUA sources into DU's json format.  
+It will be called with parameters like source folder, main lua file and output folder.  
+For an example see the "build_tobitege.bat" file in the root of this repository.
+
+* [DUnit](https://github.com/Otixa/dunit) ../horizon2/DUnit
+This is the main unit testing framework for Horizon2.  
+It is used to run the tests defined in the "Tests" subfolder, but not required right
+now in the master branch (see branch development!).
+
+### Extensions
 
 * In order to build on save, you need to install the [Trigger Task on Save](https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.triggertaskonsave) extension.  
 * If you want to have IntelliSense support you should install [Lua by sumneko](https://marketplace.visualstudio.com/items?itemName=sumneko.lua).  
@@ -71,18 +89,20 @@ The dubuild repository may have in folder DUBuild\Properties a launchSettings.js
 
 Once the build finishes, it should have produced the following:
 
-- JSON files for each of the main builds in the `./output/` directory
-- Your clipboard will contain the `StandardBuild` JSON
-- The `testresults` directory will contain the test results, provided the test run succeeded.
+* One or more JSON files for each of the main builds in the `./output/` directory
+Optionally:
+* Your clipboard should (will?) contain the `Standard` JSON (as specified in the Main_\*.lua file)
+* The `testresults` directory will contain the test results, provided the tests ran successfully.
 
 #### Troubleshooting
 
-Here you will find some common issues when first attempting to start Horizon2 development, and ways to remedy them.
-There may be a PowerShell command file to start a build process like "build.ps1".
+Here you will find some common issues when first attempting to start Horizon2 development, and ways to remedy them.  
 
-> build.ps1 is not digitally signed. The script will not execute on the system.
+* Depending on the branch, there might be a PowerShell file to start a build process like "build.ps1" (see development branch).
 
-If you get this error, run VSCode as Administrator and attempt to build. Subsequent runs without Administrator rights should not cause the error to reappear.
+  > build.ps1 is not digitally signed. The script will not execute on the system.
+
+  If you get this error, run VSCode as Administrator and attempt to build again. Subsequent runs without Administrator rights should not cause the error to reappear.
 
 ## Submitting Code
 
@@ -143,4 +163,6 @@ end
 
 ##### Adding modules
 
-# Deployment
+### Deployment
+
+Copy the contents of a resulting JSON file to clipboard and in game paste it onto a remote controller or piloting element via right-mouse menu.
